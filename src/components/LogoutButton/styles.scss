@@ -4,6 +4,7 @@
   border: 1px solid var(--theme-border-color);
   border-radius: var(--style-radius-m);
   background: var(--theme-elevation-150);
+  color: var(--color);
   cursor: pointer;
   &:hover {
     background: var(--theme-elevation-200);

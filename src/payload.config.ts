@@ -10,6 +10,7 @@ import { es } from '@payloadcms/translations/languages/es' // español
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Clientes } from './collections/Clientes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,7 +31,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Clientes],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
