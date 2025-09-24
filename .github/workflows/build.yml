@@ -34,7 +34,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/payload-app
+          images: ghcr.io/${{ github.repository_owner }}/adminpanel-nazarpropiedades
           tags: |
             # Staging cuando es push a main
             type=raw,value=staging,enable=${{ github.ref == 'refs/heads/main' }}
