@@ -1,14 +1,18 @@
 name: build-and-push
+
 on:
   push:
-    branches: [ "main" ]   # <<--- importante: tu rama de despliegue
+    branches: [ "main" ]
+    tags: [ "v*.*.*" ]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   docker:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write        # publicar a GHCR
+
     steps:
       - uses: actions/checkout@v4
 
@@ -25,14 +29,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Push (tag latest + commit)
+      # Genera tags según si es push a main o push de tag semántico
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/payload-app
+          tags: |
+            # Staging cuando es push a main
+            type=raw,value=staging,enable=${{ github.ref == 'refs/heads/main' }}
+            # Tag por commit largo (útil para debug en staging)
+            type=sha,format=long,enable=${{ github.ref == 'refs/heads/main' }}
+            # Release cuando es push de tag (ej: v1.2.3)
+            type=ref,event=tag
+
+      - name: Build & Push
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/payload-app:latest
-            ghcr.io/${{ github.repository_owner }}/payload-app:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             NODE_ENV=production
