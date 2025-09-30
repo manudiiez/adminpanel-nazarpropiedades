@@ -11,6 +11,7 @@ import { es } from '@payloadcms/translations/languages/es' // español
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Clientes } from './collections/Clientes'
+import { r2Storage } from '@payloadcms/storage-r2'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -48,5 +49,20 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
+    r2Storage({
+      // collections: { media: { prefix: process.env.R2_PREFIX || '' } },
+      collections: { media: true },
+      bucket: process.env.R2_BUCKET!,
+      // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
+      config: {
+        endpoint: process.env.R2_ENDPOINT,
+        region: 'auto',
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+        forcePathStyle: true,
+      },
+    }),
   ],
 })

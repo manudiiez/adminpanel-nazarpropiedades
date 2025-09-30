@@ -22,9 +22,10 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    mimeTypes: ['image/*'],
     imageSizes: [
       {
         name: 'thumbnail',
