@@ -7,11 +7,10 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { es } from '@payloadcms/translations/languages/es' // español
-
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Clientes } from './collections/Clientes'
-import { r2Storage } from '@payloadcms/storage-r2'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,9 +48,8 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
-    r2Storage({
-      // collections: { media: { prefix: process.env.R2_PREFIX || '' } },
-      collections: { media: true },
+    s3Storage({
+      collections: { media: { prefix: process.env.R2_PREFIX || '' } },
       bucket: process.env.R2_BUCKET!,
       // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
       config: {
