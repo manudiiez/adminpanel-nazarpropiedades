@@ -29,6 +29,10 @@ export default buildConfig({
       logout: {
         Button: '@/components/LogoutButton/LogoutButton',
       },
+      graphics: {
+        Icon: '@/components/brand/IconComponent',
+        Logo: '@/components/brand/LogoComponent/LogoComponent',
+      },
     },
   },
   collections: [Users, Media, Clientes],

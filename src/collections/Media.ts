@@ -1,5 +1,10 @@
 import { authenticated } from '@/access/authenticated'
 import type { CollectionConfig } from 'payload'
+import { fileURLToPath } from 'url'
+import path from 'path'
+
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -16,5 +21,29 @@ export const Media: CollectionConfig = {
       // required: true,
     },
   ],
-  upload: true,
+  upload: {
+    staticDir: path.resolve(dirname, '../../public/media'),
+    adminThumbnail: 'thumbnail',
+    focalPoint: true,
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 300,
+      },
+      {
+        name: 'small',
+        width: 600,
+      },
+      {
+        name: 'medium',
+        width: 1280,
+      },
+      {
+        name: 'og',
+        width: 1200,
+        height: 630,
+        crop: 'center',
+      },
+    ],
+  },
 }

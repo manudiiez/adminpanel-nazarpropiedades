@@ -1,0 +1,8 @@
+/* admin.scss */
+.brand-wrap { display: inline-block; }
+
+.brand-wrap .brand-light { display: block; }
+.brand-wrap .brand-dark  { display: none;  }
+
+html[data-theme="dark"] .brand-wrap .brand-light { display: none; }
+html[data-theme="dark"] .brand-wrap .brand-dark  { display: block; }
