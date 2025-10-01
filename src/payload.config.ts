@@ -31,6 +31,7 @@ export default buildConfig({
       logout: {
         Button: '@/components/LogoutButton/LogoutButton',
       },
+      afterDashboard: ['@/views/DashboardView#default'],
       graphics: {
         Icon: '@/components/brand/IconComponent',
         Logo: '@/components/brand/LogoComponent/LogoComponent',

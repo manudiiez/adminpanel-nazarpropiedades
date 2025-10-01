@@ -48,7 +48,7 @@ export default function ClientDetails({
     const parts = []
     if (ownerFee > 0) parts.push(`${ownerFeeCurrency} $${formatPrice(ownerFee)}`)
     if (buyerFee > 0) parts.push(`${buyerFeeCurrency} $${formatPrice(buyerFee)}`)
-    
+
     return parts.join(' + ')
   }
 
