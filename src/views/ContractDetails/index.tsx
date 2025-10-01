@@ -172,8 +172,17 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                   </div>
                   <div className="contract-details__price-item">
                     <div className="contract-details__price-value">
-                      {contractData.ownerFeeCurrency.value} $
-                      {formatPrice(contractData.ownerFee.value)}
+                      {/* Mostrar honorarios totales calculados */}
+                      {(() => {
+                        const ownerFee = contractData.ownerFee?.value || 0
+                        const buyerFee = contractData.buyerFee?.value || 0
+                        const totalFees = ownerFee + buyerFee
+
+                        // Usar la moneda del owner fee como principal, pero manejar casos mixtos
+                        const currency = contractData.ownerFeeCurrency?.value || 'USD'
+
+                        return `${currency} $${formatPrice(totalFees)}`
+                      })()}
                     </div>
                     <div className="contract-details__price-label">
                       {contractConfig[contractType as keyof typeof contractConfig].feeLabel}
@@ -201,8 +210,15 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                       {contractConfig[contractType as keyof typeof contractConfig].feeLabel}
                     </span>
                     <p>
-                      {calculateFee(contractData.realPrice.value, contractData.ownerFee.value)}%
-                      {contractType !== 'venta' && ' de la renta'}
+                      {(() => {
+                        const ownerFee = contractData.ownerFee?.value || 0
+                        const buyerFee = contractData.buyerFee?.value || 0
+                        const totalFees = ownerFee + buyerFee
+                        const realPrice = contractData.realPrice?.value || 0
+
+                        return calculateFee(realPrice, totalFees)
+                      })()}
+                      %{contractType !== 'venta' && ' de la renta'}
                     </p>
                   </div>
                   <div className="contract-details__meta-item">
@@ -265,54 +281,54 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                       <div className="contract-details__property-features">
                         {propertyData.environments?.bedrooms && (
                           <div className="contract-details__property-feature">
+                            <div className="contract-details__property-feature-label">Hab.</div>
                             <div className="contract-details__property-feature-value">
                               {propertyData.environments.bedrooms}
                             </div>
-                            <div className="contract-details__property-feature-label">Hab.</div>
                           </div>
                         )}
                         {propertyData.environments?.bathrooms && (
                           <div className="contract-details__property-feature">
+                            <div className="contract-details__property-feature-label">Baños</div>
                             <div className="contract-details__property-feature-value">
                               {propertyData.environments.bathrooms}
                             </div>
-                            <div className="contract-details__property-feature-label">Baños</div>
                           </div>
                         )}
                         {propertyData.caracteristics?.totalArea && (
                           <div className="contract-details__property-feature">
-                            <div className="contract-details__property-feature-value">
-                              {propertyData.caracteristics.totalArea}
-                            </div>
                             <div className="contract-details__property-feature-label">
                               m² totales
+                            </div>
+                            <div className="contract-details__property-feature-value">
+                              {propertyData.caracteristics.totalArea}
                             </div>
                           </div>
                         )}
                         {propertyData.caracteristics?.coveredArea && (
                           <div className="contract-details__property-feature">
-                            <div className="contract-details__property-feature-value">
-                              {propertyData.caracteristics.coveredArea}
-                            </div>
                             <div className="contract-details__property-feature-label">
                               m² cubiertos
+                            </div>
+                            <div className="contract-details__property-feature-value">
+                              {propertyData.caracteristics.coveredArea}
                             </div>
                           </div>
                         )}
                         {propertyData.environments?.garages && (
                           <div className="contract-details__property-feature">
+                            <div className="contract-details__property-feature-label">Cocheras</div>
                             <div className="contract-details__property-feature-value">
                               {propertyData.environments.garages}
                             </div>
-                            <div className="contract-details__property-feature-label">Cocheras</div>
                           </div>
                         )}
                         {propertyData.environments?.funished && (
                           <div className="contract-details__property-feature">
+                            <div className="contract-details__property-feature-label">Amoblado</div>
                             <div className="contract-details__property-feature-value">
                               {propertyData.environments.funished ? 'Si' : 'No'}
                             </div>
-                            <div className="contract-details__property-feature-label">Amoblado</div>
                           </div>
                         )}
                       </div>
@@ -360,18 +376,77 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                   <div className="contract-details__financial-column">
                     <h4>Ganancia de la inmobiliaria</h4>
                     <div className="contract-details__payment-details">
-                      <div className="contract-details__payment-item">
-                        <span>Moneda</span>
-                        <span>{contractData.ownerFeeCurrency.value}</span>
-                      </div>
-                      <div className="contract-details__expense-item">
-                        <span>
-                          {contractConfig[contractType as keyof typeof contractConfig].feeLabel} (
-                          {calculateFee(contractData.realPrice.value, contractData.ownerFee.value)}%
-                          {contractType !== 'venta' && ' de la renta'})
-                        </span>
-                        <span>${formatPrice(contractData.ownerFee.value)}</span>
-                      </div>
+                      {/* Honorarios del propietario */}
+                      {contractData.ownerFee?.value > 0 && (
+                        <>
+                          <div className="contract-details__payment-item">
+                            <span>Moneda (Propietario)</span>
+                            <span>{contractData.ownerFeeCurrency?.value || 'USD'}</span>
+                          </div>
+                          <div className="contract-details__expense-item">
+                            <span>
+                              Honorarios del propietario (
+                              {calculateFee(
+                                contractData.realPrice?.value || 0,
+                                contractData.ownerFee?.value || 0,
+                              )}
+                              %{contractType !== 'venta' && ' de la renta'})
+                            </span>
+                            <span>${formatPrice(contractData.ownerFee.value)}</span>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Honorarios del comprador/inquilino */}
+                      {contractData.buyerFee?.value > 0 && (
+                        <>
+                          <div className="contract-details__payment-item">
+                            <span>
+                              Moneda ({contractType === 'venta' ? 'Comprador' : 'Inquilino'})
+                            </span>
+                            <span>{contractData.buyerFeeCurrency?.value || 'USD'}</span>
+                          </div>
+                          <div className="contract-details__expense-item">
+                            <span>
+                              Honorarios del {contractType === 'venta' ? 'comprador' : 'inquilino'}{' '}
+                              (
+                              {calculateFee(
+                                contractData.realPrice?.value || 0,
+                                contractData.buyerFee?.value || 0,
+                              )}
+                              %{contractType !== 'venta' && ' de la renta'})
+                            </span>
+                            <span>${formatPrice(contractData.buyerFee.value)}</span>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Total de honorarios */}
+                      {(contractData.ownerFee?.value > 0 || contractData.buyerFee?.value > 0) && (
+                        <div className="contract-details__expense-item contract-details__total-fees">
+                          <span>
+                            <strong>
+                              Total de honorarios (
+                              {(() => {
+                                const ownerFee = contractData.ownerFee?.value || 0
+                                const buyerFee = contractData.buyerFee?.value || 0
+                                const totalFees = ownerFee + buyerFee
+                                return calculateFee(contractData.realPrice?.value || 0, totalFees)
+                              })()}
+                              %{contractType !== 'venta' && ' de la renta'})
+                            </strong>
+                          </span>
+                          <span>
+                            <strong>
+                              $
+                              {formatPrice(
+                                (contractData.ownerFee?.value || 0) +
+                                  (contractData.buyerFee?.value || 0),
+                              )}
+                            </strong>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -4,7 +4,8 @@ export function formatPrice(num: number): string {
 }
 
 export function calculateFee(price: number, fee: number): number {
-  return (fee / price) * 100
+  const percentage = (fee / price) * 100
+  return Math.round(percentage * 10) / 10 // Redondea a 1 decimal
 }
 
 // dates
