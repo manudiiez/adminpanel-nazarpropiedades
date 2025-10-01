@@ -27,6 +27,31 @@ export default function ClientDetails({
     setCurrentTab(tab)
   }
 
+  // Función para calcular y formatear honorarios totales
+  const calculateTotalFees = (priceInfo: any) => {
+    if (!priceInfo.ownerFee && !priceInfo.buyerFee) {
+      return null
+    }
+
+    const ownerFee = priceInfo.ownerFee || 0
+    const buyerFee = priceInfo.buyerFee || 0
+    const ownerFeeCurrency = priceInfo.ownerFeeCurrency || 'USD'
+    const buyerFeeCurrency = priceInfo.buyerFeeCurrency || 'USD'
+
+    // Si ambos honorarios están en la misma moneda, sumamos
+    if (ownerFeeCurrency === buyerFeeCurrency) {
+      const totalFee = ownerFee + buyerFee
+      return `${ownerFeeCurrency} $${formatPrice(totalFee)}`
+    }
+
+    // Si están en monedas diferentes, mostramos por separado
+    const parts = []
+    if (ownerFee > 0) parts.push(`${ownerFeeCurrency} $${formatPrice(ownerFee)}`)
+    if (buyerFee > 0) parts.push(`${buyerFeeCurrency} $${formatPrice(buyerFee)}`)
+    
+    return parts.join(' + ')
+  }
+
   const getCurrentProperties = () => {
     switch (currentTab) {
       case 'publicadas':
@@ -74,22 +99,28 @@ export default function ClientDetails({
         return {
           currency: property.soldCurrency,
           price: property.soldPrice,
-          fee: property.fee,
-          feeCurrency: property.feeCurrency,
+          ownerFee: property.ownerFee,
+          ownerFeeCurrency: property.ownerFeeCurrency,
+          buyerFee: property.buyerFee,
+          buyerFeeCurrency: property.buyerFeeCurrency,
         }
       } else if (type === 'alquiladas') {
         return {
           currency: property.rentCurrency,
           price: property.rentPrice,
-          fee: property.fee,
-          feeCurrency: property.feeCurrency,
+          ownerFee: property.ownerFee,
+          ownerFeeCurrency: property.ownerFeeCurrency,
+          buyerFee: property.buyerFee,
+          buyerFeeCurrency: property.buyerFeeCurrency,
         }
       } else if (type === 'compradas') {
         return {
           currency: property.buyCurrency || 'USD',
           price: property.buyPrice,
-          fee: property.fee,
-          feeCurrency: property.feeCurrency,
+          ownerFee: property.ownerFee,
+          ownerFeeCurrency: property.ownerFeeCurrency,
+          buyerFee: property.buyerFee,
+          buyerFeeCurrency: property.buyerFeeCurrency,
         }
       } else {
         // Para propiedades publicadas
@@ -173,7 +204,7 @@ export default function ClientDetails({
                 )}
                 {(type === 'vendidas' || type === 'compradas' || type === 'alquiladas') && (
                   <span className="client-details__property-card-price-original">
-                    Honorarios: {priceInfo.feeCurrency} ${formatPrice(priceInfo.fee)}
+                    Honorarios: {calculateTotalFees(priceInfo) || 'No disponible'}
                   </span>
                 )}
               </div>

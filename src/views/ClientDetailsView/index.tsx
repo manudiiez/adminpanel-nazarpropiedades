@@ -64,8 +64,10 @@ async function fetchSoldProperties(clientId: string | number) {
         clientNumber: contract.client.phone,
         soldPrice: contract.realPrice,
         soldCurrency: contract.realCurrency,
-        fee: contract.fee,
-        feeCurrency: contract.feeCurrency,
+        ownerFee: contract.ownerFee,
+        ownerFeeCurrency: contract.ownerFeeCurrency,
+        buyerFee: contract.buyerFee,
+        buyerFeeCurrency: contract.buyerFeeCurrency,
         propertyPublishedDate: contract.propertyPublishedDate,
         signDate: contract.signDate,
         contractId: contract.id,
@@ -107,8 +109,10 @@ async function fetchRentedProperties(clientId: string | number) {
         clientNumber: contract.client.phone,
         rentPrice: contract.realPrice,
         rentCurrency: contract.realCurrency,
-        fee: contract.fee,
-        feeCurrency: contract.feeCurrency,
+        ownerFee: contract.ownerFee,
+        ownerFeeCurrency: contract.ownerFeeCurrency,
+        buyerFee: contract.buyerFee,
+        buyerFeeCurrency: contract.buyerFeeCurrency,
         propertyPublishedDate: contract.propertyPublishedDate,
         startDate: contract.startDate,
         endDate: contract.endDate,
@@ -151,8 +155,10 @@ async function fetchPurchasedProperties(clientId: string | number) {
         clientNumber: contract.owner.phone,
         buyPrice: contract.realPrice,
         buyCurrency: contract.realCurrency,
-        fee: contract.fee,
-        feeCurrency: contract.feeCurrency,
+        ownerFee: contract.ownerFee,
+        ownerFeeCurrency: contract.ownerFeeCurrency,
+        buyerFee: contract.buyerFee,
+        buyerFeeCurrency: contract.buyerFeeCurrency,
         signDate: contract.signDate,
         contractId: contract.id,
         ownerId: contract.owner.id,
@@ -213,33 +219,60 @@ export default async function ClientDetails(props: AdminViewServerProps) {
 
     // Sumar comisiones de propiedades vendidas
     soldProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
 
     // Sumar comisiones de propiedades alquiladas
     rentedProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
 
     // Sumar comisiones de propiedades compradas
     purchasedProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
@@ -252,11 +285,20 @@ export default async function ClientDetails(props: AdminViewServerProps) {
     let totalARS = 0
 
     soldProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
@@ -269,11 +311,20 @@ export default async function ClientDetails(props: AdminViewServerProps) {
     let totalARS = 0
 
     rentedProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
@@ -286,11 +337,20 @@ export default async function ClientDetails(props: AdminViewServerProps) {
     let totalARS = 0
 
     purchasedProperties.forEach((prop: any) => {
-      if (prop.fee && prop.feeCurrency) {
-        if (prop.feeCurrency === 'USD') {
-          totalUSD += prop.fee
-        } else if (prop.feeCurrency === 'ARS') {
-          totalARS += prop.fee
+      // Sumar ownerFee
+      if (prop.ownerFee && prop.ownerFeeCurrency) {
+        if (prop.ownerFeeCurrency === 'USD') {
+          totalUSD += prop.ownerFee
+        } else if (prop.ownerFeeCurrency === 'ARS') {
+          totalARS += prop.ownerFee
+        }
+      }
+      // Sumar buyerFee
+      if (prop.buyerFee && prop.buyerFeeCurrency) {
+        if (prop.buyerFeeCurrency === 'USD') {
+          totalUSD += prop.buyerFee
+        } else if (prop.buyerFeeCurrency === 'ARS') {
+          totalARS += prop.buyerFee
         }
       }
     })
