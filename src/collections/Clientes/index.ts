@@ -15,19 +15,19 @@ export const Clientes: CollectionConfig = {
     useAsTitle: 'fullname',
     defaultColumns: ['fullname', 'phone'],
     components: {
-      // views: {
-      //   edit: {
-      //     detalles: {
-      //       Component: '@/views/ClientDetailsView#default', // tu vista
-      //       path: '/detalles', // ruta dentro del doc
-      //       tab: {
-      //         label: 'Detalles', // texto del tab
-      //         href: '/detalles', // ruta dentro del doc
-      //         order: 100,
-      //       },
-      //     },
-      //   },
-      // },
+      views: {
+        edit: {
+          detalles: {
+            Component: '@/views/ClientDetailsView#default', // tu vista
+            path: '/detalles', // ruta dentro del doc
+            tab: {
+              label: 'Detalles', // texto del tab
+              href: '/detalles', // ruta dentro del doc
+              order: 100,
+            },
+          },
+        },
+      },
     },
   },
   fields: [

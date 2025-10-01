@@ -1,3 +1,4 @@
+import { default as default_3a4bde263d2a6f2518cd9975df318e7d } from '@/views/ClientDetailsView'
 import { default as default_e7ee03efa8aa95eef4c60dcd3fa83117 } from '@/components/fields/LocalitySelect/LocalitySelect'
 import { default as default_39db86c0e96279979896a7284715a462 } from '@/components/fields/GoogleMapField/GoogleMapField'
 import { default as default_58b322287d3d033d4e013ff9ddd745bf } from '@/components/fields/AiTitleAndDescriptionGenerator/AiTitleAndDescriptionGenerator'
@@ -9,6 +10,7 @@ import { default as default_ac4cc787ccc7d7a93048d70494ada943 } from '@/component
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
+  "@/views/ClientDetailsView#default": default_3a4bde263d2a6f2518cd9975df318e7d,
   "@/components/fields/LocalitySelect/LocalitySelect#default": default_e7ee03efa8aa95eef4c60dcd3fa83117,
   "@/components/fields/GoogleMapField/GoogleMapField#default": default_39db86c0e96279979896a7284715a462,
   "@/components/fields/AiTitleAndDescriptionGenerator/AiTitleAndDescriptionGenerator#default": default_58b322287d3d033d4e013ff9ddd745bf,
