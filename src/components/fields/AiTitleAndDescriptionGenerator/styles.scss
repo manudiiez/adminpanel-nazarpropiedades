@@ -1,0 +1,142 @@
+// Variables SCSS para AIContentGenerator
+$colors: (
+  text-muted: #856404,
+  text-error: #721c24,
+  text-tip: #0c5460,
+
+  bg-warning: #fff3cd,
+  bg-error: #f8d7da,
+  bg-tip: #d1ecf1,
+
+  border-warning: #ffeaa7,
+  border-error: #f5c6cb,
+  border-tip: #bee5eb,
+
+  button-disabled: #6c757d,
+);
+
+$spacing: (
+  xs: 8px,
+  sm: 12px,
+  md: 15px,
+  lg: 20px,
+  xl: 24px,
+);
+
+$font-sizes: (
+  xs: 13px,
+  sm: 14px,
+  md: 16px,
+  lg: 1rem,
+);
+
+$border-radius: (
+  sm: 4px,
+  md: 6px,
+  lg: 8px,
+);
+
+// Mixins
+@mixin alert-base {
+  margin-bottom: map-get($spacing, md);
+  padding: map-get($spacing, sm);
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--style-radius-m);
+}
+
+@mixin text-base($size: sm, $weight: normal) {
+  margin: 0;
+  font-size: map-get($font-sizes, $size);
+  font-weight: $weight;
+}
+
+// Componentes
+.aiGeneratorContainer {
+  margin-bottom: map-get($spacing, lg);
+  border-radius: var(--style-radius-s);
+}
+
+.title {
+  @include text-base(md, 600);
+  margin-bottom: map-get($spacing, md);
+  color: var(--theme-elevation-800);
+}
+
+.description {
+  @include text-base(sm);
+  margin-bottom: map-get($spacing, md);
+  color: var(--theme-elevation-400);
+  line-height: 1.4;
+}
+
+.warningContainer {
+  @include alert-base;
+  background-color: var(--theme-warning-100);
+  border-color: var(--theme-warning-300);
+}
+
+.warningTitle {
+  @include text-base(sm, 500);
+  margin-bottom: map-get($spacing, xs);
+  color: var(--theme-warning-800);
+}
+
+.warningList {
+  @include text-base(xs);
+  margin: 0;
+  padding-left: map-get($spacing, lg);
+  color: var(--theme-warning-600);
+}
+
+.errorContainer {
+  @include alert-base;
+  @include text-base(sm);
+  background-color: var(--theme-error-100);
+  border-color: var(--theme-error-300);
+  color: var(--theme-error-800);
+}
+
+.generateButton {
+  padding: map-get($spacing, sm) map-get($spacing, xl);
+  color: var(--theme-elevation-800);
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--style-radius-s);
+  font-size: map-get($font-sizes, lg);
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:enabled {
+    background-color: var(--theme-input-bg);
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  &:disabled {
+    background-color: var(--theme-elevation-100);
+    color: var(--theme-elevation-400);
+    cursor: not-allowed;
+  }
+
+  &.generating {
+    opacity: 0.7;
+  }
+}
+
+.buttonIcon {
+  margin-right: map-get($spacing, xs);
+}
+
+.tipContainer {
+  @include alert-base;
+  margin-top: map-get($spacing, md);
+  background-color: var(--theme-elevation-150);
+  border-color: var(--theme-elevation-200);
+}
+
+.tipText {
+  @include text-base(xs);
+  color: var(--theme-elevation-800);
+}

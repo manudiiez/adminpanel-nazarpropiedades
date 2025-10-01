@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     clientes: Cliente;
+    propiedades: Propiedade;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +80,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     clientes: ClientesSelect<false> | ClientesSelect<true>;
+    propiedades: PropiedadesSelect<false> | PropiedadesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -214,6 +216,556 @@ export interface Cliente {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "propiedades".
+ */
+export interface Propiedade {
+  id: string;
+  title?: string | null;
+  /**
+   * Estado actual de la propiedad. "Terminada" se establece automáticamente al crear un contrato.
+   */
+  status: 'borrador' | 'activa' | 'reservada' | 'terminada';
+  classification: {
+    type:
+      | 'casa'
+      | 'departamento'
+      | 'lote'
+      | 'bodega'
+      | 'bodega_con_vinedo'
+      | 'cabaña'
+      | 'campo'
+      | 'chalet'
+      | 'cochera'
+      | 'condominio'
+      | 'deposito'
+      | 'duplex'
+      | 'edificio'
+      | 'estacion_de_servicio'
+      | 'fábrica'
+      | 'finca'
+      | 'fondo_de_comercio'
+      | 'fraccionamiento'
+      | 'galpon'
+      | 'hotel'
+      | 'industria'
+      | 'local_comercial'
+      | 'loft'
+      | 'loteo'
+      | 'negocio'
+      | 'oficina'
+      | 'ph'
+      | 'piso'
+      | 'playa_de_estacionamiento'
+      | 'quinta'
+      | 'semipiso'
+      | 'terreno'
+      | 'triplex'
+      | 'vinedo';
+    condition: 'venta' | 'alquiler' | 'alquiler_temporario' | 'permuta';
+  };
+  ubication: {
+    /**
+     * Provincia fija: Mendoza
+     */
+    province?: string | null;
+    department:
+      | 'capital'
+      | 'godoy_cruz'
+      | 'guaymallen'
+      | 'las_heras'
+      | 'lujan_de_cuyo'
+      | 'maipu'
+      | 'san_martin'
+      | 'rivadavia'
+      | 'junin'
+      | 'san_rafael'
+      | 'general_alvear'
+      | 'malargue'
+      | 'tupungato'
+      | 'tunuyan'
+      | 'san_carlos'
+      | 'lavalle'
+      | 'santa_rosa'
+      | 'la_paz';
+    /**
+     * Selecciona la localidad según el departamento elegido
+     */
+    locality?:
+      | (
+          | '1a_seccion_parque_central'
+          | '2a_seccion_barrio_civico'
+          | '3a_seccion_parque_ohiggins'
+          | '4a_seccion_area_fundacional'
+          | '5a_seccion_residencial_sur'
+          | '6a_seccion_residencial_norte'
+          | '7a_seccion_residencial_parque'
+          | '8a_seccion_aeroparque'
+          | '9a_seccion_parque_general_san_martin'
+          | '10a_seccion_residencial_los_cerros'
+          | '11a_seccion_san_agustin'
+          | '12a_seccion_piedemonte'
+          | 'godoy_cruz_city'
+          | 'gobernador_benegas'
+          | 'las_tortugas'
+          | 'presidente_sarmiento'
+          | 'san_francisco_del_monte_gc'
+          | 'trapiche'
+          | 'villa_marini'
+          | 'villa_hipodromo'
+          | 'villa_del_parque'
+          | 'guaymallen_villa_nueva'
+          | 'villa_nueva'
+          | 'la_primavera'
+          | 'los_corralitos'
+          | 'puente_de_hierro'
+          | 'el_bermejo'
+          | 'buena_nueva'
+          | 'capilla_del_rosario'
+          | 'colonia_segovia'
+          | 'colonia_molina'
+          | 'dorrego'
+          | 'el_sauce'
+          | 'jesus_nazareno'
+          | 'kilometro_8'
+          | 'kilometro_11'
+          | 'las_canas'
+          | 'nueva_ciudad'
+          | 'pedro_molina'
+          | 'rodeo_de_la_cruz'
+          | 'san_francisco_del_monte_gm'
+          | 'san_jose_gm'
+          | 'belgrano_gm'
+          | 'blanco_encalada'
+          | 'jocoli_lh'
+          | 'el_algarrobal'
+          | 'el_borbollon'
+          | 'el_challao'
+          | 'el_pastal'
+          | 'el_plumerillo'
+          | 'el_resguardo'
+          | 'la_cieneguita'
+          | 'las_cuevas'
+          | 'las_heras_city'
+          | 'los_penitentes'
+          | 'panquehua'
+          | 'polvaredas'
+          | 'puente_del_inca'
+          | 'punta_de_vacas'
+          | 'uspallata'
+          | 'agrelo'
+          | 'barrio_perdriel_iv'
+          | 'carrodilla'
+          | 'cacheuta'
+          | 'chacras_de_coria'
+          | 'costa_flores'
+          | 'el_carrizal'
+          | 'el_salto'
+          | 'mayor_drummond'
+          | 'la_puntilla'
+          | 'las_compuertas'
+          | 'las_vegas'
+          | 'lujan_de_cuyo_city'
+          | 'perdriel'
+          | 'potrerillos'
+          | 'vistalba'
+          | 'ugarteche'
+          | 'vertientes_del_pedemonte'
+          | 'barrancas'
+          | 'barrio_jesus_de_nazaret'
+          | 'coquimbito'
+          | 'cruz_de_piedra'
+          | 'el_pedregal'
+          | 'fray_luis_beltran'
+          | 'general_gutierrez'
+          | 'general_ortega'
+          | 'maipu_city'
+          | 'lunlunta'
+          | 'luzuriaga'
+          | 'rodeo_del_medio'
+          | 'russell'
+          | 'san_roque'
+          | 'villa_teresa'
+          | 'alto_verde_sm'
+          | 'barrio_emanuel'
+          | 'barrio_la_estacion'
+          | 'barrio_los_charabones'
+          | 'barrio_nuestra_senora_de_fatima'
+          | 'chapanay'
+          | 'chivilcoy'
+          | 'el_espino'
+          | 'el_central'
+          | 'el_divisadero'
+          | 'el_ramblon'
+          | 'montecaseros'
+          | 'nueva_california_est_moluches'
+          | 'palmira'
+          | 'san_martin_city'
+          | 'tres_portenas'
+          | 'andrade'
+          | 'barrio_cooperativa_los_campamentos'
+          | 'barrio_rivadavia'
+          | 'el_mirador'
+          | 'la_central'
+          | 'la_esperanza'
+          | 'la_florida'
+          | 'la_libertad'
+          | 'los_arboles'
+          | 'los_campamentos'
+          | 'medrano_riv'
+          | 'mundo_nuevo_riv'
+          | 'reduccion_de_abajo'
+          | 'rivadavia_city'
+          | 'santa_maria_de_oro'
+          | 'junin_centro'
+          | 'los_barriales'
+          | 'philipps'
+          | 'medrano_jun'
+          | 'algarrobo_grande'
+          | 'la_colonia'
+          | 'alto_verde_jun'
+          | 'rodriguez_pena'
+          | 'inge_giagnoni'
+          | '25_de_mayo_villa_veinticinco_de_mayo'
+          | 'barrio_campos_el_toledano'
+          | 'barrio_el_nevado'
+          | 'barrio_empleados_de_comercio'
+          | 'barrio_intendencia'
+          | 'capitan_montoya'
+          | 'cuadro_benegas'
+          | 'el_nihuil'
+          | 'el_sosneado_sr'
+          | 'el_tropezon'
+          | 'goudge'
+          | 'jaime_prats_sr'
+          | 'la_llave_nueva'
+          | 'las_malvinas'
+          | 'los_reyunos'
+          | 'monte_coman'
+          | 'pobre_diablo'
+          | 'punta_del_agua'
+          | 'rama_caida'
+          | 'real_del_padre'
+          | 'salto_de_las_rosas'
+          | 'san_rafael_city'
+          | 'villa_atuel'
+          | 'general_alvear'
+          | 'bowen'
+          | 'carmensa'
+          | 'san_pedro_del_atuel'
+          | 'colonia_alvear_oeste'
+          | 'los_compartos'
+          | 'agua_escondida'
+          | 'las_lenas'
+          | 'rio_grande'
+          | 'malargue_city'
+          | 'anchoris'
+          | 'barrio_belgrano_norte'
+          | 'cordon_del_plata'
+          | 'el_peral'
+          | 'el_zampal'
+          | 'la_arboleda'
+          | 'san_jose_tup'
+          | 'tupungato_city'
+          | 'villa_bastias'
+          | 'barrio_san_cayetano'
+          | 'campo_los_andes'
+          | 'colonia_las_rosas'
+          | 'el_manzano'
+          | 'los_sauces'
+          | 'tunuyan_city'
+          | 'vista_flores'
+          | 'barrio_carrasco'
+          | 'barrio_el_cepillo'
+          | 'chilecito'
+          | 'eugenio_bustos'
+          | 'la_consulta'
+          | 'pareditas_sc'
+          | 'san_carlos_city'
+          | '3_de_mayo'
+          | 'barrio_alto_del_olvido'
+          | 'barrio_jocoli_ii'
+          | 'barrio_lagunas_de_bartoluzzi'
+          | 'barrio_la_palmera'
+          | 'barrio_la_pega'
+          | 'barrio_los_jarilleros'
+          | 'barrio_los_olivos'
+          | 'barrio_virgen_del_rosario'
+          | 'costa_de_araujo'
+          | 'el_paramillo'
+          | 'el_vergel'
+          | 'ingeniero_gustavo_andre'
+          | 'jocoli_lav'
+          | 'jocoli_viejo'
+          | 'las_violetas'
+          | 'villa_tulumaya'
+          | 'barrio_12_de_octubre'
+          | 'barrio_maria_auxiliadora'
+          | 'barrio_molina_cabrera'
+          | 'la_dormida'
+          | 'las_catitas'
+          | 'santa_rosa_city'
+          | 'desaguadero'
+          | 'la_paz_city'
+          | 'villa_antigua'
+        )
+      | null;
+    /**
+     * Nombre específico del barrio, edificio o complejo
+     */
+    neighborhood?: string | null;
+    /**
+     * Dirección completa de la propiedad
+     */
+    address: string;
+    /**
+     * Busca la dirección específica en el mapa o haz clic para marcar la ubicación exacta.
+     */
+    mapLocation?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    /**
+     * Controla qué tan precisa será la ubicación mostrada en el sitio web
+     */
+    locationPrivacy?: ('exact' | 'approximate' | 'hidden') | null;
+    /**
+     * Distancia en metros para el área aproximada de la ubicación
+     */
+    approximateRadius?: number | null;
+  };
+  caracteristics: {
+    /**
+     * Precio de la propiedad
+     */
+    price: number;
+    currency: 'usd' | 'ars';
+    hasExpenses?: ('Si' | 'No') | null;
+    expenses?: number | null;
+    expensesCurrency?: ('usd' | 'ars') | null;
+    appraisal?: number | null;
+    appraisalCurrency?: ('usd' | 'ars') | null;
+    coveredArea?: number | null;
+    totalArea?: number | null;
+    frontMeters?: number | null;
+    deepMeters?: number | null;
+    antiquity?:
+      | (
+          | 'a_estrenar'
+          | '6_meses'
+          | '1_ano'
+          | '1_ano_y_medio'
+          | '2_anos'
+          | '3_anos'
+          | '4_anos'
+          | '5_anos'
+          | '6_anos'
+          | '7_anos'
+          | '8_anos'
+          | '9_anos'
+          | '10_anos'
+          | '11_anos'
+          | '12_anos'
+          | '13_anos'
+          | '14_anos'
+          | '15_anos'
+          | '16_anos'
+          | '17_anos'
+          | '18_anos'
+          | '19_anos'
+          | '20_anos'
+          | '21_anos'
+          | '22_anos'
+          | '23_anos'
+          | '24_anos'
+          | '25_anos'
+          | '26_anos'
+          | '27_anos'
+          | '28_anos'
+          | '29_anos'
+          | '30_anos'
+          | '31_anos'
+          | '32_anos'
+          | '33_anos'
+          | '34_anos'
+          | '35_anos'
+          | '36_anos'
+          | '37_anos'
+          | '38_anos'
+          | '39_anos'
+          | '40_anos'
+          | '41_anos'
+          | '42_anos'
+          | '43_anos'
+          | '44_anos'
+          | '45_anos'
+          | '46_anos'
+          | '47_anos'
+          | '48_anos'
+          | '49_anos'
+          | '50_anos'
+          | 'mas_de_50_anos'
+        )
+      | null;
+    conservationStatus?: ('excelente' | 'muy_bueno' | 'bueno' | 'regular') | null;
+    orientation?: ('norte' | 'sur' | 'este' | 'oeste' | 'noreste' | 'noroeste' | 'sureste' | 'suroeste') | null;
+  };
+  environments?: {
+    bedrooms?: number | null;
+    bathrooms?: number | null;
+    garageType?: ('garage' | 'garage_cochera' | 'garage_doble' | 'cochera_pasante' | 'sin_cochera') | null;
+    garages?: number | null;
+    plantas?: number | null;
+    ambientes?: ('Monoambiente' | '1' | '2' | '3' | '4' | '5' | '6 o mas') | null;
+    /**
+     * Controla si la propiedad está amueblada
+     */
+    funished?: ('si' | 'no') | null;
+  };
+  amenities?: {
+    mascotas?: ('Si' | 'No') | null;
+    barrioPrivado?: ('Si' | 'No' | 'Semi Privado') | null;
+    agua?: ('Si' | 'No') | null;
+    cloacas?: ('Si' | 'No') | null;
+    gas?: ('Si' | 'No') | null;
+    luz?: ('Si' | 'No') | null;
+    estrellas?: number | null;
+    /**
+     * Primero debes seleccionar el tipo de propiedad y condición
+     */
+    servicios?:
+      | (
+          | 'aire_acondicionado'
+          | 'financiacion'
+          | 'internet'
+          | 'piscina'
+          | 'apto_credito_hipotecario'
+          | 'cable_tv'
+          | 'telefono'
+          | 'calefaccion_central'
+          | 'gas'
+          | 'agua'
+          | 'luz_electrica'
+          | 'recibe_permuta'
+        )[]
+      | null;
+    ambientes?:
+      | (
+          | 'parrilla'
+          | 'balcon'
+          | 'patio'
+          | 'desayunador'
+          | 'cocina'
+          | 'dormitorio_en_suite'
+          | 'escritorio'
+          | 'estudio'
+          | 'comedor'
+          | 'jardin'
+          | 'living'
+          | 'living_comedor'
+          | 'seguridad'
+          | 'cowork'
+          | 'gimnasio'
+          | 'ascensor'
+          | 'club_house'
+          | 'quincho'
+          | 'area_de_cine'
+          | 'area_de_juegos_infantiles'
+          | 'area_verde'
+          | 'chimenea'
+          | 'dependencia_de_servicio'
+          | 'estacionamiento_para_visitantes'
+          | 'porton_automatico'
+          | 'rampa_para_silla_de_ruedas'
+          | 'salon_de_usos_multiples'
+          | 'sauna'
+          | 'terraza'
+        )[]
+      | null;
+    zonasCercanas?:
+      | (
+          | 'colegios'
+          | 'universidades'
+          | 'guarderias'
+          | 'hospitales'
+          | 'centros_de_salud'
+          | 'centro_comercial'
+          | 'shopping'
+          | 'supermercados'
+          | 'club_deportivo'
+          | 'zona_deportiva'
+          | 'ciclovia'
+          | 'paradas_de_colectivo'
+          | 'estacion_de_tren'
+          | 'estacion_de_subte'
+          | 'parque'
+          | 'plaza'
+        )[]
+      | null;
+  };
+  /**
+   * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
+   */
+  aiContent: {
+    /**
+     * Puedes generar automáticamente o escribir tu propio título
+     */
+    title: string;
+    /**
+     * Descripción detallada que aparecerá en el sitio web
+     */
+    description?: string | null;
+  };
+  images: {
+    /**
+     * Imagen principal que aparecerá como portada. No repetir esta imagen en la galería.
+     */
+    coverImage: string | Media;
+    /**
+     * Arrastrá varias imágenes a la vez; podés reordenarlas con drag & drop.
+     */
+    gallery?: (string | Media)[] | null;
+    /**
+     * Enlace a un video de la propiedad (YouTube, Vimeo, etc.). Se mostrará un botón en la ficha.
+     */
+    videoUrl?: string | null;
+    /**
+     * Enlace a un tour virtual 3D (ej: Matterport). Se mostrará un botón en la ficha.
+     */
+    virtualTourUrl?: string | null;
+  };
+  owner: string | Cliente;
+  /**
+   * Notas o comentarios internos sobre la propiedad (no se muestran en el sitio)
+   */
+  notes?: string | null;
+  inmoup?: {
+    name?: string | null;
+    uploaded?: boolean | null;
+    externalId?: string | null;
+    externalUrl?: string | null;
+    status?: ('not_sent' | 'queued' | 'ok' | 'error' | 'desactualizado') | null;
+    lastSyncAt?: string | null;
+    lastError?: string | null;
+  };
+  mercadolibre?: {
+    name?: string | null;
+    uploaded?: boolean | null;
+    externalId?: string | null;
+    externalUrl?: string | null;
+    status?: ('not_sent' | 'queued' | 'ok' | 'error' | 'desactualizado') | null;
+    lastSyncAt?: string | null;
+    lastError?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -230,6 +782,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'clientes';
         value: string | Cliente;
+      } | null)
+    | ({
+        relationTo: 'propiedades';
+        value: string | Propiedade;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -373,6 +929,115 @@ export interface ClientesSelect<T extends boolean = true> {
   dni?: T;
   notes?: T;
   fullname?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "propiedades_select".
+ */
+export interface PropiedadesSelect<T extends boolean = true> {
+  title?: T;
+  status?: T;
+  classification?:
+    | T
+    | {
+        type?: T;
+        condition?: T;
+      };
+  ubication?:
+    | T
+    | {
+        province?: T;
+        department?: T;
+        locality?: T;
+        neighborhood?: T;
+        address?: T;
+        mapLocation?: T;
+        locationPrivacy?: T;
+        approximateRadius?: T;
+      };
+  caracteristics?:
+    | T
+    | {
+        price?: T;
+        currency?: T;
+        hasExpenses?: T;
+        expenses?: T;
+        expensesCurrency?: T;
+        appraisal?: T;
+        appraisalCurrency?: T;
+        coveredArea?: T;
+        totalArea?: T;
+        frontMeters?: T;
+        deepMeters?: T;
+        antiquity?: T;
+        conservationStatus?: T;
+        orientation?: T;
+      };
+  environments?:
+    | T
+    | {
+        bedrooms?: T;
+        bathrooms?: T;
+        garageType?: T;
+        garages?: T;
+        plantas?: T;
+        ambientes?: T;
+        funished?: T;
+      };
+  amenities?:
+    | T
+    | {
+        mascotas?: T;
+        barrioPrivado?: T;
+        agua?: T;
+        cloacas?: T;
+        gas?: T;
+        luz?: T;
+        estrellas?: T;
+        servicios?: T;
+        ambientes?: T;
+        zonasCercanas?: T;
+      };
+  aiContent?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  images?:
+    | T
+    | {
+        coverImage?: T;
+        gallery?: T;
+        videoUrl?: T;
+        virtualTourUrl?: T;
+      };
+  owner?: T;
+  notes?: T;
+  inmoup?:
+    | T
+    | {
+        name?: T;
+        uploaded?: T;
+        externalId?: T;
+        externalUrl?: T;
+        status?: T;
+        lastSyncAt?: T;
+        lastError?: T;
+      };
+  mercadolibre?:
+    | T
+    | {
+        name?: T;
+        uploaded?: T;
+        externalId?: T;
+        externalUrl?: T;
+        status?: T;
+        lastSyncAt?: T;
+        lastError?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

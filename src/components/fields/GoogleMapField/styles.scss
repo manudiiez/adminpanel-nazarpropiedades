@@ -1,0 +1,211 @@
+// Variables SCSS para GoogleMapField
+$colors: (
+  text-required: #dc3545,
+  shadow-focus: rgba(0, 102, 204, 0.1),
+  shadow-dropdown: rgba(0, 0, 0, 0.3),
+);
+
+$spacing: (
+  xs: 2px,
+  sm: 5px,
+  md: 10px,
+  lg: 12px,
+  xl: 15px,
+  xxl: 16px,
+);
+
+$sizes: (
+  border-radius: 3px,
+  input-height: 40px,
+  map-height: 400px,
+  map-height-mobile: 300px,
+  dropdown-max-height: 200px,
+  clear-button-size: 20px,
+);
+
+$font-sizes: (
+  xs: 12px,
+  sm: 13px,
+  md: 14px,
+  lg: 1rem,
+  xl: 16px,
+  xxl: 20px,
+);
+
+$transitions: (
+  fast: 0.2s ease,
+);
+
+// Mixins
+@mixin input-base {
+  border-radius: map-get($sizes, border-radius);
+  border: 1px solid var(--theme-elevation-150);
+  background-color: var(--theme-input-bg);
+  box-shadow: 0 2px 2px -1px #0000001a;
+
+  color: var(--theme-elevation-800);
+  transition: border-color map-get($transitions, fast);
+
+  &:focus {
+    outline: none;
+    border-color: var(--theme-elevation-400);
+  }
+}
+
+@mixin dropdown-base {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--theme-input-bg);
+  border: 1px solid var(--theme-elevation-150);
+  border-top: none;
+  border-radius: 0 0 map-get($sizes, border-radius) map-get($sizes, border-radius);
+  z-index: 1000;
+}
+
+@mixin button-clear {
+  position: absolute;
+  background: none;
+  border: none;
+  transition: all map-get($transitions, fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+// Componentes
+.googleMapField {
+  margin-bottom: map-get($spacing, xxl);
+}
+
+.fieldLabel {
+  display: block;
+  font-weight: 400;
+  font-size: map-get($font-sizes, sm);
+  color: var(--theme-elevation-800);
+  padding-bottom: map-get($spacing, sm);
+}
+
+.required {
+  color: map-get($colors, text-required);
+  margin-left: map-get($spacing, xs);
+}
+
+.mapControls {
+  margin-bottom: map-get($spacing, md);
+  position: relative;
+}
+
+.searchInput {
+  @include input-base;
+
+  width: 100%;
+  height: map-get($sizes, input-height);
+  padding: 8px 35px 8px map-get($spacing, xl);
+  font-size: map-get($font-sizes, lg);
+
+  &::placeholder {
+    color: var(--theme-elevation-500);
+  }
+}
+
+.clearButton {
+  @include button-clear;
+
+  right: map-get($spacing, md);
+  top: 50%;
+  transform: translateY(-55%);
+  color: var(--theme-elevation-800);
+  font-size: map-get($font-sizes, xxl);
+  padding: map-get($spacing, xs);
+  border-radius: map-get($sizes, border-radius);
+  width: map-get($sizes, clear-button-size);
+  height: map-get($sizes, clear-button-size);
+
+  &:hover {
+    color: var(--theme-elevation-800);
+    background-color: var(--theme-elevation-100);
+  }
+}
+
+.searchDropdown {
+  @include dropdown-base;
+
+  max-height: map-get($sizes, dropdown-max-height);
+  overflow-y: auto;
+  box-shadow: 0 4px 8px map-get($colors, shadow-dropdown);
+}
+
+.searchResult {
+  padding: map-get($spacing, lg) map-get($spacing, xl);
+  cursor: pointer;
+  border-bottom: 1px solid var(--theme-elevation-150);
+  transition: background-color map-get($transitions, fast);
+  &:hover {
+    background-color: var(--theme-input-bg);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.searchResultText {
+  color: var(--theme-elevation-800);
+  font-size: map-get($font-sizes, md);
+  line-height: 1.4;
+}
+
+.searchLoading {
+  @include dropdown-base;
+
+  padding: map-get($spacing, lg) map-get($spacing, xl);
+  color: var(--theme-elevation-600);
+  font-size: map-get($font-sizes, md);
+}
+
+.mapContainer {
+  height: map-get($sizes, map-height);
+  width: 100%;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: map-get($sizes, border-radius);
+}
+
+.locationInfo {
+  margin-top: map-get($spacing, md);
+  padding: map-get($spacing, md);
+  background-color: var(--theme-input-bg);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: map-get($sizes, border-radius);
+  color: var(--theme-elevation-800);
+  box-shadow: 0 2px 2px -1px #0000001a;
+
+  strong {
+    color: var(--theme-elevation-800);
+  }
+
+  small {
+    color: var(--theme-elevation-600);
+  }
+}
+
+.helpText {
+  font-size: map-get($font-sizes, xs);
+  color: var(--theme-elevation-800);
+  margin-top: map-get($spacing, sm);
+  line-height: 1.4;
+}
+
+// Media queries responsive
+@media (max-width: 768px) {
+  .mapContainer {
+    height: map-get($sizes, map-height-mobile);
+  }
+
+  .searchInput {
+    padding: map-get($spacing, md) 35px map-get($spacing, md) map-get($spacing, xl);
+    font-size: map-get($font-sizes, xl); /* Evita zoom en iOS */
+  }
+}
