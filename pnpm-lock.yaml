@@ -41,6 +41,9 @@ importers:
       next:
         specifier: 15.4.4
         version: 15.4.4(@babel/core@7.28.4)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4)
+      openai:
+        specifier: ^6.0.0
+        version: 6.0.0(ws@8.18.3)
       payload:
         specifier: 3.56.0
         version: 3.56.0(graphql@16.11.0)(typescript@5.7.3)
@@ -3489,6 +3492,18 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
+
+  openai@6.0.0:
+    resolution: {integrity: sha512-J7LEmTn3WLZnbyEmMYcMPyT5A0fGzhPwSvVUcNRKy6j2hJIbqSFrJERnUHYNkcoCCalRumypnj9AVoe5bVHd3Q==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -8621,6 +8636,10 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
+
+  openai@6.0.0(ws@8.18.3):
+    optionalDependencies:
+      ws: 8.18.3
 
   optionator@0.9.4:
     dependencies:

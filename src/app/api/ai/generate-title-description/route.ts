@@ -1,4 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import OpenAI from 'openai'
+
+export type ListingCopy = {
+  title: string
+  description: string
+}
+
+export type GenerateListingCopyParams = {
+  /** Objeto con los datos de la propiedad (lo que ya tengas en tu app). */
+  property: Record<string, any>
+  /** (Opcional) Modelo a usar. Por defecto gpt-4o. */
+  model?: string
+  /** (Opcional) Idioma de salida. Por defecto "es-AR". */
+  locale?: string
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,17 +46,12 @@ export async function POST(request: NextRequest) {
       }
     }
     // Enviar datos a N8N (con o sin token)
-    console.log('propertyData:', propertyData)
     const aiResponse = await generateWithAI(propertyData, token || '')
 
     return NextResponse.json({
       title: aiResponse.title,
       description: aiResponse.description,
     })
-    // return NextResponse.json({
-    //   title: 'titulo de prueba',
-    //   description: 'descripcion de prueba',
-    // })
   } catch (error) {
     console.error('Error generando contenido:', error)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })

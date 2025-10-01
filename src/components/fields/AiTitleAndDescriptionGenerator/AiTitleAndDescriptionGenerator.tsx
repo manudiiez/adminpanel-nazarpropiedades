@@ -26,7 +26,7 @@ const AIContentGenerator: React.FC = () => {
 
     // Ubicación básica
     if (!fields?.['ubication.department']?.value) required.push('Departamento')
-    if (!fields?.['ubication.address']?.value) required.push('Dirección')
+    if (!fields?.['ubication.address']?.value) required.push('Domicilio')
 
     // Área total es importante para la descripción
     if (!fields?.['caracteristics.totalArea']?.value) {
@@ -66,7 +66,7 @@ const AIContentGenerator: React.FC = () => {
         provincia: fields?.['ubication.province']?.value,
         departamento: fields?.['ubication.department']?.value,
         localidad: fields?.['ubication.locality']?.value,
-        barrio: fields?.['ubication.neighborhood']?.value,
+        barrioEdificioComplejo: fields?.['ubication.neighborhood']?.value,
         direccion: fields?.['ubication.address']?.value,
         // Características
         precio: fields?.['caracteristics.price']?.value,

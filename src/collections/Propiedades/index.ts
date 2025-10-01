@@ -41,21 +41,21 @@ export const Propiedades: CollectionConfig = {
       'ubication.address',
       'classification.type',
     ],
-    // components: {
-    //   views: {
-    //     edit: {
-    //       detalles: {
-    //         Component: '@/views/PropertyDetailsView#default', // tu vista
-    //         path: '/detalles', // ruta dentro del doc
-    //         tab: {
-    //           label: 'Detalles', // texto del tab
-    //           href: '/detalles', // ruta dentro del doc
-    //           order: 100,
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
+    components: {
+      views: {
+        edit: {
+          detalles: {
+            Component: '@/views/PropertyDetailsView#default', // tu vista
+            path: '/detalles', // ruta dentro del doc
+            tab: {
+              label: 'Detalles', // texto del tab
+              href: '/detalles', // ruta dentro del doc
+              order: 100,
+            },
+          },
+        },
+      },
+    },
   },
   access: {
     admin: authenticated,
@@ -64,60 +64,59 @@ export const Propiedades: CollectionConfig = {
     read: authenticated,
     update: authenticated,
   },
-  //   hooks: {
-  //     beforeChange: [
-  //       ({ data }) => {
-  //         // Sincronizar aiContent.title con title solo al momento de enviar/guardar
-  //         if (data?.aiContent?.title) {
-  //           data.title = data.aiContent.title
-  //         }
-  //         return data
-  //       },
-  //       ({ data, originalDoc, operation }) => {
-  //         // Solo para actualizaciones (no creaciones)
-  //         if (operation === 'update' && originalDoc) {
-  //           // No marcar como desactualizado si el estado está cambiando a "terminada"
-  //           // (esto ocurre cuando se crea un contrato)
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        // Sincronizar aiContent.title con title solo al momento de enviar/guardar
+        if (data?.aiContent?.title) {
+          data.title = data.aiContent.title
+        }
+        return data
+      },
+      ({ data, originalDoc, operation }) => {
+        // Solo para actualizaciones (no creaciones)
+        if (operation === 'update' && originalDoc) {
+          // No marcar como desactualizado si el estado está cambiando a "terminada"
+          // (esto ocurre cuando se crea un contrato)
 
-  //           // Verificar si Inmoup está publicado (status: 'ok')
-  //           if (originalDoc.inmoup?.status === 'ok') {
-  //             // Si hay cambios en la propiedad, marcar Inmoup como desactualizado
-  //             // Excluir cambios solo en campos internos como lastSyncAt, notes, etc.
-  //             const fieldsToIgnore = [
-  //               'inmoup.lastSyncAt',
-  //               'inmoup.lastError',
-  //               'notes',
-  //               'updatedAt',
-  //               'createdAt',
-  //               'status', // Agregar status a los campos a ignorar para cambios automáticos
-  //             ]
+          // Verificar si Inmoup está publicado (status: 'ok')
+          if (originalDoc.inmoup?.status === 'ok') {
+            // Si hay cambios en la propiedad, marcar Inmoup como desactualizado
+            // Excluir cambios solo en campos internos como lastSyncAt, notes, etc.
+            const fieldsToIgnore = [
+              'inmoup.lastSyncAt',
+              'inmoup.lastError',
+              'notes',
+              'updatedAt',
+              'createdAt',
+              'status', // Agregar status a los campos a ignorar para cambios automáticos
+            ]
 
-  //             // Verificar si hay cambios significativos comparando data vs originalDoc
-  //             const hasSignificantChanges = Object.keys(data).some((key) => {
-  //               if (fieldsToIgnore.some((field) => field.startsWith(key))) {
-  //                 return false
-  //               }
+            // Verificar si hay cambios significativos comparando data vs originalDoc
+            const hasSignificantChanges = Object.keys(data).some((key) => {
+              if (fieldsToIgnore.some((field) => field.startsWith(key))) {
+                return false
+              }
 
-  //               // Comparación profunda simplificada para detectar cambios
-  //               return JSON.stringify(data[key]) !== JSON.stringify(originalDoc[key])
-  //             })
+              // Comparación profunda simplificada para detectar cambios
+              return JSON.stringify(data[key]) !== JSON.stringify(originalDoc[key])
+            })
 
-  //             if (hasSignificantChanges) {
+            if (hasSignificantChanges) {
+              // Actualizar el estado de Inmoup a desactualizado
+              if (!data.inmoup) {
+                data.inmoup = { ...originalDoc.inmoup }
+              }
+              data.inmoup.status = 'desactualizado'
+              data.inmoup.lastSyncAt = new Date().toISOString()
+            }
+          }
+        }
 
-  //               // Actualizar el estado de Inmoup a desactualizado
-  //               if (!data.inmoup) {
-  //                 data.inmoup = { ...originalDoc.inmoup }
-  //               }
-  //               data.inmoup.status = 'desactualizado'
-  //               data.inmoup.lastSyncAt = new Date().toISOString()
-  //             }
-  //           }
-  //         }
-
-  //         return data
-  //       },
-  //     ],
-  //   },
+        return data
+      },
+    ],
+  },
   fields: [
     // Campo título oculto para useAsTitle (se sincroniza con aiContent.title)
     {
@@ -965,9 +964,9 @@ export const Propiedades: CollectionConfig = {
           relationTo: 'media',
           required: true,
           admin: {
-            // components: {
-            //   Cell: '@/components/PortadaCell#default',
-            // },
+            components: {
+              Cell: '@/components/cells/ImageCell/ImageCell',
+            },
             description:
               'Imagen principal que aparecerá como portada. No repetir esta imagen en la galería.',
           },
