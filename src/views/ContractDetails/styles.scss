@@ -1,0 +1,558 @@
+// Variables de colores
+$color-primary: #8b5cf6;
+$color-primary-light: #a78bfa;
+$color-primary-dark: #7c3aed;
+$color-success: #16a34a;
+$color-warning: #d97706;
+$color-danger: #dc2626;
+$color-gray-50: #f9fafb;
+$color-gray-100: #f3f4f6;
+$color-gray-200: #e5e7eb;
+$color-gray-300: #d1d5db;
+$color-gray-400: #9ca3af;
+$color-gray-500: #6b7280;
+$color-gray-600: #4b5563;
+$color-gray-700: #374151;
+$color-gray-800: #1f2937;
+$color-gray-900: #111827;
+$color-white: #ffffff;
+
+// Variables de espaciado
+$spacing-1: 0.25rem;
+$spacing-2: 0.5rem;
+$spacing-3: 0.75rem;
+$spacing-4: 1rem;
+$spacing-5: 1.25rem;
+$spacing-6: 1.5rem;
+$spacing-8: 2rem;
+$spacing-10: 2.5rem;
+$spacing-12: 3rem;
+$spacing-16: 4rem;
+$spacing-20: 5rem;
+
+// Variables de border radius
+$border-radius-sm: 0.375rem;
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+
+// Sombras
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow:
+  0 1px 3px 0 rgba(0, 0, 0, 0.1),
+  0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md:
+  0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// Container principal
+.contract-details {
+  font-family: 'Inter', sans-serif;
+  color: $color-gray-900;
+
+  // Contenido principal
+  &__content {
+    margin: 0 auto;
+    padding: $spacing-8 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: $spacing-8;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-6;
+    }
+  }
+
+  &__main-column {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+  }
+
+  &__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+  }
+
+  // Secciones
+  &__section {
+    border-radius: var(--style-radius-m);
+    border: 1px solid var(--theme-border-color);
+    padding: $spacing-6;
+    box-shadow: $shadow-sm;
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--theme-text);
+      margin: 0 0 $spacing-6 0;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--theme-elevation-800);
+      margin: 0 0 $spacing-4 0;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--theme-elevation-800);
+      margin: 0 0 $spacing-3 0;
+    }
+  }
+
+  // Resumen del contrato
+  &__contract-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-6;
+    margin-bottom: $spacing-6;
+  }
+
+  &__price-item {
+    text-align: center;
+    padding: $spacing-4;
+    background-color: var(--theme-elevation-50);
+    border-radius: var(--style-radius-m);
+    border: 1px solid var(--theme-border-color);
+  }
+
+  &__price-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--theme-elevation-900);
+    margin-bottom: $spacing-1;
+  }
+
+  &__price-label {
+    font-size: 0.875rem;
+    color: var(--theme-elevation-700);
+  }
+
+  // Meta información
+  &__meta-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-4;
+  }
+
+  &__meta-item {
+    span {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--theme-elevation-600);
+      margin-bottom: $spacing-1;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+    }
+  }
+
+  // Propiedad
+  &__property {
+    display: flex;
+    gap: $spacing-6;
+    align-items: flex-start;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  &__property-image {
+    flex-shrink: 0;
+    width: 200px;
+    height: 150px;
+    background-color: var(--theme-elevation-50);
+    border-radius: var(--style-radius-m);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__property-info {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 $spacing-2 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+    }
+
+    > p {
+      margin: 0 0 $spacing-4 0;
+      color: var(--theme-elevation-700);
+    }
+  }
+
+  &__property-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: $spacing-4;
+  }
+
+  &__property-features {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    border-bottom: 1px solid var(--theme-elevation-50);
+    padding-bottom: 1rem;
+  }
+
+  &__property-feature {
+    text-align: center;
+
+    &-value {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+      margin: 0;
+    }
+
+    &-label {
+      font-size: 0.75rem;
+      color: var(--theme-elevation-600);
+      margin: 0;
+    }
+  }
+
+  &__property-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  &__detail {
+    span {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--theme-elevation-600);
+      margin-bottom: $spacing-1;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+    }
+  }
+
+  // Comparación de precios
+  &__price-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-6;
+    padding: $spacing-6;
+    background-color: var(--theme-elevation-50);
+    border-radius: var(--style-radius-m);
+    border: 1px solid var(--theme-border-color);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: $spacing-4;
+    }
+  }
+
+  &__price-comparison-item {
+    text-align: center;
+    flex: 1;
+  }
+
+  &__comparison-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--theme-elevation-900);
+    margin-bottom: $spacing-1;
+  }
+
+  &__comparison-label {
+    font-size: 0.875rem;
+    color: var(--theme-elevation-600);
+    margin-bottom: $spacing-2;
+  }
+
+  &__comparison-savings {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $color-success;
+    padding: $spacing-2 $spacing-4;
+    background-color: rgba(22, 163, 74, 0.1);
+    border-radius: var(--style-radius-m);
+    display: inline-block;
+  }
+
+  // Grid financiero
+  &__financial-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-8;
+
+    @media (max-width: 768px) {
+      gap: $spacing-6;
+    }
+  }
+
+  &__financial-column {
+    h4 {
+      margin-bottom: $spacing-4;
+      padding-bottom: $spacing-2;
+      border-bottom: 1.5px solid var(--theme-border-color);
+    }
+  }
+
+  &__payment-details,
+  &__expense-details {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__payment-item,
+  &__expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-3;
+    background-color: var(--theme-elevation-50);
+    border-radius: var(--style-radius-m);
+    border-bottom: 1px solid var(--theme-border-color);
+
+    span:first-child {
+      font-weight: 500;
+      color: var(--theme-elevation-700);
+    }
+
+    span:last-child {
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+    }
+
+    &.contract-details__expense-total {
+      background-color: var(--theme-primary);
+      color: var(--theme-white);
+
+      span {
+        color: var(--theme-white);
+      }
+    }
+  }
+
+  // Documentos
+  &__documents {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__document-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-4;
+    background-color: var(--theme-elevation-50);
+    border-radius: var(--style-radius-m);
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: var(--theme-elevation-100);
+    }
+  }
+
+  &__document-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__doc-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--style-radius-m);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: var(--theme-elevation-700);
+    }
+  }
+
+  &__document-text {
+    flex: 1;
+  }
+
+  &__document-name {
+    font-weight: 600;
+    color: var(--theme-elevation-900);
+    margin-bottom: $spacing-1;
+  }
+
+  &__document-date {
+    font-size: 0.875rem;
+    color: var(--theme-elevation-600);
+  }
+
+  &__document-download {
+    color: var(--theme-elevation-400);
+    transition: color 0.2s;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &:hover {
+      color: var(--theme-primary);
+    }
+  }
+
+  // Información de personas
+  &__person-info {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--theme-elevation-50);
+    margin-bottom: 1rem;
+  }
+
+  &__info-item {
+    span {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--theme-elevation-600);
+      margin-bottom: $spacing-1;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      color: var(--theme-elevation-900);
+    }
+  }
+}
+
+// Animación del spinner
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Utilidades responsivas
+@media (max-width: 768px) {
+  .contract-details {
+    &__header {
+      &-content {
+        padding: 0 $spacing-4;
+      }
+
+      &-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-3;
+      }
+
+      &-right {
+        margin-top: $spacing-4;
+        flex-wrap: wrap;
+      }
+    }
+
+    &__content {
+      padding: $spacing-6 $spacing-4;
+    }
+
+    &__section {
+      padding: $spacing-4;
+    }
+
+    &__contract-summary {
+      grid-template-columns: 1fr;
+    }
+
+    &__meta-info {
+      grid-template-columns: 1fr;
+    }
+
+    &__property-details {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Estados de color para badges
+.contract-details__status-badge {
+  &--activo {
+    background-color: $color-success;
+  }
+
+  &--pendiente {
+    background-color: $color-warning;
+  }
+
+  &--vencido {
+    background-color: $color-danger;
+  }
+
+  &--cancelado {
+    background-color: $color-gray-500;
+  }
+}
+
+// Colores para iconos de documentos
+.red {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.blue {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.green {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.yellow {
+  background-color: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.purple {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+}

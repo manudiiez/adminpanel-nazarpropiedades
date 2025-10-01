@@ -12,6 +12,7 @@ import { Media } from './collections/Media'
 import { Clientes } from './collections/Clientes'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Propiedades } from './collections/Propiedades'
+import { Contratos } from './collections/Contratos'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,7 +37,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Clientes, Propiedades],
+  collections: [Users, Media, Clientes, Propiedades, Contratos],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     clientes: Cliente;
     propiedades: Propiedade;
+    contratos: Contrato;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     clientes: ClientesSelect<false> | ClientesSelect<true>;
     propiedades: PropiedadesSelect<false> | PropiedadesSelect<true>;
+    contratos: ContratosSelect<false> | ContratosSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -766,6 +768,41 @@ export interface Propiedade {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contratos".
+ */
+export interface Contrato {
+  id: string;
+  displayTitle?: string | null;
+  propertyTitle?: string | null;
+  propertyPublishedDate?: string | null;
+  type: 'venta' | 'alquiler';
+  property: string | Propiedade;
+  /**
+   * Se autocompletará con el propietario de la propiedad seleccionada, pero puedes cambiarlo
+   */
+  owner: string | Cliente;
+  client: string | Cliente;
+  signDate: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  listingPrice: number;
+  currency: 'USD' | 'ARS';
+  realPrice: number;
+  realCurrency: 'USD' | 'ARS';
+  ownerFee?: number | null;
+  ownerFeeCurrency?: ('USD' | 'ARS') | null;
+  buyerFee?: number | null;
+  buyerFeeCurrency?: ('USD' | 'ARS') | null;
+  /**
+   * Adjunta documentos relevantes como contratos, facturas, comprobantes, etc.
+   */
+  documents?: (string | Media)[] | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -786,6 +823,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'propiedades';
         value: string | Propiedade;
+      } | null)
+    | ({
+        relationTo: 'contratos';
+        value: string | Contrato;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1038,6 +1079,34 @@ export interface PropiedadesSelect<T extends boolean = true> {
         lastSyncAt?: T;
         lastError?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contratos_select".
+ */
+export interface ContratosSelect<T extends boolean = true> {
+  displayTitle?: T;
+  propertyTitle?: T;
+  propertyPublishedDate?: T;
+  type?: T;
+  property?: T;
+  owner?: T;
+  client?: T;
+  signDate?: T;
+  startDate?: T;
+  endDate?: T;
+  listingPrice?: T;
+  currency?: T;
+  realPrice?: T;
+  realCurrency?: T;
+  ownerFee?: T;
+  ownerFeeCurrency?: T;
+  buyerFee?: T;
+  buyerFeeCurrency?: T;
+  documents?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -13,7 +13,7 @@ export const Clientes: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'fullname',
-    defaultColumns: ['fullname', 'phone'],
+    defaultColumns: ['fullname', 'phone', 'email', 'dni'],
     components: {
       views: {
         edit: {
