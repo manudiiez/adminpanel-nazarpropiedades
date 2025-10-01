@@ -2,7 +2,7 @@ import type { AdminViewServerProps } from 'payload'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
-import { calculateFee, calculateTimeOnMarket, fechaLarga, formatPrice } from '@/utils/formatValues'
+import { calculateFee, daysBetween, fechaLarga, formatPrice } from '@/utils/formatValues'
 import { Gutter } from '@payloadcms/ui'
 import { propertyLabels } from '@/utils/propertyLabels'
 import { ContractDetailsClient } from './ContractDetailsClient'
@@ -89,6 +89,39 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
   // Extraer el ID del contrato desde los parámetros
   const contractId = props.docID || (props.params?.segments?.[2] as string | number)
 
+  // Función para calcular honorarios totales considerando diferentes monedas
+  const calculateTotalFees = (contractData: any) => {
+    const ownerFee = contractData.ownerFee?.value || 0
+    const buyerFee = contractData.buyerFee?.value || 0
+    const ownerFeeCurrency = contractData.ownerFeeCurrency?.value || 'USD'
+    const buyerFeeCurrency = contractData.buyerFeeCurrency?.value || 'USD'
+    const propertyCurrency = contractData.currency?.value || 'USD'
+
+    // Si ambos honorarios están en la misma moneda, sumamos directamente
+    if (ownerFeeCurrency === buyerFeeCurrency) {
+      return {
+        totalAmount: ownerFee + buyerFee,
+        currency: ownerFeeCurrency,
+        breakdown: `${ownerFeeCurrency} $${formatPrice(ownerFee + buyerFee)}`,
+        isMixed: false,
+        propertyCurrency,
+      }
+    }
+
+    // Si están en monedas diferentes, mostramos por separado
+    const parts = []
+    if (ownerFee > 0) parts.push(`${ownerFeeCurrency} $${formatPrice(ownerFee)}`)
+    if (buyerFee > 0) parts.push(`${buyerFeeCurrency} $${formatPrice(buyerFee)}`)
+
+    return {
+      totalAmount: ownerFee + buyerFee, // Solo para cálculos de porcentaje
+      currency: ownerFeeCurrency, // Usar la del owner como principal
+      breakdown: parts.join(' + '),
+      isMixed: true,
+      propertyCurrency,
+    }
+  }
+
   if (!contractId) {
     return (
       <div className="contract-details">
@@ -174,14 +207,8 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                     <div className="contract-details__price-value">
                       {/* Mostrar honorarios totales calculados */}
                       {(() => {
-                        const ownerFee = contractData.ownerFee?.value || 0
-                        const buyerFee = contractData.buyerFee?.value || 0
-                        const totalFees = ownerFee + buyerFee
-
-                        // Usar la moneda del owner fee como principal, pero manejar casos mixtos
-                        const currency = contractData.ownerFeeCurrency?.value || 'USD'
-
-                        return `${currency} $${formatPrice(totalFees)}`
+                        const totalFeesData = calculateTotalFees(contractData)
+                        return totalFeesData.breakdown
                       })()}
                     </div>
                     <div className="contract-details__price-label">
@@ -203,22 +230,56 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                   </div>
                   <div className="contract-details__meta-item">
                     <span>Tiempo en Mercado</span>
-                    <p>{calculateTimeOnMarket(contractData.propertyPublishedDate.value)}</p>
+                    <p>
+                      {daysBetween(
+                        contractData.propertyPublishedDate.value,
+                        contractData.signDate.value,
+                      )}{' '}
+                      dias
+                    </p>
                   </div>
                   <div className="contract-details__meta-item">
                     <span>
-                      {contractConfig[contractType as keyof typeof contractConfig].feeLabel}
+                      {contractConfig[contractType as keyof typeof contractConfig].feeLabel}{' '}
+                      {contractData.realCurrency.value}
                     </span>
                     <p>
                       {(() => {
-                        const ownerFee = contractData.ownerFee?.value || 0
-                        const buyerFee = contractData.buyerFee?.value || 0
-                        const totalFees = ownerFee + buyerFee
+                        const totalFeesData = calculateTotalFees(contractData)
                         const realPrice = contractData.realPrice?.value || 0
 
-                        return calculateFee(realPrice, totalFees)
+                        if (totalFeesData.isMixed) {
+                          // Para monedas mixtas, mostrar porcentajes solo de las que coincidan con la propiedad
+                          const ownerFee = contractData.ownerFee?.value || 0
+                          const buyerFee = contractData.buyerFee?.value || 0
+                          const ownerFeeCurrency = contractData.ownerFeeCurrency?.value || 'USD'
+                          const buyerFeeCurrency = contractData.buyerFeeCurrency?.value || 'USD'
+
+                          const parts = []
+                          if (ownerFee > 0 && ownerFeeCurrency === totalFeesData.propertyCurrency) {
+                            parts.push(`${calculateFee(realPrice, ownerFee)}`)
+                          }
+                          if (buyerFee > 0 && buyerFeeCurrency === totalFeesData.propertyCurrency) {
+                            parts.push(`${calculateFee(realPrice, buyerFee)}`)
+                          }
+
+                          // Si ningún honorario coincide con la moneda de la propiedad, no mostrar porcentaje
+                          return parts.length > 0 ? parts.join(' + ') : ''
+                        } else {
+                          // Misma moneda, verificar si coincide con la de la propiedad
+                          if (totalFeesData.currency === totalFeesData.propertyCurrency) {
+                            return calculateFee(realPrice, totalFeesData.totalAmount)
+                          } else {
+                            return ''
+                          }
+                        }
                       })()}
-                      %{contractType !== 'venta' && ' de la renta'}
+                      {contractData.currency?.value === 'USD' ||
+                      contractData.currency?.value === 'ARS'
+                        ? contractType !== 'venta'
+                          ? '% de la renta'
+                          : '%'
+                        : '%'}
                     </p>
                   </div>
                   <div className="contract-details__meta-item">
@@ -385,12 +446,22 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                           </div>
                           <div className="contract-details__expense-item">
                             <span>
-                              Honorarios del propietario (
-                              {calculateFee(
-                                contractData.realPrice?.value || 0,
-                                contractData.ownerFee?.value || 0,
-                              )}
-                              %{contractType !== 'venta' && ' de la renta'})
+                              Honorarios del propietario{' '}
+                              {(() => {
+                                const ownerFeeCurrency =
+                                  contractData.ownerFeeCurrency?.value || 'USD'
+                                const propertyCurrency = contractData.currency?.value || 'USD'
+
+                                // Solo mostrar porcentaje si las monedas coinciden
+                                if (ownerFeeCurrency === propertyCurrency) {
+                                  return `(${calculateFee(
+                                    contractData.realPrice?.value || 0,
+                                    contractData.ownerFee?.value || 0,
+                                  )}%${contractType !== 'venta' ? ' de la renta' : ''})`
+                                } else {
+                                  return ''
+                                }
+                              })()}
                             </span>
                             <span>${formatPrice(contractData.ownerFee.value)}</span>
                           </div>
@@ -409,12 +480,21 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                           <div className="contract-details__expense-item">
                             <span>
                               Honorarios del {contractType === 'venta' ? 'comprador' : 'inquilino'}{' '}
-                              (
-                              {calculateFee(
-                                contractData.realPrice?.value || 0,
-                                contractData.buyerFee?.value || 0,
-                              )}
-                              %{contractType !== 'venta' && ' de la renta'})
+                              {(() => {
+                                const buyerFeeCurrency =
+                                  contractData.buyerFeeCurrency?.value || 'USD'
+                                const propertyCurrency = contractData.currency?.value || 'USD'
+
+                                // Solo mostrar porcentaje si las monedas coinciden
+                                if (buyerFeeCurrency === propertyCurrency) {
+                                  return `(${calculateFee(
+                                    contractData.realPrice?.value || 0,
+                                    contractData.buyerFee?.value || 0,
+                                  )}%${contractType !== 'venta' ? ' de la renta' : ''})`
+                                } else {
+                                  return ''
+                                }
+                              })()}
                             </span>
                             <span>${formatPrice(contractData.buyerFee.value)}</span>
                           </div>
@@ -426,23 +506,54 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                         <div className="contract-details__expense-item contract-details__total-fees">
                           <span>
                             <strong>
-                              Total de honorarios (
+                              Total de honorarios{' '}
                               {(() => {
-                                const ownerFee = contractData.ownerFee?.value || 0
-                                const buyerFee = contractData.buyerFee?.value || 0
-                                const totalFees = ownerFee + buyerFee
-                                return calculateFee(contractData.realPrice?.value || 0, totalFees)
+                                const totalFeesData = calculateTotalFees(contractData)
+                                const realPrice = contractData.realPrice?.value || 0
+
+                                if (totalFeesData.isMixed) {
+                                  // Para monedas mixtas, mostrar porcentajes solo de las que coincidan con la propiedad
+                                  const ownerFee = contractData.ownerFee?.value || 0
+                                  const buyerFee = contractData.buyerFee?.value || 0
+                                  const ownerFeeCurrency =
+                                    contractData.ownerFeeCurrency?.value || 'USD'
+                                  const buyerFeeCurrency =
+                                    contractData.buyerFeeCurrency?.value || 'USD'
+
+                                  const parts = []
+                                  if (
+                                    ownerFee > 0 &&
+                                    ownerFeeCurrency === totalFeesData.propertyCurrency
+                                  ) {
+                                    parts.push(`${calculateFee(realPrice, ownerFee)}%`)
+                                  }
+                                  if (
+                                    buyerFee > 0 &&
+                                    buyerFeeCurrency === totalFeesData.propertyCurrency
+                                  ) {
+                                    parts.push(`${calculateFee(realPrice, buyerFee)}%`)
+                                  }
+
+                                  // Si hay porcentajes válidos, mostrarlos con paréntesis
+                                  return parts.length > 0 ? `(${parts.join(' + ')})` : ''
+                                } else {
+                                  // Misma moneda, verificar si coincide con la de la propiedad
+                                  if (totalFeesData.currency === totalFeesData.propertyCurrency) {
+                                    return `(${calculateFee(realPrice, totalFeesData.totalAmount)}%)`
+                                  } else {
+                                    return ''
+                                  }
+                                }
                               })()}
-                              %{contractType !== 'venta' && ' de la renta'})
+                              {contractType !== 'venta' && ' de la renta'}
                             </strong>
                           </span>
                           <span>
                             <strong>
-                              $
-                              {formatPrice(
-                                (contractData.ownerFee?.value || 0) +
-                                  (contractData.buyerFee?.value || 0),
-                              )}
+                              {(() => {
+                                const totalFeesData = calculateTotalFees(contractData)
+                                return totalFeesData.breakdown
+                              })()}
                             </strong>
                           </span>
                         </div>
@@ -486,10 +597,16 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                         <p>{clientData.email}</p>
                       </div>
                     )}
-                    {clientData.phone && (
+                    {clientData.dni && (
                       <div className="contract-details__info-item">
-                        <span>Teléfono</span>
-                        <p>{clientData.phone}</p>
+                        <span>DNI</span>
+                        <p>{clientData.dni}</p>
+                      </div>
+                    )}
+                    {clientData.notes && (
+                      <div className="contract-details__info-item">
+                        <span>Notas</span>
+                        <p>{clientData.notes}</p>
                       </div>
                     )}
                   </div>
@@ -517,6 +634,12 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                       <div className="contract-details__info-item">
                         <span>Email</span>
                         <p>{ownerData.email}</p>
+                      </div>
+                    )}
+                    {ownerData.dni && (
+                      <div className="contract-details__info-item">
+                        <span>DNI</span>
+                        <p>{ownerData.dni}</p>
                       </div>
                     )}
                     {ownerData.notes && (

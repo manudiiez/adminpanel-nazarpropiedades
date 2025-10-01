@@ -11,12 +11,27 @@ const PropertyAutoFill: React.FC = () => {
   const { setValue: setOwner } = useField<string>({ path: 'owner' })
   const { setValue: setListingPrice } = useField<number>({ path: 'listingPrice' })
   const { setValue: setListingCurrency } = useField<string>({ path: 'currency' })
+  const { setValue: setRealCurrency } = useField<string>({ path: 'realCurrency' })
 
   // Campo oculto para el título
   const { setValue: setPropertyTitle } = useField<string>({ path: 'propertyTitle' })
 
   // Campo oculto para la fecha de publicación
   const { setValue: setPropertyPublishedDate } = useField<string>({ path: 'propertyPublishedDate' })
+
+  // Función para mapear monedas al formato correcto
+  const mapCurrency = (currency: string): string => {
+    if (!currency) return 'USD'
+
+    const currencyMap: { [key: string]: string } = {
+      usd: 'USD',
+      USD: 'USD',
+      ars: 'ARS',
+      ARS: 'ARS',
+    }
+
+    return currencyMap[currency.toLowerCase()] || 'USD'
+  }
 
   // Obtener valores actuales
   const propertyId = fields?.['property']?.value
@@ -51,8 +66,15 @@ const PropertyAutoFill: React.FC = () => {
 
             // Autocompletar currency si no hay una y la propiedad tiene currency
             if (property?.caracteristics?.currency && !currentListingCurrency) {
-              setListingCurrency(property.caracteristics.currency)
-              console.log('Moneda autocompletada:', property.caracteristics.currency)
+              const mappedCurrency = mapCurrency(property.caracteristics.currency)
+              setListingCurrency(mappedCurrency)
+              setRealCurrency(mappedCurrency) // También autocompletar realCurrency
+              console.log(
+                'Moneda autocompletada:',
+                property.caracteristics.currency,
+                '→',
+                mappedCurrency,
+              )
             }
 
             // Autocompletar título de la propiedad
@@ -85,6 +107,7 @@ const PropertyAutoFill: React.FC = () => {
     setOwner,
     setListingPrice,
     setListingCurrency,
+    setRealCurrency,
     setPropertyTitle,
     setPropertyPublishedDate,
   ])
