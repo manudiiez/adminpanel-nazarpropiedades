@@ -11,6 +11,7 @@ interface ImageData {
   filename?: string
   width?: number
   height?: number
+  sizes?: any
 }
 
 export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
@@ -110,7 +111,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         >
           <Image
             // src={imageData.url}
-            src={imageData.sizes.thumbnail.url}
+            src={imageData?.sizes?.thumbnail?.url || imageData.url}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
             height={150}
