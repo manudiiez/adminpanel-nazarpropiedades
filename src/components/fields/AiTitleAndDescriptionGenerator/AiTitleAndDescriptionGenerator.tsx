@@ -19,10 +19,23 @@ const AIContentGenerator: React.FC = () => {
   const getRequiredFields = () => {
     const required = []
 
+    // Campos básicos obligatorios
     if (!fields?.['classification.type']?.value) required.push('Tipo de propiedad')
     if (!fields?.['classification.condition']?.value) required.push('Condición (Venta/Alquiler)')
     if (!fields?.['caracteristics.price']?.value) required.push('Precio')
-    if (!fields?.['caracteristics.totalArea']?.value) required.push('Área total')
+
+    // Ubicación básica
+    if (!fields?.['ubication.department']?.value) required.push('Departamento')
+    if (!fields?.['ubication.address']?.value) required.push('Dirección')
+
+    // Área total es importante para la descripción
+    if (!fields?.['caracteristics.totalArea']?.value) {
+      // Solo requerir área total si no es un tipo que no la necesite
+      const propertyType = fields?.['classification.type']?.value
+      if (propertyType !== 'negocio') {
+        required.push('Área total')
+      }
+    }
 
     return required
   }
@@ -44,123 +57,60 @@ const AIContentGenerator: React.FC = () => {
     setError(null)
 
     try {
-      // Obtener el token _verificationToken específico de Payload CMS
-      let token = null
-
-      const cookies = document.cookie.split('; ')
-      console.log('Todas las cookies:', cookies)
-
-      // Buscar específicamente _verificationToken y otros nombres posibles
-      const possibleTokenNames = [
-        '_verificationToken',
-        'payload-token',
-        'payload',
-        'token',
-        'jwt',
-        'auth-token',
-        'payload_jwt',
-        'payload-jwt',
-      ]
-
-      for (const cookieName of possibleTokenNames) {
-        const cookieValue = cookies.find((row) => row.startsWith(`${cookieName}=`))?.split('=')[1]
-        if (cookieValue) {
-          token = cookieValue
-          console.log(`Token encontrado en cookie '${cookieName}':`, token)
-          break
-        }
-      }
-
-      // Si no hay token en cookies, intentar desde localStorage
-      if (!token) {
-        console.log('No se encontró token en cookies, intentando localStorage...')
-
-        for (const storageKey of possibleTokenNames) {
-          try {
-            const storageValue = localStorage.getItem(storageKey)
-            if (storageValue) {
-              token = storageValue
-              console.log(`Token encontrado en localStorage '${storageKey}':`, token)
-              break
-            }
-          } catch (e) {
-            console.log('localStorage no disponible')
-          }
-        }
-      }
-
-      // Si no hay token en localStorage, intentar desde sessionStorage
-      if (!token) {
-        console.log('No se encontró token en localStorage, intentando sessionStorage...')
-
-        for (const storageKey of possibleTokenNames) {
-          try {
-            const storageValue = sessionStorage.getItem(storageKey)
-            if (storageValue) {
-              token = storageValue
-              console.log(`Token encontrado en sessionStorage '${storageKey}':`, token)
-              break
-            }
-          } catch (e) {
-            console.log('sessionStorage no disponible')
-          }
-        }
-      }
-
-      if (!token) {
-        console.log('No se encontró token en ningún lado, continuando sin token...')
-      } else {
-        console.log('Token final a usar:', token)
-      }
-
       // Preparar los datos para enviar a la API
       const propertyData = {
-        type: fields?.['classification.type']?.value,
-        condition: fields?.['classification.condition']?.value,
-        location: {
-          province: fields?.['ubication.province']?.value,
-          department: fields?.['ubication.department']?.value,
-          locality: fields?.['ubication.locality']?.value,
-          neighborhood: fields?.['ubication.neighborhood']?.value,
-        },
-        characteristics: {
-          price: fields?.['caracteristics.price']?.value,
-          currency: fields?.['caracteristics.currency']?.value,
-          expenses: fields?.['caracteristics.expenses']?.value,
-          expensesCurrency: fields?.['caracteristics.expensesCurrency']?.value,
-          coveredArea: fields?.['caracteristics.coveredArea']?.value,
-          totalArea: fields?.['caracteristics.totalArea']?.value,
-          antiquity: fields?.['caracteristics.antiquity']?.value,
-          orientation: fields?.['caracteristics.orientation']?.value,
-        },
-        environments: {
-          bedrooms: fields?.['environments.bedrooms']?.value,
-          bathrooms: fields?.['environments.bathrooms']?.value,
-          garages: fields?.['environments.garages']?.value,
-          garageType: fields?.['environments.garageType']?.value,
-          furnished: fields?.['environments.funished']?.value,
-        },
-        amenities: {
-          servicios: fields?.['amenities.servicios']?.value || [],
-          ambientes: fields?.['amenities.ambientes']?.value || [],
-          zonasCercanas: fields?.['amenities.zonasCercanas']?.value || [],
-        },
+        // Clasificación
+        tipo: fields?.['classification.type']?.value,
+        condicion: fields?.['classification.condition']?.value,
+        // Ubicación
+        provincia: fields?.['ubication.province']?.value,
+        departamento: fields?.['ubication.department']?.value,
+        localidad: fields?.['ubication.locality']?.value,
+        barrio: fields?.['ubication.neighborhood']?.value,
+        direccion: fields?.['ubication.address']?.value,
+        // Características
+        precio: fields?.['caracteristics.price']?.value,
+        moneda: fields?.['caracteristics.currency']?.value,
+        tieneExpensas: fields?.['caracteristics.hasExpenses']?.value,
+        expensas: fields?.['caracteristics.expenses']?.value,
+        expensasMoneda: fields?.['caracteristics.expensesCurrency']?.value,
+        areaCubierta: fields?.['caracteristics.coveredArea']?.value,
+        areaTotal: fields?.['caracteristics.totalArea']?.value,
+        metroFrente: fields?.['caracteristics.frontMeters']?.value,
+        metrosProfundidad: fields?.['caracteristics.deepMeters']?.value,
+        antiguedad: fields?.['caracteristics.antiquity']?.value,
+        estadoConservacion: fields?.['caracteristics.conservationStatus']?.value,
+        orientacion: fields?.['caracteristics.orientation']?.value,
+        // Ambientes
+        cantHabitaciones: fields?.['environments.bedrooms']?.value,
+        cantBaños: fields?.['environments.bathrooms']?.value,
+        tipoGaraje: fields?.['environments.garageType']?.value,
+        cantAutos: fields?.['environments.garages']?.value,
+        cantPlantas: fields?.['environments.plantas']?.value,
+        cantAmbientes: fields?.['environments.ambientes']?.value,
+        amueblado: fields?.['environments.funished']?.value,
+        // Amenities y servicios
+        mascotas: fields?.['amenities.mascotas']?.value,
+        barrioPrivado: fields?.['amenities.barrioPrivado']?.value,
+        agua: fields?.['amenities.agua']?.value,
+        cloacas: fields?.['amenities.cloacas']?.value,
+        gas: fields?.['amenities.gas']?.value,
+        luz: fields?.['amenities.luz']?.value,
+        estrellas: fields?.['amenities.estrellas']?.value,
+        servicios: fields?.['amenities.servicios']?.value || [],
+        ambientes: fields?.['amenities.ambientes']?.value || [],
+        zonasCercanas: fields?.['amenities.zonasCercanas']?.value || [],
+        // Contenido existente (si hay)
+        titulo: fields?.['aiContent.title']?.value,
+        descripcion: fields?.['aiContent.description']?.value,
       }
 
-      // Preparar headers para la petición
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      }
-
-      // Solo agregar Authorization si tenemos token
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
-      // Llamar a tu API
+      // Llamar a la API (el token se maneja automáticamente desde las cookies)
       const response = await fetch('/api/ai/generate-title-description', {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(propertyData),
       })
 

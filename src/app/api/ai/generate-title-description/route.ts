@@ -26,14 +26,10 @@ export async function POST(request: NextRequest) {
         const cookieValue = cookieHeader?.match(new RegExp(`${tokenName}=([^;]+)`))?.[1]
         if (cookieValue) {
           token = cookieValue
-          console.log(`Token encontrado en cookie del servidor '${tokenName}':`, token)
           break
         }
       }
     }
-
-    console.log('Token final del servidor:', token ? 'Encontrado' : 'No encontrado')
-
     // Enviar datos a N8N (con o sin token)
     console.log('propertyData:', propertyData)
     const aiResponse = await generateWithAI(propertyData, token || '')
@@ -42,6 +38,10 @@ export async function POST(request: NextRequest) {
       title: aiResponse.title,
       description: aiResponse.description,
     })
+    // return NextResponse.json({
+    //   title: 'titulo de prueba',
+    //   description: 'descripcion de prueba',
+    // })
   } catch (error) {
     console.error('Error generando contenido:', error)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
