@@ -63,6 +63,7 @@ export default function DashboardView() {
   const [isLoading, setIsLoading] = useState(true)
   const [isChartLoading, setIsChartLoading] = useState(true)
   const [isMobileView, setIsMobileView] = useState(false)
+  const [isMediumView, setIsMediumView] = useState(false)
   const [currentSemester, setCurrentSemester] = useState(() => {
     // Inicializar en el semestre actual
     const now = new Date()
@@ -70,12 +71,6 @@ export default function DashboardView() {
     return currentMonth < 6 ? 0 : 1 // 0 para primer semestre (ene-jun), 1 para segundo (jul-dic)
   })
   const [allContracts, setAllContracts] = useState<ContractData[]>([])
-
-  // Colores para el gráfico
-  const chartColors = {
-    primary: '#6b7280',
-    secondary: '#9ca3af',
-  }
 
   const months = [
     'enero',
@@ -165,9 +160,9 @@ export default function DashboardView() {
     return new Intl.NumberFormat('es-AR').format(number)
   }
 
-  // Función para formatear números abreviados en mobile
+  // Función para formatear números abreviados en mobile y pantallas medianas
   const formatCompactCurrency = (value: number, currency: 'USD' | 'ARS') => {
-    if (!isMobileView) {
+    if (!isMobileView && !isMediumView) {
       return formatCurrency(value, currency)
     }
 
@@ -553,9 +548,11 @@ export default function DashboardView() {
 
     return displayMonths.map((month) => {
       const monthData = yearData[month]
-      const monthName = isMobileView
-        ? monthNamesShort[month as keyof typeof monthNamesShort]
-        : monthNames[month as keyof typeof monthNames]
+      // Usar abreviaciones en mobile y pantallas medianas
+      const monthName =
+        isMobileView || isMediumView
+          ? monthNamesShort[month as keyof typeof monthNamesShort]
+          : monthNames[month as keyof typeof monthNames]
 
       return {
         month,
@@ -576,7 +573,9 @@ export default function DashboardView() {
   // Detectar cambio de tamaño de pantalla para modo responsive
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobileView(window.innerWidth <= 768)
+      const width = window.innerWidth
+      setIsMobileView(width <= 768)
+      setIsMediumView(width > 768 && width <= 1200)
     }
 
     checkScreenSize()
@@ -695,45 +694,43 @@ export default function DashboardView() {
               {isChartLoading ? (
                 <div className="dashboard__chart-loading">Cargando datos de {currentYear}...</div>
               ) : (
-                <ResponsiveContainer 
-                  width="100%" 
-                  height={isMobileView ? 320 : 400}
-                  minWidth={0}
-                >
+                <ResponsiveContainer width="100%" height={isMobileView ? 320 : 400} minWidth={0}>
                   <BarChart
                     data={getChartData()}
                     margin={
                       isMobileView
                         ? { top: 15, right: 25, left: 25, bottom: 15 }
-                        : { top: 20, right: 30, left: 20, bottom: 5 }
+                        : isMediumView
+                          ? { top: 20, right: 25, left: 15, bottom: 5 }
+                          : { top: 20, right: 30, left: 20, bottom: 5 }
                     }
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--theme-elevation-200)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--theme-elevation-150)" />
                     <XAxis
                       dataKey="monthName"
                       tick={{
                         fill: 'var(--theme-elevation-700)',
-                        fontSize: isMobileView ? 10 : 12,
+                        fontSize: isMobileView ? 10 : isMediumView ? 11 : 12,
                       }}
                     />
                     <YAxis
                       yAxisId="left"
                       tick={{
                         fill: 'var(--theme-elevation-700)',
-                        fontSize: isMobileView ? 10 : 12,
+                        fontSize: isMobileView ? 10 : isMediumView ? 11 : 12,
                       }}
                       tickFormatter={(value) => formatCompactCurrency(value, 'USD')}
-                      width={isMobileView ? 40 : 60}
+                      width={isMobileView ? 40 : isMediumView ? 55 : 60}
                     />
                     <YAxis
                       yAxisId="right"
                       orientation="right"
                       tick={{
                         fill: 'var(--theme-elevation-700)',
-                        fontSize: isMobileView ? 10 : 12,
+                        fontSize: isMobileView ? 10 : isMediumView ? 11 : 12,
                       }}
                       tickFormatter={(value) => formatCompactCurrency(value, 'ARS')}
-                      width={isMobileView ? 40 : 60}
+                      width={isMobileView ? 40 : isMediumView ? 55 : 60}
                     />
                     <Tooltip
                       formatter={(value: number, name: string) => [
@@ -767,8 +764,8 @@ export default function DashboardView() {
                     <Bar
                       yAxisId="left"
                       dataKey="USD"
-                      fill="rgba(107, 114, 128, 0.8)"
-                      stroke="#6b7280"
+                      fill="var(--theme-success-600)"
+                      stroke="var(--theme-success-700)"
                       strokeWidth={1}
                       name="USD"
                       radius={[2, 2, 0, 0]}
@@ -778,8 +775,8 @@ export default function DashboardView() {
                     <Bar
                       yAxisId="right"
                       dataKey="ARS"
-                      fill="rgba(165, 170, 180, 0.8)"
-                      stroke="#9ca3af"
+                      fill="var(--theme-elevation-600)"
+                      stroke="var(--theme-elevation-700)"
                       strokeWidth={1}
                       name="ARS"
                       radius={[2, 2, 0, 0]}
