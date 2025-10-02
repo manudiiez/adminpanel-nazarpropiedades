@@ -58,6 +58,9 @@ export default function DashboardView() {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
   const [dashboardData, setDashboardData] = useState<DashboardData>(initialDashboardData)
   const [isLoading, setIsLoading] = useState(true)
+  const [isChartLoading, setIsChartLoading] = useState(true)
+  const [isMobileView, setIsMobileView] = useState(false)
+  const [currentSemester, setCurrentSemester] = useState(0) // 0 para primer semestre, 1 para segundo
   const chartRef = useRef<HTMLCanvasElement>(null)
   const chartInstanceRef = useRef<any>(null)
 
@@ -76,9 +79,6 @@ export default function DashboardView() {
       text: computedStyle.getPropertyValue('--chart-text').trim() || '#374151',
     }
   }
-
-  // Colores y estilos para el gráfico (usando variables CSS)
-  const chartColors = getChartColors()
 
   const months = [
     'enero',
@@ -108,6 +108,21 @@ export default function DashboardView() {
     octubre: 'Octubre',
     noviembre: 'Noviembre',
     diciembre: 'Diciembre',
+  }
+
+  const monthNamesShort = {
+    enero: 'Ene',
+    febrero: 'Feb',
+    marzo: 'Mar',
+    abril: 'Abr',
+    mayo: 'May',
+    junio: 'Jun',
+    julio: 'Jul',
+    agosto: 'Ago',
+    septiembre: 'Sep',
+    octubre: 'Oct',
+    noviembre: 'Nov',
+    diciembre: 'Dic',
   }
 
   // Funciones de utilidad
@@ -320,11 +335,11 @@ export default function DashboardView() {
   // Función para cargar datos de un año específico
   const loadYearData = async (year: number) => {
     try {
-      setIsLoading(true)
+      setIsChartLoading(true)
 
       // Si ya tenemos datos para este año, no volver a cargar
       if (dashboardData.monthlyData[year]) {
-        setIsLoading(false)
+        setIsChartLoading(false)
         return
       }
 
@@ -348,14 +363,14 @@ export default function DashboardView() {
     } catch (error) {
       console.error('Error loading year data:', error)
     } finally {
-      setIsLoading(false)
+      setIsChartLoading(false)
     }
   }
 
   // Función para cargar datos iniciales del dashboard
   const loadInitialDashboardData = async () => {
     try {
-      setIsLoading(true)
+      setIsChartLoading(true)
 
       const currentYear = new Date().getFullYear()
 
@@ -389,6 +404,7 @@ export default function DashboardView() {
       console.error('Error loading initial dashboard data:', error)
     } finally {
       setIsLoading(false)
+      setIsChartLoading(false)
     }
   }
 
@@ -446,6 +462,30 @@ export default function DashboardView() {
     }
   }
 
+  const changeSemester = (direction: number) => {
+    const newSemester = currentSemester + direction
+    const currentActualYear = new Date().getFullYear()
+
+    // Si va más allá del semestre 1
+    if (newSemester > 1) {
+      // Solo permitir si no estamos en el año actual, o si estamos en el año actual pero no es futuro
+      if (currentYear < currentActualYear) {
+        changeYear(1)
+        setCurrentSemester(0)
+      }
+      // Si estamos en el año actual, no hacer nada (no permitir ir al futuro)
+    }
+    // Si va antes del semestre 0, cambiar al año anterior y setear semestre 1
+    else if (newSemester < 0) {
+      changeYear(-1)
+      setCurrentSemester(1)
+    }
+    // Cambio normal de semestre
+    else {
+      setCurrentSemester(newSemester)
+    }
+  }
+
   const createEarningsChart = () => {
     if (!chartRef.current || !window.Chart) return
 
@@ -461,22 +501,24 @@ export default function DashboardView() {
     // Obtener colores actualizados del CSS
     const colors = getChartColors()
 
-    const earnings = months.map((month) => {
+    // Determinar qué meses mostrar según el modo responsive
+    let displayMonths = months
+    if (isMobileView) {
+      // Primer semestre: enero-junio, Segundo semestre: julio-diciembre
+      const startIndex = currentSemester * 6
+      displayMonths = months.slice(startIndex, startIndex + 6)
+    }
+
+    // Separar datos por moneda según los meses a mostrar
+    const earningsUSD = displayMonths.map((month) => {
       const monthData = yearData[month]
-      if (!monthData) return 0
-
-      // Asegurar que los valores sean números válidos
-      const arsValue = monthData.earnings?.ars || 0
-      const usdValue = monthData.earnings?.usd || 0
-
-      // Convertir USD a ARS para el gráfico (usando una tasa aproximada)
-      const totalEarnings = arsValue + usdValue * 1000 // Ajustada la tasa para mejor visualización
-
-      return totalEarnings
+      return monthData?.earnings?.usd || 0
     })
 
-    console.log('Chart earnings data:', earnings)
-    console.log('Year data:', yearData)
+    const earningsARS = displayMonths.map((month) => {
+      const monthData = yearData[month]
+      return monthData?.earnings?.ars || 0
+    })
 
     // Destruir gráfico anterior si existe
     if (chartInstanceRef.current) {
@@ -486,50 +528,86 @@ export default function DashboardView() {
     chartInstanceRef.current = new window.Chart(ctx, {
       type: 'bar',
       data: {
-        labels: months.map((month) => monthNames[month as keyof typeof monthNames]),
+        labels: displayMonths.map((month) =>
+          isMobileView
+            ? monthNamesShort[month as keyof typeof monthNamesShort]
+            : monthNames[month as keyof typeof monthNames],
+        ),
         datasets: [
           {
-            label: 'Ganancias Mensuales',
-            data: earnings,
-            backgroundColor: months.map((month) =>
-              month === selectedMonth ? colors.primary : colors.secondary,
-            ),
-            borderColor: months.map((month) =>
-              month === selectedMonth ? colors.border : colors.borderSecondary,
-            ),
-            borderWidth: 1,
-            borderRadius: 4,
-            borderSkipped: false,
+            label: 'Ganancias USD',
+            data: earningsUSD,
+            backgroundColor: 'rgba(107, 114, 128, 0.8)', // Gris medio para USD
+            borderColor: '#6b7280',
+            borderWidth: 2,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Ganancias ARS',
+            data: earningsARS,
+            backgroundColor: 'rgba(165, 170, 180, 0.8)', // Gris claro para ARS
+            borderColor: '#9ca3af',
+            borderWidth: 2,
+            yAxisID: 'y1',
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
         plugins: {
           legend: {
-            display: false,
+            display: true,
+            position: 'top',
+            labels: {
+              color: colors.text,
+              usePointStyle: false,
+            },
           },
           tooltip: {
             callbacks: {
               label: function (context: any) {
-                const monthData = yearData[months[context.dataIndex]]
-                if (!monthData || !monthData.earnings) return 'Sin datos'
+                const currency = context.datasetIndex === 0 ? 'USD' : 'ARS'
+                const value = context.parsed.y || 0
+                return `${currency}: ${formatCurrency(value, currency)}`
+              },
+              afterBody: function (tooltipItems: any) {
+                const monthIndex = tooltipItems[0].dataIndex
+                const monthData = yearData[displayMonths[monthIndex]]
+                if (!monthData || !monthData.earnings) return []
 
-                const arsValue = monthData.earnings.ars || 0
-                const usdValue = monthData.earnings.usd || 0
-
-                return [
-                  `USD: ${formatCurrency(usdValue, 'USD')}`,
-                  `ARS: ${formatCurrency(arsValue, 'ARS')}`,
-                  `Total: ${formatDualCurrency(monthData.earnings)}`,
-                ]
+                return ['', `Total mes: ${formatDualCurrency(monthData.earnings)}`]
               },
             },
           },
         },
         scales: {
           y: {
+            beginAtZero: true,
+            position: 'left',
+            ticks: {
+              callback: function (value: any) {
+                return formatCurrency(value, 'USD')
+              },
+              color: colors.text,
+            },
+            grid: {
+              color: colors.grid,
+            },
+            title: {
+              display: true,
+              text: 'Ganancias (USD)',
+              color: colors.text,
+            },
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
             beginAtZero: true,
             ticks: {
               callback: function (value: any) {
@@ -538,7 +616,12 @@ export default function DashboardView() {
               color: colors.text,
             },
             grid: {
-              color: colors.grid,
+              drawOnChartArea: false,
+            },
+            title: {
+              display: true,
+              text: 'Ganancias (ARS)',
+              color: colors.text,
             },
           },
           x: {
@@ -553,7 +636,7 @@ export default function DashboardView() {
         onClick: (event: any, elements: any) => {
           if (elements.length > 0) {
             const index = elements[0].index
-            selectMonth(months[index])
+            selectMonth(displayMonths[index])
           }
         },
       },
@@ -585,41 +668,31 @@ export default function DashboardView() {
     }
   }, [])
 
+  // Detectar cambio de tamaño de pantalla para modo responsive
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobileView(window.innerWidth <= 768)
+    }
+
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+
+    return () => {
+      window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
+
   // Cargar datos del dashboard al inicializar
   useEffect(() => {
     loadInitialDashboardData()
   }, [])
 
-  // Recrear gráfico cuando cambien el año o mes seleccionado
+  // Recrear gráfico cuando cambien el año, mes seleccionado, o modo responsive
   useEffect(() => {
-    if (window.Chart && !isLoading) {
+    if (window.Chart && !isChartLoading) {
       createEarningsChart()
     }
-  }, [currentYear, selectedMonth, dashboardData, isLoading])
-
-  // Mostrar loading mientras se cargan los datos
-  if (isLoading) {
-    return (
-      <div className="dashboard">
-        <div className="dashboard__content">
-          <main className="dashboard__main">
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '50vh',
-                fontSize: '1.2rem',
-                color: '#6b7280',
-              }}
-            >
-              Cargando datos del dashboard...
-            </div>
-          </main>
-        </div>
-      </div>
-    )
-  }
+  }, [currentYear, selectedMonth, dashboardData, isChartLoading, isMobileView, currentSemester])
 
   return (
     <div className="dashboard">
@@ -673,40 +746,57 @@ export default function DashboardView() {
             <div className="dashboard__chart-header">
               <h2 className="dashboard__chart-title">Ganancias Mensuales</h2>
               <div className="dashboard__year-controls">
-                <button
-                  className="dashboard__year-btn"
-                  onClick={() => changeYear(-1)}
-                  disabled={isLoading}
-                >
-                  ‹ {currentYear - 1}
-                </button>
-                <span className="dashboard__current-year">{currentYear}</span>
-                <button
-                  className="dashboard__year-btn"
-                  onClick={() => changeYear(1)}
-                  disabled={isLoading || currentYear >= new Date().getFullYear()}
-                >
-                  {currentYear + 1} ›
-                </button>
+                {isMobileView ? (
+                  // Controles para semestres en modo responsive
+                  <>
+                    <button
+                      className="dashboard__year-btn"
+                      onClick={() => changeSemester(-1)}
+                      disabled={isChartLoading}
+                    >
+                      ‹ Anterior
+                    </button>
+                    <span className="dashboard__current-year">
+                      {currentYear} - {currentSemester === 0 ? '1er Semestre' : '2do Semestre'}
+                    </span>
+                    <button
+                      className="dashboard__year-btn"
+                      onClick={() => changeSemester(1)}
+                      disabled={
+                        isChartLoading ||
+                        (currentYear >= new Date().getFullYear() && currentSemester === 1)
+                      }
+                    >
+                      Siguiente ›
+                    </button>
+                  </>
+                ) : (
+                  // Controles normales para años en modo desktop
+                  <>
+                    <button
+                      className="dashboard__year-btn"
+                      onClick={() => changeYear(-1)}
+                      disabled={isChartLoading}
+                    >
+                      ‹ {currentYear - 1}
+                    </button>
+                    <span className="dashboard__current-year">{currentYear}</span>
+                    <button
+                      className="dashboard__year-btn"
+                      onClick={() => changeYear(1)}
+                      disabled={isChartLoading || currentYear >= new Date().getFullYear()}
+                    >
+                      {currentYear + 1} ›
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="dashboard__chart-container">
-              {isLoading ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%',
-                    fontSize: '1rem',
-                    color: '#6b7280',
-                  }}
-                >
-                  Cargando datos de {currentYear}...
-                </div>
-              ) : (
-                <canvas ref={chartRef} className="dashboard__chart-canvas"></canvas>
+            <div className="dashboard__chart-container" style={{ position: 'relative' }}>
+              <canvas ref={chartRef} className="dashboard__chart-canvas"></canvas>
+              {isChartLoading && (
+                <div className="dashboard__chart-loading">Cargando datos de {currentYear}...</div>
               )}
             </div>
           </div>
