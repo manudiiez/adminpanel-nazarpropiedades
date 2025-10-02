@@ -1,14 +1,17 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
 import './styles.scss'
-
-// Declarar Chart como global para TypeScript
-declare global {
-  interface Window {
-    Chart: any
-  }
-}
 
 interface MonthData {
   earnings: { ars: number; usd: number }
@@ -60,26 +63,18 @@ export default function DashboardView() {
   const [isLoading, setIsLoading] = useState(true)
   const [isChartLoading, setIsChartLoading] = useState(true)
   const [isMobileView, setIsMobileView] = useState(false)
-  const [currentSemester, setCurrentSemester] = useState(0) // 0 para primer semestre, 1 para segundo
+  const [currentSemester, setCurrentSemester] = useState(() => {
+    // Inicializar en el semestre actual
+    const now = new Date()
+    const currentMonth = now.getMonth() // 0-11
+    return currentMonth < 6 ? 0 : 1 // 0 para primer semestre (ene-jun), 1 para segundo (jul-dic)
+  })
   const [allContracts, setAllContracts] = useState<ContractData[]>([])
-  const [usdRate, setUsdRate] = useState<number>(1000) // Valor por defecto
-  const chartRef = useRef<HTMLCanvasElement>(null)
-  const chartInstanceRef = useRef<any>(null)
 
-  // Función para obtener colores CSS del tema
-  const getChartColors = () => {
-    const root = document.documentElement
-    const computedStyle = getComputedStyle(root)
-
-    return {
-      primary: computedStyle.getPropertyValue('--chart-primary').trim() || '#000000',
-      secondary: computedStyle.getPropertyValue('--chart-secondary').trim() || '#e5e7eb',
-      border: computedStyle.getPropertyValue('--chart-border').trim() || '#000000',
-      borderSecondary:
-        computedStyle.getPropertyValue('--chart-border-secondary').trim() || '#d1d5db',
-      grid: computedStyle.getPropertyValue('--chart-grid').trim() || '#f3f4f6',
-      text: computedStyle.getPropertyValue('--chart-text').trim() || '#374151',
-    }
+  // Colores para el gráfico
+  const chartColors = {
+    primary: '#6b7280',
+    secondary: '#9ca3af',
   }
 
   const months = [
@@ -128,7 +123,7 @@ export default function DashboardView() {
   }
 
   // Funciones de utilidad
-  const formatCurrency = (amount: number, currency = 'USD') => {
+  const formatCurrency = (amount: number, currency = 'ARS') => {
     if (currency === 'USD') {
       return new Intl.NumberFormat('en-AR', {
         style: 'currency',
@@ -149,16 +144,45 @@ export default function DashboardView() {
     }
   }
 
-    const formatDualCurrency = (amounts: { ars: number; usd: number }) => {
-    if (!amounts) return formatCurrency(0, 'USD')
+  const formatDualCurrency = (amounts: { ars: number; usd: number }) => {
+    if (!amounts) return formatCurrency(0, 'ARS')
 
-    // Solo mostrar USD ya que hemos convertido todo a USD
     const usdAmount = amounts.usd || 0
-    return formatCurrency(usdAmount, 'USD')
+    const arsAmount = amounts.ars || 0
+
+    if (usdAmount > 0 && arsAmount > 0) {
+      return `${formatCurrency(usdAmount, 'USD')} / ${formatCurrency(arsAmount, 'ARS')}`
+    } else if (usdAmount > 0) {
+      return formatCurrency(usdAmount, 'USD')
+    } else if (arsAmount > 0) {
+      return formatCurrency(arsAmount, 'ARS')
+    } else {
+      return formatCurrency(0, 'ARS')
+    }
   }
 
   const formatNumber = (number: number) => {
     return new Intl.NumberFormat('es-AR').format(number)
+  }
+
+  // Función para formatear números abreviados en mobile
+  const formatCompactCurrency = (value: number, currency: 'USD' | 'ARS') => {
+    if (!isMobileView) {
+      return formatCurrency(value, currency)
+    }
+
+    const absValue = Math.abs(value)
+    const symbol = currency === 'USD' ? '$' : '$'
+
+    if (absValue >= 1000000) {
+      const millions = absValue / 1000000
+      return `${symbol}${millions.toFixed(0)}M`
+    } else if (absValue >= 1000) {
+      const thousands = absValue / 1000
+      return `${symbol}${thousands.toFixed(0)}K`
+    } else {
+      return `${symbol}${absValue.toFixed(0)}`
+    }
   }
 
   const calculateYearlyTotals = (year: number) => {
@@ -190,30 +214,6 @@ export default function DashboardView() {
       console.error('Error fetching contracts:', error)
       return []
     }
-  }
-
-  // Función para obtener el tipo de cambio USD/ARS
-  const fetchUsdRate = async () => {
-    try {
-      const response = await fetch('https://api.bluelytics.com.ar/v2/latest')
-      if (!response.ok) {
-        throw new Error('Error al obtener tipo de cambio')
-      }
-
-      const data = await response.json()
-      const blueRate = data.blue?.value_avg || 1000 // Usar valor promedio blue, fallback a 1000
-      setUsdRate(blueRate)
-      return blueRate
-    } catch (error) {
-      console.error('Error fetching USD rate:', error)
-      // Mantener el valor por defecto en caso de error
-      return usdRate
-    }
-  }
-
-  // Función para convertir ARS a USD
-  const convertArsToUsd = (arsAmount: number) => {
-    return arsAmount / usdRate
   }
 
   // Función para obtener propiedades totales
@@ -299,28 +299,36 @@ export default function DashboardView() {
       const ownerFeeCurrency = (contract.ownerFeeCurrency || 'ARS').toUpperCase()
       const buyerFeeCurrency = (contract.buyerFeeCurrency || 'ARS').toUpperCase()
 
-      // Convertir todos los honorarios a USD
-      let ownerFeeUSD = ownerFee
-      let buyerFeeUSD = buyerFee
+      // Calcular total de honorarios por moneda
+      let totalFeesARS = 0
+      let totalFeesUSD = 0
 
+      // Sumar honorarios del propietario
       if (ownerFeeCurrency === 'ARS') {
-        ownerFeeUSD = convertArsToUsd(ownerFee)
+        totalFeesARS += ownerFee
+      } else if (ownerFeeCurrency === 'USD') {
+        totalFeesUSD += ownerFee
       }
 
+      // Sumar honorarios del comprador/inquilino
       if (buyerFeeCurrency === 'ARS') {
-        buyerFeeUSD = convertArsToUsd(buyerFee)
+        totalFeesARS += buyerFee
+      } else if (buyerFeeCurrency === 'USD') {
+        totalFeesUSD += buyerFee
       }
 
-      const totalFeesUSD = ownerFeeUSD + buyerFeeUSD
-
-      // Agregar comisiones según el tipo de contrato (todo en USD)
+      // Agregar comisiones según el tipo de contrato
       if (contract.type === 'venta') {
         monthlyData[month].propertiesSold += 1
+        monthlyData[month].salesCommission.ars += totalFeesARS
         monthlyData[month].salesCommission.usd += totalFeesUSD
+        monthlyData[month].earnings.ars += totalFeesARS
         monthlyData[month].earnings.usd += totalFeesUSD
       } else if (contract.type === 'alquiler') {
         monthlyData[month].propertiesRented += 1
+        monthlyData[month].rentalCommission.ars += totalFeesARS
         monthlyData[month].rentalCommission.usd += totalFeesUSD
+        monthlyData[month].earnings.ars += totalFeesARS
         monthlyData[month].earnings.usd += totalFeesUSD
       }
     })
@@ -383,12 +391,11 @@ export default function DashboardView() {
 
       const currentYear = new Date().getFullYear()
 
-      // Obtener datos en paralelo incluyendo tipo de cambio
-      const [totalProperties, contracts, properties, usdRateValue] = await Promise.all([
+      // Obtener datos en paralelo
+      const [totalProperties, contracts, properties] = await Promise.all([
         fetchTotalProperties(),
         fetchContracts(currentYear),
         fetchPropertiesByYear(currentYear),
-        fetchUsdRate(),
       ])
 
       // Procesar datos para el año actual
@@ -421,6 +428,7 @@ export default function DashboardView() {
 
   // Función auxiliar para calcular totales de un año específico
   const calculateYearlyTotalsFromData = (yearData: { [month: string]: MonthData }) => {
+    let totalEarningsARS = 0
     let totalEarningsUSD = 0
     let totalProperties = 0
 
@@ -433,13 +441,14 @@ export default function DashboardView() {
 
     Object.values(yearData).forEach((month) => {
       if (month && month.earnings) {
+        totalEarningsARS += month.earnings.ars || 0
         totalEarningsUSD += month.earnings.usd || 0
       }
       totalProperties += month?.propertiesAdded || 0
     })
 
     return {
-      earnings: { ars: 0, usd: totalEarningsUSD }, // Solo USD, ARS en 0
+      earnings: { ars: totalEarningsARS, usd: totalEarningsUSD },
       properties: totalProperties,
     }
   }
@@ -529,42 +538,10 @@ export default function DashboardView() {
     )
   }
 
-  const createEarningsChart = () => {
-    if (!chartRef.current || !window.Chart) return
-
-    const ctx = chartRef.current.getContext('2d')
-    if (!ctx) return
-
+  // Función para preparar datos para Recharts
+  const getChartData = () => {
     const yearData = dashboardData.monthlyData[currentYear]
-    if (!yearData) {
-      console.log('No year data available for', currentYear)
-      return
-    }
-
-    // Destruir gráfico anterior si existe
-    if (chartInstanceRef.current) {
-      chartInstanceRef.current.destroy()
-    }
-
-    // Forzar recálculo del tamaño del canvas
-    const canvas = chartRef.current
-    const container = canvas.parentElement
-    if (container) {
-      const rect = container.getBoundingClientRect()
-      canvas.style.width = rect.width + 'px'
-      canvas.style.height = rect.height + 'px'
-
-      // Establecer tamaño interno del canvas (considerando devicePixelRatio)
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = rect.width * dpr
-      canvas.height = rect.height * dpr
-
-      // Escalar el contexto
-      ctx.scale(dpr, dpr)
-    }
-
-    // Obtener colores actualizados del CSS
-    const colors = getChartColors()
+    if (!yearData) return []
 
     // Determinar qué meses mostrar según el modo responsive
     let displayMonths = months
@@ -574,141 +551,27 @@ export default function DashboardView() {
       displayMonths = months.slice(startIndex, startIndex + 6)
     }
 
-    // Solo obtener datos en USD (ya convertidos)
-    const earningsUSD = displayMonths.map((month) => {
+    return displayMonths.map((month) => {
       const monthData = yearData[month]
-      return monthData?.earnings?.usd || 0
-    })
+      const monthName = isMobileView
+        ? monthNamesShort[month as keyof typeof monthNamesShort]
+        : monthNames[month as keyof typeof monthNames]
 
-    chartInstanceRef.current = new window.Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: displayMonths.map((month) =>
-          isMobileView
-            ? monthNamesShort[month as keyof typeof monthNamesShort]
-            : monthNames[month as keyof typeof monthNames],
-        ),
-        datasets: [
-          {
-            label: 'Ganancias (USD)',
-            data: earningsUSD,
-            backgroundColor: 'rgba(34, 197, 94, 0.8)', // Verde para USD
-            borderColor: '#22c55e',
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        devicePixelRatio: window.devicePixelRatio || 1,
-        resizeDelay: 0,
-        interaction: {
-          mode: 'index',
-          axis: 'x',
-          intersect: false,
-        },
-        hover: {
-          mode: 'index',
-          axis: 'x',
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              color: colors.text,
-              usePointStyle: false,
-            },
-          },
-          tooltip: {
-            callbacks: {
-              label: function (context: any) {
-                const currency = context.datasetIndex === 0 ? 'USD' : 'ARS'
-                const value = context.parsed.y || 0
-                return `${currency}: ${formatCurrency(value, currency)}`
-              },
-              afterBody: function (tooltipItems: any) {
-                const chartIndex = tooltipItems[0].dataIndex
-                const actualMonth = displayMonths[chartIndex]
-                const monthData = yearData[actualMonth]
-                if (!monthData || !monthData.earnings) return []
-
-                return ['', `Total mes: ${formatDualCurrency(monthData.earnings)}`]
-              },
-            },
-          },
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: function (value: any) {
-                return formatCurrency(value, 'USD')
-              },
-              color: colors.text,
-            },
-            grid: {
-              color: colors.grid,
-            },
-            title: {
-              display: true,
-              text: 'Ganancias (USD)',
-              color: colors.text,
-            },
-          },
-          x: {
-            ticks: {
-              color: colors.text,
-            },
-            grid: {
-              display: false,
-            },
-          },
-        },
-        onClick: (event: any, elements: any) => {
-          if (elements.length > 0) {
-            const chartIndex = elements[0].index
-            const actualMonth = displayMonths[chartIndex]
-            selectMonth(actualMonth)
-          }
-        },
-      },
-    })
-
-    // Forzar resize después de crear el gráfico para corregir desfases
-    setTimeout(() => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.resize()
+      return {
+        month,
+        monthName,
+        USD: monthData?.earnings?.usd || 0,
+        ARS: monthData?.earnings?.ars || 0,
       }
-    }, 100)
+    })
   }
 
-  // Cargar Chart.js y crear el gráfico
-  useEffect(() => {
-    const loadChartJS = async () => {
-      if (!window.Chart) {
-        const script = document.createElement('script')
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js'
-        script.onload = () => {
-          createEarningsChart()
-        }
-        document.head.appendChild(script)
-      } else {
-        createEarningsChart()
-      }
+  // Función para manejar click en las barras
+  const handleBarClick = (data: any) => {
+    if (data && data.month) {
+      selectMonth(data.month)
     }
-
-    loadChartJS()
-
-    // Cleanup al desmontar el componente
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy()
-      }
-    }
-  }, [])
+  }
 
   // Detectar cambio de tamaño de pantalla para modo responsive
   useEffect(() => {
@@ -728,13 +591,6 @@ export default function DashboardView() {
   useEffect(() => {
     loadInitialDashboardData()
   }, [])
-
-  // Recrear gráfico cuando cambien el año, mes seleccionado, o modo responsive
-  useEffect(() => {
-    if (window.Chart && !isChartLoading) {
-      createEarningsChart()
-    }
-  }, [currentYear, selectedMonth, dashboardData, isChartLoading, isMobileView, currentSemester])
 
   return (
     <div className="dashboard">
@@ -835,10 +691,103 @@ export default function DashboardView() {
               </div>
             </div>
 
-            <div className="dashboard__chart-container" style={{ position: 'relative' }}>
-              <canvas ref={chartRef} className="dashboard__chart-canvas"></canvas>
-              {isChartLoading && (
+            <div className="dashboard__chart-container">
+              {isChartLoading ? (
                 <div className="dashboard__chart-loading">Cargando datos de {currentYear}...</div>
+              ) : (
+                <ResponsiveContainer 
+                  width="100%" 
+                  height={isMobileView ? 320 : 400}
+                  minWidth={0}
+                >
+                  <BarChart
+                    data={getChartData()}
+                    margin={
+                      isMobileView
+                        ? { top: 15, right: 25, left: 25, bottom: 15 }
+                        : { top: 20, right: 30, left: 20, bottom: 5 }
+                    }
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--theme-elevation-200)" />
+                    <XAxis
+                      dataKey="monthName"
+                      tick={{
+                        fill: 'var(--theme-elevation-700)',
+                        fontSize: isMobileView ? 10 : 12,
+                      }}
+                    />
+                    <YAxis
+                      yAxisId="left"
+                      tick={{
+                        fill: 'var(--theme-elevation-700)',
+                        fontSize: isMobileView ? 10 : 12,
+                      }}
+                      tickFormatter={(value) => formatCompactCurrency(value, 'USD')}
+                      width={isMobileView ? 40 : 60}
+                    />
+                    <YAxis
+                      yAxisId="right"
+                      orientation="right"
+                      tick={{
+                        fill: 'var(--theme-elevation-700)',
+                        fontSize: isMobileView ? 10 : 12,
+                      }}
+                      tickFormatter={(value) => formatCompactCurrency(value, 'ARS')}
+                      width={isMobileView ? 40 : 60}
+                    />
+                    <Tooltip
+                      formatter={(value: number, name: string) => [
+                        formatCurrency(value, name as 'USD' | 'ARS'),
+                        `Ganancias ${name}`,
+                      ]}
+                      labelFormatter={(label, payload) => {
+                        if (payload && payload[0]) {
+                          const data = payload[0].payload
+                          const totalUSD = data.USD || 0
+                          const totalARS = data.ARS || 0
+
+                          return [
+                            label,
+                            totalUSD > 0 && totalARS > 0
+                              ? `Total: ${formatCurrency(totalUSD, 'USD')} / ${formatCurrency(totalARS, 'ARS')}`
+                              : totalUSD > 0
+                                ? `Total: ${formatCurrency(totalUSD, 'USD')}`
+                                : `Total: ${formatCurrency(totalARS, 'ARS')}`,
+                          ]
+                        }
+                        return label
+                      }}
+                      contentStyle={{
+                        backgroundColor: 'var(--theme-elevation-50)',
+                        border: '1px solid var(--theme-border-color)',
+                        borderRadius: 'var(--style-radius-m)',
+                      }}
+                    />
+                    <Legend wrapperStyle={{ color: 'var(--theme-elevation-700)' }} />
+                    <Bar
+                      yAxisId="left"
+                      dataKey="USD"
+                      fill="rgba(107, 114, 128, 0.8)"
+                      stroke="#6b7280"
+                      strokeWidth={1}
+                      name="USD"
+                      radius={[2, 2, 0, 0]}
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <Bar
+                      yAxisId="right"
+                      dataKey="ARS"
+                      fill="rgba(165, 170, 180, 0.8)"
+                      stroke="#9ca3af"
+                      strokeWidth={1}
+                      name="ARS"
+                      radius={[2, 2, 0, 0]}
+                      onClick={handleBarClick}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
               )}
             </div>
           </div>

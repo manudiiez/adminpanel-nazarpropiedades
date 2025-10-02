@@ -9,6 +9,22 @@
 }
 
 .dashboard {
+  
+  &__content {
+    width: 100%;
+    
+    @media (max-width: 768px) {
+      padding: 0; // Eliminar padding en mobile
+    }
+  }
+  
+  &__main {
+    width: 100%;
+    
+    @media (max-width: 768px) {
+      padding: 0; // Eliminar padding en mobile
+    }
+  }
 
   // Metrics
   &__metrics {
@@ -455,6 +471,24 @@
   }
 }
 
+.dashboard__chart-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  
+  @media (max-width: 768px) {
+    // Método agresivo para tomar todo el ancho del viewport
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    padding: 0 0.5rem; // Padding mínimo para evitar que toque los bordes
+    box-sizing: border-box;
+  }
+}
 
 .dashboard__chart-loading {
   position: absolute;
