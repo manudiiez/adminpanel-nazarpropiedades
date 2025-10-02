@@ -61,6 +61,7 @@ export default function DashboardView() {
   const [isChartLoading, setIsChartLoading] = useState(true)
   const [isMobileView, setIsMobileView] = useState(false)
   const [currentSemester, setCurrentSemester] = useState(0) // 0 para primer semestre, 1 para segundo
+  const [allContracts, setAllContracts] = useState<ContractData[]>([])
   const chartRef = useRef<HTMLCanvasElement>(null)
   const chartInstanceRef = useRef<any>(null)
 
@@ -337,29 +338,29 @@ export default function DashboardView() {
     try {
       setIsChartLoading(true)
 
-      // Si ya tenemos datos para este año, no volver a cargar
-      if (dashboardData.monthlyData[year]) {
-        setIsChartLoading(false)
-        return
-      }
-
-      // Obtener contratos y propiedades del año específico
+      // Siempre cargar contratos del año solicitado para la lista
       const [contracts, properties] = await Promise.all([
         fetchContracts(year),
         fetchPropertiesByYear(year),
       ])
 
-      // Procesar datos del año
-      const yearData = processContractsData(contracts, properties, year)
+      // Actualizar contratos del año seleccionado
+      setAllContracts(contracts)
 
-      // Actualizar datos del dashboard
-      setDashboardData((prev) => ({
-        ...prev,
-        monthlyData: {
-          ...prev.monthlyData,
-          [year]: yearData,
-        },
-      }))
+      // Solo procesar datos del dashboard si no los tenemos ya
+      if (!dashboardData.monthlyData[year]) {
+        // Procesar datos del año
+        const yearData = processContractsData(contracts, properties, year)
+
+        // Actualizar datos del dashboard
+        setDashboardData((prev) => ({
+          ...prev,
+          monthlyData: {
+            ...prev.monthlyData,
+            [year]: yearData,
+          },
+        }))
+      }
     } catch (error) {
       console.error('Error loading year data:', error)
     } finally {
@@ -400,6 +401,7 @@ export default function DashboardView() {
 
       setDashboardData(processedData)
       setCurrentYear(currentYear)
+      setAllContracts(contracts) // Almacenar todos los contratos
     } catch (error) {
       console.error('Error loading initial dashboard data:', error)
     } finally {
@@ -486,6 +488,40 @@ export default function DashboardView() {
     }
   }
 
+  // Función para filtrar contratos según la vista actual
+  const getFilteredContracts = () => {
+    if (!allContracts.length) return []
+
+    let filteredContracts = allContracts.filter((contract) => {
+      const signDate = new Date(contract.signDate)
+      return signDate.getFullYear() === currentYear
+    })
+
+    // Si hay un mes seleccionado, filtrar por ese mes
+    if (selectedMonth) {
+      filteredContracts = filteredContracts.filter((contract) => {
+        const signDate = new Date(contract.signDate)
+        const contractMonth = months[signDate.getMonth()]
+        return contractMonth === selectedMonth
+      })
+    }
+    // Si estamos en móvil, filtrar por semestre
+    else if (isMobileView) {
+      const startMonth = currentSemester * 6
+      const endMonth = startMonth + 6
+      filteredContracts = filteredContracts.filter((contract) => {
+        const signDate = new Date(contract.signDate)
+        const monthIndex = signDate.getMonth()
+        return monthIndex >= startMonth && monthIndex < endMonth
+      })
+    }
+
+    // Ordenar por fecha de firma (más recientes primero)
+    return filteredContracts.sort(
+      (a, b) => new Date(b.signDate).getTime() - new Date(a.signDate).getTime(),
+    )
+  }
+
   const createEarningsChart = () => {
     if (!chartRef.current || !window.Chart) return
 
@@ -556,7 +592,13 @@ export default function DashboardView() {
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
-          mode: 'index',
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false,
+        },
+        hover: {
+          mode: 'nearest',
+          axis: 'x',
           intersect: false,
         },
         plugins: {
@@ -576,8 +618,9 @@ export default function DashboardView() {
                 return `${currency}: ${formatCurrency(value, currency)}`
               },
               afterBody: function (tooltipItems: any) {
-                const monthIndex = tooltipItems[0].dataIndex
-                const monthData = yearData[displayMonths[monthIndex]]
+                const chartIndex = tooltipItems[0].dataIndex
+                const actualMonth = displayMonths[chartIndex]
+                const monthData = yearData[actualMonth]
                 if (!monthData || !monthData.earnings) return []
 
                 return ['', `Total mes: ${formatDualCurrency(monthData.earnings)}`]
@@ -635,8 +678,9 @@ export default function DashboardView() {
         },
         onClick: (event: any, elements: any) => {
           if (elements.length > 0) {
-            const index = elements[0].index
-            selectMonth(displayMonths[index])
+            const chartIndex = elements[0].index
+            const actualMonth = displayMonths[chartIndex]
+            selectMonth(actualMonth)
           }
         },
       },
@@ -993,6 +1037,116 @@ export default function DashboardView() {
                     )
                   })()}
                 </>
+              )}
+            </div>
+          </div>
+
+          {/* Lista de Contratos */}
+          <div className="dashboard__contracts-section">
+            <div className="dashboard__contracts-header">
+              <h3 className="dashboard__section-title">
+                Contratos{' '}
+                {selectedMonth
+                  ? `- ${monthNames[selectedMonth as keyof typeof monthNames]} ${currentYear}`
+                  : isMobileView
+                    ? `- ${currentYear} (${currentSemester === 0 ? '1er Semestre' : '2do Semestre'})`
+                    : `- ${currentYear}`}
+              </h3>
+              <span className="dashboard__contracts-count">
+                {getFilteredContracts().length} contratos
+              </span>
+            </div>
+
+            <div className="dashboard__contracts-list">
+              {getFilteredContracts().length > 0 ? (
+                getFilteredContracts().map((contract) => (
+                  <div key={contract.id} className="dashboard__contract-card">
+                    <div className="dashboard__contract-header">
+                      <div className="dashboard__contract-type">
+                        <span
+                          className={`dashboard__contract-badge dashboard__contract-badge--${contract.type}`}
+                        >
+                          {contract.type === 'venta' ? 'Venta' : 'Alquiler'}
+                        </span>
+                        <span className="dashboard__contract-date">
+                          {new Date(contract.signDate).toLocaleDateString('es-AR')}
+                        </span>
+                      </div>
+                      <div className="dashboard__contract-total">
+                        {(() => {
+                          const ownerFee = contract.ownerFee || 0
+                          const buyerFee = contract.buyerFee || 0
+                          const ownerCurrency = contract.ownerFeeCurrency || 'ARS'
+                          const buyerCurrency = contract.buyerFeeCurrency || 'ARS'
+
+                          // Calcular totales por moneda
+                          let totalUSD = 0
+                          let totalARS = 0
+
+                          if (ownerCurrency === 'USD') totalUSD += ownerFee
+                          else totalARS += ownerFee
+
+                          if (buyerCurrency === 'USD') totalUSD += buyerFee
+                          else totalARS += buyerFee
+
+                          if (totalUSD > 0 && totalARS > 0) {
+                            return `${formatCurrency(totalUSD, 'USD')} / ${formatCurrency(totalARS, 'ARS')}`
+                          } else if (totalUSD > 0) {
+                            return formatCurrency(totalUSD, 'USD')
+                          } else {
+                            return formatCurrency(totalARS, 'ARS')
+                          }
+                        })()}
+                      </div>
+                    </div>
+
+                    <div className="dashboard__contract-details">
+                      <div className="dashboard__contract-property">
+                        <strong>Propiedad:</strong> {contract.property?.title || 'Sin título'}
+                      </div>
+
+                      <div className="dashboard__contract-fees">
+                        <div className="dashboard__contract-fee">
+                          <span className="dashboard__fee-label">
+                            Honorarios Propietario ({contract.ownerFeeCurrency || 'ARS'}):
+                          </span>
+                          <span className="dashboard__fee-value">
+                            {formatCurrency(
+                              contract.ownerFee || 0,
+                              contract.ownerFeeCurrency || 'ARS',
+                            )}
+                          </span>
+                        </div>
+                        <div className="dashboard__contract-fee">
+                          <span className="dashboard__fee-label">
+                            Honorarios {contract.type === 'venta' ? 'Comprador' : 'Inquilino'} (
+                            {contract.buyerFeeCurrency || 'ARS'}):
+                          </span>
+                          <span className="dashboard__fee-value">
+                            {formatCurrency(
+                              contract.buyerFee || 0,
+                              contract.buyerFeeCurrency || 'ARS',
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="dashboard__contract-actions">
+                        <a
+                          href={`/admin/collections/contratos/${contract.id}/detalles`}
+                          className="dashboard__contract-btn"
+                          rel="noopener noreferrer"
+                        >
+                          Ver detalles
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="dashboard__no-contracts">
+                  <p>No hay contratos para el período seleccionado</p>
+                </div>
               )}
             </div>
           </div>
