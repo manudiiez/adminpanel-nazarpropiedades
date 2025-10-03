@@ -105,7 +105,7 @@ interface InmoupData {
   orientation?: string | number
   garageType?: string | number
   furnished?: boolean | string | number
-  antiquity?: string | number
+  antiquity?: string | number | { value: number; tiempo: string }
   frontMeters?: number
   deepMeters?: number
   expenses?: number
@@ -122,13 +122,27 @@ interface InmoupData {
 }
 
 /**
- * Función para mapear un valor individual usando los mapeos de Inmoup
+ * Función para mapear un valor individual usando los mapeos de Inmoup (para mapeos simples)
  */
-function mapValue(value: string, mappingType: keyof typeof inmoupMappings): string | number {
+function mapValue(
+  value: string,
+  mappingType: Exclude<keyof typeof inmoupMappings, 'antiquity'>,
+): string | number {
   if (!value) return value
 
   const mapping = inmoupMappings[mappingType]
-  return mapping[value] || value
+  const mappedValue = mapping[value] as string | number | undefined
+  return mappedValue || value
+}
+
+/**
+ * Función específica para mapear la antigüedad que devuelve un objeto
+ */
+function mapAntiquity(value: string): { value: number; tiempo: string } | string {
+  if (!value) return value
+
+  const antiquityMapping = inmoupMappings.antiquity[value]
+  return antiquityMapping || value
 }
 
 /**
@@ -136,7 +150,7 @@ function mapValue(value: string, mappingType: keyof typeof inmoupMappings): stri
  */
 function mapArrayValues(
   values: string[],
-  mappingType: keyof typeof inmoupMappings,
+  mappingType: Exclude<keyof typeof inmoupMappings, 'antiquity'>,
 ): (string | number)[] {
   if (!Array.isArray(values)) return []
 
@@ -213,7 +227,7 @@ export function mapFormDataToInmoup(propertyData: PropertyData): InmoupData {
       'conservationStatus',
     ),
     orientation: mapValue(propertyData.caracteristics?.orientation || '', 'orientation'),
-    antiquity: mapValue(propertyData.caracteristics?.antiquity || '', 'antiquity'),
+    antiquity: mapAntiquity(propertyData.caracteristics?.antiquity || ''),
     frontMeters: propertyData.caracteristics?.frontMeters,
     deepMeters: propertyData.caracteristics?.deepMeters,
 
