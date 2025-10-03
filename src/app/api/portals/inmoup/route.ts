@@ -255,6 +255,8 @@ function createInmoupData(
             (mappedPropertyData.amenityServices || []).includes('financiacion') ||
             (mappedPropertyData.amenityServices || []).includes('ofrece-financiacion') ||
             undefined,
+          permuta:
+            (mappedPropertyData.amenityServices || []).includes('recibe_permuta') || undefined,
           barrio_privado:
             mappedPropertyData.barrioPrivado === 'Si' ||
             (mappedPropertyData.amenityServices || []).includes('barrio-privado') ||
@@ -498,7 +500,7 @@ export async function POST(request: NextRequest) {
     // console.log('Datos finales enviados a Inmoup:', inmoupData)
     // console.log('Datos mapeados para Inmoup ubicacion:', inmoupData.propiedades[0].ubicacion)
     // console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
-    // console.log('Datos mapeados para Inmoup servicios:', inmoupData.propiedades[0].servicios)
+    console.log('Datos mapeados para Inmoup servicios:', inmoupData.propiedades[0].servicios)
     // console.log('Datos mapeados para Inmoup vendedor:', inmoupData.propiedades[0].vendedor)
     // Llamada real a API de Inmoup
     try {

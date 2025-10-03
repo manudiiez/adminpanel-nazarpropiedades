@@ -289,6 +289,7 @@ export const amenityServicesOptions: SelectOption[] = [
     type: [
       'casa',
       'departamento',
+      'lote',
       'bodega',
       'cabaña',
       'quinta',
@@ -361,6 +362,7 @@ export const amenityServicesOptions: SelectOption[] = [
       'departamento',
       'bodega',
       'cabaña',
+      'lote',
       'campo',
       'quinta',
       'condominio',
