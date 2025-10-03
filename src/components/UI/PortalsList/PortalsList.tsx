@@ -137,6 +137,17 @@ export default function PortalsList({
             lastError: errorData.updatedInmoupData.lastError,
           })
           console.log('Datos de error actualizados desde backend:', errorData.updatedInmoupData)
+          console.log('lastError actualizado:', errorData.updatedInmoupData.lastError)
+        } else {
+          // Si no hay updatedInmoupData, actualizar manualmente el estado
+          setStatuses((prev) => ({ ...prev, inmoup: 'error' }))
+          setLocalInmoupData({
+            ...localInmoupData,
+            status: 'error',
+            lastError: errorData.error || 'Error al publicar en Inmoup',
+            lastSyncAt: new Date().toISOString(),
+          })
+          console.log('Error actualizado manualmente:', errorData.error)
         }
 
         throw new Error(errorData.error || 'Error al publicar en Inmoup')
@@ -187,9 +198,11 @@ export default function PortalsList({
     } catch (error) {
       console.error('Error publicando en Inmoup:', error)
 
-      // Solo actualizar si no se hizo en el bloque de manejo de errores HTTP
-      if (statuses['inmoup'] !== 'error') {
-        setStatuses((prev) => ({ ...prev, inmoup: 'error' }))
+      // Actualizar siempre el estado de error, ya sea que venga del backend o del catch
+      setStatuses((prev) => ({ ...prev, inmoup: 'error' }))
+
+      // Solo actualizar lastError si no se actualizó desde el backend
+      if (!localInmoupData?.lastError || localInmoupData.lastError === undefined) {
         setLocalInmoupData({
           ...localInmoupData,
           status: 'error',
@@ -560,11 +573,31 @@ export default function PortalsList({
           </div>
         )
       case 'error':
-        const errorMessage = 'Hubo un problema al procesar la solicitud. Intenta nuevamente.'
+        // Obtener el error específico del backend para Inmoup
+        let errorMessage = 'Hubo un problema al procesar la solicitud. Intenta nuevamente.'
+        let showDuplicatePropertyMessage = false
+
+        if (portalKey === 'inmoup' && localInmoupData?.lastError) {
+          errorMessage = localInmoupData.lastError
+
+          // Detectar si el error es por propiedad duplicada
+          if (errorMessage.toLowerCase().includes('la propiedad ya existe en inmoup')) {
+            showDuplicatePropertyMessage = true
+          }
+        }
+
         return (
-          <div className="property-details__portal-status-message property-details__portal-status-message--error">
-            ⚠️ <strong>Error:</strong> {errorMessage}
-          </div>
+          <>
+            <div className="property-details__portal-status-message property-details__portal-status-message--error">
+              ⚠️ <strong>Error:</strong> {errorMessage}
+            </div>
+            {showDuplicatePropertyMessage && (
+              <div className="property-details__portal-status-message property-details__portal-status-message--warning">
+                💡 <strong>Sugerencia:</strong> Esta propiedad ya existe en Inmoup. Debes probar
+                cambiando el domicilio para crear una nueva publicación.
+              </div>
+            )}
+          </>
         )
       case 'queued':
         return (
@@ -591,14 +624,6 @@ export default function PortalsList({
         )
     }
     return null
-  }
-
-  // Función para publicar en Inmoup (botón principal)
-  const publishInInmoup = async () => {
-    const currentStatus = statuses['inmoup']
-    if (currentStatus !== 'published' && currentStatus !== 'ok') {
-      await handlePublish('inmoup')
-    }
   }
 
   return (
@@ -666,11 +691,15 @@ export default function PortalsList({
               externalUrl:
                 portalKey === 'inmoup' ? localInmoupData?.externalUrl : portal.externalUrl,
             })}
-            {localInmoupData.lastError && (
-              <div className="property-details__portal-status-message property-details__portal-status-message--error">
-                ⚠️ <strong>Error:</strong> {localInmoupData.lastError}
-              </div>
-            )}
+
+            {/* Mostrar error específico solo si no se mostró en getStatusMessage */}
+            {portalKey === 'inmoup' &&
+              localInmoupData.lastError &&
+              statuses[portalKey] !== 'error' && (
+                <div className="property-details__portal-status-message property-details__portal-status-message--error">
+                  ⚠️ <strong>Error:</strong> {localInmoupData.lastError}
+                </div>
+              )}
           </div>
         ))}
       </div>

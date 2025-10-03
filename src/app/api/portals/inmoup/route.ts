@@ -205,8 +205,8 @@ function createInmoupData(
           estrellas: mappedPropertyData.estrellas || undefined,
           cochera: mappedPropertyData.garageType || undefined,
           antiguedad: {
-            valor: mappedPropertyData.antiquity || undefined,
-            tiempo: mappedPropertyData.antiquity ? 'años' : undefined,
+            valor: mappedPropertyData.antiquity.value || undefined,
+            tiempo: mappedPropertyData.antiquity.tiempo || undefined,
           },
           estado_conservacion: mappedPropertyData.conservationStatus || undefined,
 
@@ -238,7 +238,10 @@ function createInmoupData(
             (mappedPropertyData.amenityEnvironments || []).includes('pileta') ||
             undefined,
           zona_escolar:
-            (mappedPropertyData.amenityNearbyZones || []).includes('colegios') || undefined,
+            (mappedPropertyData.amenityNearbyZones || []).includes('colegios') ||
+            (mappedPropertyData.amenityNearbyZones || []).includes('universidades') ||
+            undefined,
+
           mascota:
             mappedPropertyData.mascotas === 'Si' ||
             (mappedPropertyData.amenityServices || []).includes('permite-mascotas') ||
@@ -499,7 +502,7 @@ export async function POST(request: NextRequest) {
 
     // console.log('Datos finales enviados a Inmoup:', inmoupData)
     // console.log('Datos mapeados para Inmoup ubicacion:', inmoupData.propiedades[0].ubicacion)
-    // console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
+    console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
     console.log('Datos mapeados para Inmoup servicios:', inmoupData.propiedades[0].servicios)
     // console.log('Datos mapeados para Inmoup vendedor:', inmoupData.propiedades[0].vendedor)
     // Llamada real a API de Inmoup
