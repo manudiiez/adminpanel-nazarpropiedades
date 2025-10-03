@@ -197,7 +197,12 @@ function createInmoupData(
           precio_peso_m2: undefined, // Se puede calcular
           precio_dolar_m2: undefined, // Se puede calcular
           expensas: mappedPropertyData.expenses || undefined,
-          tiene_expensas: mappedPropertyData.hasExpenses || undefined,
+          tiene_expensas:
+            mappedPropertyData.hasExpenses === 'Si'
+              ? true
+              : mappedPropertyData.hasExpenses === 'No'
+                ? false
+                : undefined,
           dormitorios: mappedPropertyData.bedrooms || undefined,
           banos: mappedPropertyData.bathrooms || undefined,
           plantas: mappedPropertyData.plantas || undefined,
@@ -212,27 +217,48 @@ function createInmoupData(
 
           // Servicios básicos - priorizar campos directos sobre amenityServices
           agua:
-            mappedPropertyData.agua === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('agua-corriente') ||
-            undefined,
+            mappedPropertyData.agua === 'Si'
+              ? true
+              : mappedPropertyData.agua === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('agua-corriente')
+                  ? true
+                  : undefined,
           luz:
-            mappedPropertyData.luz === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('luz') ||
-            (mappedPropertyData.amenityServices || []).includes('electricidad') ||
-            undefined,
+            mappedPropertyData.luz === 'Si'
+              ? true
+              : mappedPropertyData.luz === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('luz') ||
+                    (mappedPropertyData.amenityServices || []).includes('electricidad')
+                  ? true
+                  : undefined,
           gas:
-            mappedPropertyData.gas === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('gas-natural') ||
-            undefined,
+            mappedPropertyData.gas === 'Si'
+              ? true
+              : mappedPropertyData.gas === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('gas-natural')
+                  ? true
+                  : undefined,
           cloacas:
-            mappedPropertyData.cloacas === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('desague-cloacal') ||
-            undefined,
+            mappedPropertyData.cloacas === 'Si'
+              ? true
+              : mappedPropertyData.cloacas === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('desague-cloacal')
+                  ? true
+                  : undefined,
           telefono: (mappedPropertyData.amenityServices || []).includes('telefono') || undefined,
           internet: (mappedPropertyData.amenityServices || []).includes('internet') || undefined,
 
           // Características de la propiedad
-          amoblado: mappedPropertyData.furnished === 'si' || undefined,
+          amoblado:
+            mappedPropertyData.furnished === 'si'
+              ? true
+              : mappedPropertyData.furnished === 'no'
+                ? false
+                : undefined,
           piscina:
             (mappedPropertyData.amenityServices || []).includes('piscina') ||
             (mappedPropertyData.amenityEnvironments || []).includes('pileta') ||
@@ -243,9 +269,13 @@ function createInmoupData(
             undefined,
 
           mascota:
-            mappedPropertyData.mascotas === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('permite-mascotas') ||
-            undefined,
+            mappedPropertyData.mascotas === 'Si'
+              ? true
+              : mappedPropertyData.mascotas === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('permite-mascotas')
+                  ? true
+                  : undefined,
           aire_acondicionado:
             (mappedPropertyData.amenityServices || []).includes('aire-acondicionado') || undefined,
           calefaccion_central:
@@ -261,10 +291,15 @@ function createInmoupData(
           permuta:
             (mappedPropertyData.amenityServices || []).includes('recibe_permuta') || undefined,
           barrio_privado:
-            mappedPropertyData.barrioPrivado === 'Si' ||
-            (mappedPropertyData.amenityServices || []).includes('barrio-privado') ||
-            undefined,
-          barrio_semi_privado: mappedPropertyData.barrioPrivado === 'Semi Privado' || undefined,
+            mappedPropertyData.barrioPrivado === 'Si'
+              ? true
+              : mappedPropertyData.barrioPrivado === 'No'
+                ? false
+                : (mappedPropertyData.amenityServices || []).includes('barrio-privado')
+                  ? true
+                  : undefined,
+          barrio_semi_privado:
+            mappedPropertyData.barrioPrivado === 'Semi Privado' ? true : undefined,
 
           // Ambientes y espacios
           patio: (mappedPropertyData.amenityEnvironments || []).includes('patio') || undefined,
