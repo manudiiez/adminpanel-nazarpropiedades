@@ -9,6 +9,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { propertyLabels } from '@/utils/propertyLabels'
 import './styles.scss'
+import NavigationHeader from '@/components/NavigationHeader'
 // Función para procesar las imágenes de la galería
 async function processGalleryImages(
   galleryValue: any[],
@@ -245,8 +246,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   const totalPortals = Object.keys(portalsConfig).length
 
   return (
-    <div className="property-details">
-      <Gutter>
+    <Gutter>
+      <div className="property-details">
+        <NavigationHeader title="Detalles de la Propiedad" />
         <div className="property-details__main">
           <div className="property-details__container">
             <div className="property-details__layout">
@@ -449,12 +451,12 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                             )}
                           </div>
 
-                          {formData.caracteristics?.furnished && (
+                          {formData.environments?.furnished && (
                             <div className="property-details__info-row">
                               <div className="property-details__info-item">
                                 <span className="property-details__info-label">Amueblado</span>
                                 <span className="property-details__info-value">
-                                  {propertyLabels.furnished(formData.caracteristics?.furnished)}
+                                  {propertyLabels.furnished(formData.environments?.furnished)}
                                 </span>
                               </div>
                             </div>
@@ -749,7 +751,7 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
             </div>
           </div>
         </div>
-      </Gutter>
-    </div>
+      </div>
+    </Gutter>
   )
 }

@@ -10,7 +10,15 @@ export function calculateFee(price: number, fee: number): number {
 
 // dates
 export function fechaLarga(fecha: Date): string {
+  if (!fecha) return 'Fecha no disponible'
+
   const date = new Date(fecha)
+
+  // Verificar si la fecha es válida
+  if (isNaN(date.getTime())) {
+    return 'Fecha inválida'
+  }
+
   const formatter = new Intl.DateTimeFormat('es-ES', {
     day: 'numeric',
     month: 'long',
@@ -28,14 +36,22 @@ export function fechaLarga(fecha: Date): string {
 }
 
 export function fechaCorta(fecha: Date): string {
+  if (!fecha) return 'No disponible'
+
   const date = new Date(fecha)
+
+  // Verificar si la fecha es válida
+  if (isNaN(date.getTime())) {
+    return 'Fecha inválida'
+  }
+
   const formatter = new Intl.DateTimeFormat('es-ES', {
     day: 'numeric',
     month: 'numeric',
     year: 'numeric',
   })
 
-  // "21 de agosto de 2025"
+  // "21/08/2025"
   return formatter.format(date)
 }
 

@@ -73,11 +73,11 @@ export const orientationMappings: InmoupMapping = {
 
 // Tipos de cochera
 export const garageTypeMappings: InmoupMapping = {
-  garage: 'garage',
-  garage_cochera: 'garage-cochera',
-  garage_doble: 'garage-doble',
-  cochera_pasante: 'cochera-pasante',
-  sin_cochera: 'sin-cochera',
+  garage: 'Garage',
+  garage_cochera: 'Garage/Cochera',
+  garage_doble: 'Garage Doble',
+  cochera_pasante: 'Cochera Pasante',
+  sin_cochera: 'Sin Cochera',
 }
 
 // Monedas

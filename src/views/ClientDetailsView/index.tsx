@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { fechaLarga, formatPrice } from '@/utils/formatValues'
 import { Gutter } from '@payloadcms/ui'
+import NavigationHeader from '@/components/NavigationHeader'
 import './styles.scss'
 import ClientDetailsClient from './ClientDetails'
 
@@ -176,15 +177,16 @@ export default async function ClientDetails(props: AdminViewServerProps) {
 
   if (!clientId) {
     return (
-      <div className="client-details">
-        <div className="client-details__container">
-          <Gutter>
+      <Gutter>
+        <div className="client-details">
+          <NavigationHeader title="Error - Detalles del Cliente" />
+          <div className="client-details__container">
             <div className="client-details__error">
               <p>No se pudo obtener el ID del cliente</p>
             </div>
-          </Gutter>
+          </div>
         </div>
-      </div>
+      </Gutter>
     )
   }
 
@@ -192,15 +194,16 @@ export default async function ClientDetails(props: AdminViewServerProps) {
   const clientData = (props as any).formState
   if (!clientData) {
     return (
-      <div className="client-details">
-        <div className="client-details__container">
-          <Gutter>
+      <Gutter>
+        <div className="client-details">
+          <NavigationHeader title="Error - Detalles del Cliente" />
+          <div className="client-details__container">
             <div className="client-details__error">
               <p>No se pudieron cargar los datos del cliente</p>
             </div>
-          </Gutter>
+          </div>
         </div>
-      </div>
+      </Gutter>
     )
   }
 
@@ -374,10 +377,12 @@ export default async function ClientDetails(props: AdminViewServerProps) {
   }
 
   return (
-    <div className="client-details">
-      <div className="client-details__container">
-        {/* Métricas Principales */}
-        <Gutter>
+    <Gutter>
+      <div className="client-details">
+        <NavigationHeader title="Detalles del Cliente" />
+        
+        <div className="client-details__container">
+          {/* Métricas Principales */}
           <div className="client-details__metrics">
             <div className="client-details__metric-card client-details__metric-card--black">
               <div className="client-details__metric-card-content">
@@ -552,8 +557,8 @@ export default async function ClientDetails(props: AdminViewServerProps) {
               </div>
             </div>
           </div>
-        </Gutter>
+        </div>
       </div>
-    </div>
+    </Gutter>
   )
 }

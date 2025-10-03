@@ -7,6 +7,7 @@ import { Gutter } from '@payloadcms/ui'
 import { propertyLabels } from '@/utils/propertyLabels'
 import { ContractDetailsClient } from './ContractDetailsClient'
 import './styles.scss'
+import NavigationHeader from '@/components/NavigationHeader'
 
 interface PageProps {
   params: { segments: string[] }
@@ -185,9 +186,11 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
   ])
 
   return (
-    <div className="contract-details">
-      <div className="contract-details__content">
-        <Gutter>
+    <Gutter>
+      <div className="contract-details">
+        <NavigationHeader title="Detalles del Contrato" />
+
+        <div className="contract-details__content">
           <div className="contract-details__grid">
             {/* Columna Principal */}
             <div className="contract-details__main-column">
@@ -384,11 +387,11 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
                             </div>
                           </div>
                         )}
-                        {propertyData.environments?.funished && (
+                        {propertyData.environments?.furnished && (
                           <div className="contract-details__property-feature">
                             <div className="contract-details__property-feature-label">Amoblado</div>
                             <div className="contract-details__property-feature-value">
-                              {propertyData.environments.funished ? 'Si' : 'No'}
+                              {propertyData.environments.furnished ? 'Si' : 'No'}
                             </div>
                           </div>
                         )}
@@ -657,8 +660,8 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
               )}
             </div>
           </div>
-        </Gutter>
+        </div>
       </div>
-    </div>
+    </Gutter>
   )
 }

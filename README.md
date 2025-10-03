@@ -71,3 +71,7 @@ If you have any issues or questions, reach out to us on [Discord](https://discor
 - `pnpm generate:importmap` to create an optimized production build of your app
 - `git tag -a v1.2.0 -m "Release v1.2.0"` to create a new tag for the release
 - `git push --tags` to push the new tag to the remote repository
+- `git push origin v1.2.0` to push the new tag to the remote repository
+
+## Faltan
+- banos (cuando sen envian dos banos no figura como 2 banos, figura indefinido, pero en la api si aparece el 2)

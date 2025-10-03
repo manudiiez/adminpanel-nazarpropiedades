@@ -88,7 +88,7 @@ const AIContentGenerator: React.FC = () => {
         cantAutos: fields?.['environments.garages']?.value,
         cantPlantas: fields?.['environments.plantas']?.value,
         cantAmbientes: fields?.['environments.ambientes']?.value,
-        amueblado: fields?.['environments.funished']?.value,
+        amueblado: fields?.['environments.furnished']?.value,
         // Amenities y servicios
         mascotas: fields?.['amenities.mascotas']?.value,
         barrioPrivado: fields?.['amenities.barrioPrivado']?.value,

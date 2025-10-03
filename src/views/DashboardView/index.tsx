@@ -72,6 +72,10 @@ export default function DashboardView() {
   })
   const [allContracts, setAllContracts] = useState<ContractData[]>([])
 
+  // Estados para paginación de contratos
+  const [currentPage, setCurrentPage] = useState(1)
+  const contractsPerPage = 10
+
   const months = [
     'enero',
     'febrero',
@@ -461,6 +465,7 @@ export default function DashboardView() {
     }
 
     setCurrentYear(newYear)
+    setCurrentPage(1) // Resetear a la primera página
 
     // Cargar datos del nuevo año si no los tenemos
     await loadYearData(newYear)
@@ -473,6 +478,7 @@ export default function DashboardView() {
     } else {
       setSelectedMonth(month)
     }
+    setCurrentPage(1) // Resetear a la primera página
   }
 
   const changeSemester = (direction: number) => {
@@ -497,6 +503,7 @@ export default function DashboardView() {
     else {
       setCurrentSemester(newSemester)
     }
+    setCurrentPage(1) // Resetear a la primera página
   }
 
   // Función para filtrar contratos según la vista actual
@@ -528,9 +535,37 @@ export default function DashboardView() {
     }
 
     // Ordenar por fecha de firma (más recientes primero)
-    return filteredContracts.sort(
+    const sortedContracts = filteredContracts.sort(
       (a, b) => new Date(b.signDate).getTime() - new Date(a.signDate).getTime(),
     )
+
+    return sortedContracts
+  }
+
+  // Función para obtener contratos paginados
+  const getPaginatedContracts = () => {
+    const filtered = getFilteredContracts()
+    const startIndex = (currentPage - 1) * contractsPerPage
+    const endIndex = startIndex + contractsPerPage
+    return filtered.slice(startIndex, endIndex)
+  }
+
+  // Función para obtener información de paginación
+  const getPaginationInfo = () => {
+    const totalContracts = getFilteredContracts().length
+    const totalPages = Math.ceil(totalContracts / contractsPerPage)
+    const startIndex = (currentPage - 1) * contractsPerPage + 1
+    const endIndex = Math.min(currentPage * contractsPerPage, totalContracts)
+
+    return {
+      totalContracts,
+      totalPages,
+      currentPage,
+      startIndex,
+      endIndex,
+      hasNextPage: currentPage < totalPages,
+      hasPrevPage: currentPage > 1,
+    }
   }
 
   // Función para preparar datos para Recharts
@@ -997,13 +1032,13 @@ export default function DashboardView() {
                     : `- ${currentYear}`}
               </h3>
               <span className="dashboard__contracts-count">
-                {getFilteredContracts().length} contratos
+                {getPaginationInfo().totalContracts} contratos
               </span>
             </div>
 
             <div className="dashboard__contracts-list">
-              {getFilteredContracts().length > 0 ? (
-                getFilteredContracts().map((contract) => (
+              {getPaginatedContracts().length > 0 ? (
+                getPaginatedContracts().map((contract) => (
                   <div key={contract.id} className="dashboard__contract-card">
                     <div className="dashboard__contract-header">
                       <div className="dashboard__contract-type">
@@ -1093,6 +1128,47 @@ export default function DashboardView() {
                 </div>
               )}
             </div>
+
+            {/* Controles de Paginación */}
+            {getPaginationInfo().totalPages > 1 && (
+              <div className="dashboard__pagination">
+                <div className="dashboard__pagination-info">
+                  Mostrando {getPaginationInfo().startIndex} - {getPaginationInfo().endIndex} de{' '}
+                  {getPaginationInfo().totalContracts} contratos
+                </div>
+                <div className="dashboard__pagination-controls">
+                  <button
+                    className="dashboard__pagination-btn"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={!getPaginationInfo().hasPrevPage}
+                  >
+                    Anterior
+                  </button>
+
+                  <div className="dashboard__pagination-pages">
+                    {Array.from({ length: getPaginationInfo().totalPages }, (_, i) => (
+                      <button
+                        key={i + 1}
+                        className={`dashboard__pagination-page ${
+                          currentPage === i + 1 ? 'dashboard__pagination-page--active' : ''
+                        }`}
+                        onClick={() => setCurrentPage(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    className="dashboard__pagination-btn"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={!getPaginationInfo().hasNextPage}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>

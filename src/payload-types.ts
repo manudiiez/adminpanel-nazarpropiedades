@@ -626,7 +626,7 @@ export interface Propiedade {
     /**
      * Controla si la propiedad está amueblada
      */
-    funished?: ('si' | 'no') | null;
+    furnished?: ('si' | 'no') | null;
   };
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
@@ -1025,7 +1025,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
         garages?: T;
         plantas?: T;
         ambientes?: T;
-        funished?: T;
+        furnished?: T;
       };
   amenities?:
     | T

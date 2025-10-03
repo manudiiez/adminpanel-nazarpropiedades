@@ -252,10 +252,10 @@ export default function ClientDetails({
                   <div className="client-details__property-feature-label">Cocheras</div>
                 </div>
               )}
-              {property.environments?.funished && (
+              {property.environments?.furnished && (
                 <div className="client-details__property-feature">
                   <div className="client-details__property-feature-value">
-                    {property.environments.funished ? 'Si' : 'No'}
+                    {property.environments.furnished ? 'Si' : 'No'}
                   </div>
                   <div className="client-details__property-feature-label">Amoblado</div>
                 </div>
@@ -289,10 +289,12 @@ export default function ClientDetails({
                   <span>Numero:</span> {property.clientNumber || 'No disponible'}
                 </div>
                 <div className="client-details__property-extra-item">
-                  <span>Inicio:</span> {fechaCorta(property.startDate) || 'No disponible'}
+                  <span>Inicio:</span>{' '}
+                  {property.startDate ? fechaCorta(property.startDate) : 'No disponible'}
                 </div>
                 <div className="client-details__property-extra-item">
-                  <span>Vencimiento:</span> {fechaCorta(property.endDate) || 'No disponible'}
+                  <span>Vencimiento:</span>{' '}
+                  {property.endDate ? fechaCorta(property.endDate) : 'No disponible'}
                 </div>
               </div>
             )}
@@ -303,7 +305,8 @@ export default function ClientDetails({
                   <span>Vendedor:</span> {property.owner?.fullname || property.clientName}
                 </div>
                 <div className="client-details__property-extra-item">
-                  <span>Fecha compra:</span> {fechaCorta(property.signDate) || 'No disponible'}
+                  <span>Fecha compra:</span>{' '}
+                  {property.signDate ? fechaCorta(property.signDate) : 'No disponible'}
                 </div>
               </div>
             )}
