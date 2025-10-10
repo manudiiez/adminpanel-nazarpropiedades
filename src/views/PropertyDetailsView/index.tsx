@@ -111,12 +111,11 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   const allImages = [...(coverImage ? [coverImage] : []), ...galleryImages]
   // Construir array de imágenes para portales con coverImage primero
   const portalImages = []
-
   // Agregar coverImage como primera imagen (orden 1)
   if (coverImage) {
     portalImages.push({
-      // url: process.env.NEXT_PUBLIC_SERVER_URL + coverImage.url,
-      url: 'https://res.cloudinary.com/dykysdnj9/image/upload/v1757027248/inmoup/204_zinkr7.jpg',
+      // url: 'https://res.cloudinary.com/dykysdnj9/image/upload/v1757027248/inmoup/204_zinkr7.jpg',
+      url: coverImage.url,
       orden: 1,
     })
   }
@@ -124,12 +123,11 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   // Agregar imágenes de galería con orden secuencial
   galleryImages.forEach((image, index) => {
     portalImages.push({
-      // url: process.env.NEXT_PUBLIC_SERVER_URL + image.url,
-      url: 'https://res.cloudinary.com/dykysdnj9/image/upload/v1757027247/inmoup/038-2_v0lhhb.jpg',
+      // url: 'https://res.cloudinary.com/dykysdnj9/image/upload/v1757027247/inmoup/038-2_v0lhhb.jpg',
+      url: image.url,
       orden: index + (coverImage ? 2 : 1), // Si hay coverImage, empieza en 2, sino en 1
     })
   })
-
   // Obtener datos de inmoup desde formData
   const inmoupData = formData.inmoup || {}
   const mercadolibreData = formData.mercadolibre || {}
