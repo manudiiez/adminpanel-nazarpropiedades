@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { getValidMercadoLibreToken } from '@/utils/mercadoLibreTokens'
-import { mapFormDataToMercadoLibre, validateMercadoLibreData } from '@/utils/mercadolibreMapper'
+import { mapFormDataToMercadoLibre, validateMercadoLibreData } from '@/utils/mercadoLibreMappers'
 
 export async function POST(request: NextRequest) {
   try {
