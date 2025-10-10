@@ -17,7 +17,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: process.env.R2_PUBLIC_BASE_URL?.replace(/^https?:\/\//, '') || '',
+        hostname: process.env.R2_PUBLIC_BASE_URL?.replace(/^https?:\/\//, '') || 'test',
         port: '',
         pathname: '/**',
       },
