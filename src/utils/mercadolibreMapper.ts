@@ -81,6 +81,7 @@ interface PropertyData {
     antiquity?: string
     conservationStatus?: string
     orientation?: string
+    guests?: number
   }
 
   // Environments
