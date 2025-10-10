@@ -539,6 +539,20 @@ export const Propiedades: CollectionConfig = {
                 },
               },
             },
+            {
+              name: 'guests',
+              label: 'Cantidad de Huéspedes',
+              type: 'number',
+              required: true,
+              admin: {
+                placeholder: 'Ingresa la cantidad máxima de huéspedes',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
+              },
+            },
           ],
         },
       ],
@@ -752,6 +766,27 @@ export const Propiedades: CollectionConfig = {
                   return (
                     data?.classification.type === 'casa' ||
                     data?.classification.type === 'lote' ||
+                    data?.classification.type === 'terreno'
+                  )
+                },
+              },
+            },
+            {
+              name: 'acceso',
+              type: 'select',
+              label: 'Acceso',
+              options: propertySelectOptions.access,
+              required: true,
+              admin: {
+                width: '50%',
+                placeholder: 'Selecciona el tipo de acceso',
+                description: 'Este campo solo sera visible para mercado libre',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'campo' ||
+                    data?.classification.type === 'quinta' ||
+                    data?.classification.type === 'lote' ||
+                    data?.classification.type === 'loteo' ||
                     data?.classification.type === 'terreno'
                   )
                 },

@@ -254,7 +254,7 @@ export const Contratos: CollectionConfig = {
             {
               name: 'documents',
               type: 'upload',
-              relationTo: 'media',
+              relationTo: 'contractmedia',
               hasMany: true,
               label: 'Documentos',
               admin: {

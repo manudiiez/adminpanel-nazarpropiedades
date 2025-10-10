@@ -69,7 +69,7 @@ async function getDocumentsData(documentIds: (string | number)[]) {
     const documentPromises = documentIds.map(async (docId) => {
       try {
         return await payload.findByID({
-          collection: 'media',
+          collection: 'contractmedia',
           id: docId,
         })
       } catch (error) {

@@ -21,7 +21,7 @@ export function ContractDetailsClient({
 
   const downloadDocument = (id: string) => {
     console.log(`Descargando documento con ID: ${id}...`)
-    router.push(`/admin/collections/media/${id}`)
+    router.push(`/admin/collections/contractmedia/${id}`)
     showNotification(`Descargando documento con ID: ${id}...`, 'info')
     setTimeout(() => {
       showNotification(`${id} descargado exitosamente`, 'success')
@@ -90,6 +90,7 @@ export function ContractDetailsClient({
           </div>
           <div className="contract-details__document-text">
             <div className="contract-details__document-name">{document.filename}</div>
+            <div className="contract-details__document-description">{document.description}</div>
             <div className="contract-details__document-date">{fechaCorta(document.createdAt)}</div>
           </div>
         </div>

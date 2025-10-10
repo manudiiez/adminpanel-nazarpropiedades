@@ -1,0 +1,53 @@
+[
+  {
+    "id": "LAND_ACCESS",
+    "name": "Acceso",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "used_in": ["MLA6413", "MLA6414", "MLA458174", "MLA50549", "MLA401687", "MLA1494"],
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "list",
+    "values": [
+      {
+        "id": "245049",
+        "name": "Tierra"
+      },
+      {
+        "id": "245045",
+        "name": "Arena"
+      },
+      {
+        "id": "245046",
+        "name": "Asfalto"
+      },
+      {
+        "id": "245047",
+        "name": "Otro"
+      },
+      {
+        "id": "245048",
+        "name": "Ripio"
+      }
+    ],
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "GUESTS",
+    "name": "Huéspedes",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "used_in": ["MLA50278", "MLA50279", "MLA105180", "MLA52745"],
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  }
+]

@@ -430,6 +430,12 @@ $shadow-lg:
     color: var(--theme-elevation-900);
     margin-bottom: $spacing-1;
   }
+  &__document-description {
+    font-size: 0.875rem;
+    color: var(--theme-elevation-700);
+    margin-bottom: $spacing-1;
+  }
+
 
   &__document-date {
     font-size: 0.875rem;

@@ -72,6 +72,8 @@ export interface Config {
     clientes: Cliente;
     propiedades: Propiedade;
     contratos: Contrato;
+    'mercadolibre-tokens': MercadolibreToken;
+    contractmedia: Contractmedia;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +85,8 @@ export interface Config {
     clientes: ClientesSelect<false> | ClientesSelect<true>;
     propiedades: PropiedadesSelect<false> | PropiedadesSelect<true>;
     contratos: ContratosSelect<false> | ContratosSelect<true>;
+    'mercadolibre-tokens': MercadolibreTokensSelect<false> | MercadolibreTokensSelect<true>;
+    contractmedia: ContractmediaSelect<false> | ContractmediaSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -615,6 +619,10 @@ export interface Propiedade {
       | null;
     conservationStatus?: ('excelente' | 'muy_bueno' | 'bueno' | 'regular') | null;
     orientation?: ('norte' | 'sur' | 'este' | 'oeste' | 'noreste' | 'noroeste' | 'sureste' | 'suroeste') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    guests?: number | null;
   };
   environments?: {
     bedrooms?: number | null;
@@ -631,6 +639,10 @@ export interface Propiedade {
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
     barrioPrivado?: ('Si' | 'No' | 'Semi Privado') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    acceso?: ('Tierra' | 'Arena' | 'Asfalto' | 'Otro' | 'Ripio') | null;
     agua?: ('Si' | 'No') | null;
     cloacas?: ('Si' | 'No') | null;
     gas?: ('Si' | 'No') | null;
@@ -796,7 +808,90 @@ export interface Contrato {
   /**
    * Adjunta documentos relevantes como contratos, facturas, comprobantes, etc.
    */
-  documents?: (string | Media)[] | null;
+  documents?: (string | Contractmedia)[] | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contractmedia".
+ */
+export interface Contractmedia {
+  id: string;
+  description?: string | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * Gestión de tokens de acceso para MercadoLibre OAuth2
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mercadolibre-tokens".
+ */
+export interface MercadolibreToken {
+  id: string;
+  /**
+   * Nombre identificativo para esta cuenta de MercadoLibre
+   */
+  accountName: string;
+  /**
+   * Token de acceso actual (expira en 6 horas)
+   */
+  accessToken: string;
+  /**
+   * Token para renovar el access token (uso único)
+   */
+  refreshToken: string;
+  /**
+   * Tipo de token (normalmente Bearer)
+   */
+  tokenType?: string | null;
+  /**
+   * Tiempo de vida del token en segundos (6 horas = 21600)
+   */
+  expiresIn?: number | null;
+  /**
+   * Fecha y hora exacta cuando expira el token
+   */
+  expiresAt?: string | null;
+  /**
+   * Permisos otorgados por el token
+   */
+  scope?: string | null;
+  /**
+   * ID del usuario en MercadoLibre
+   */
+  userId?: string | null;
+  /**
+   * Indica si este token está activo y debe usarse
+   */
+  isActive?: boolean | null;
+  /**
+   * Última vez que se utilizó este token
+   */
+  lastUsed?: string | null;
+  /**
+   * Número de errores consecutivos con este token
+   */
+  errorCount?: number | null;
+  /**
+   * Detalles del último error ocurrido
+   */
+  lastError?: string | null;
+  /**
+   * Notas adicionales sobre esta cuenta
+   */
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -827,6 +922,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contratos';
         value: string | Contrato;
+      } | null)
+    | ({
+        relationTo: 'mercadolibre-tokens';
+        value: string | MercadolibreToken;
+      } | null)
+    | ({
+        relationTo: 'contractmedia';
+        value: string | Contractmedia;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1015,6 +1118,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
         antiquity?: T;
         conservationStatus?: T;
         orientation?: T;
+        guests?: T;
       };
   environments?:
     | T
@@ -1032,6 +1136,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
     | {
         mascotas?: T;
         barrioPrivado?: T;
+        acceso?: T;
         agua?: T;
         cloacas?: T;
         gas?: T;
@@ -1109,6 +1214,46 @@ export interface ContratosSelect<T extends boolean = true> {
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mercadolibre-tokens_select".
+ */
+export interface MercadolibreTokensSelect<T extends boolean = true> {
+  accountName?: T;
+  accessToken?: T;
+  refreshToken?: T;
+  tokenType?: T;
+  expiresIn?: T;
+  expiresAt?: T;
+  scope?: T;
+  userId?: T;
+  isActive?: T;
+  lastUsed?: T;
+  errorCount?: T;
+  lastError?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contractmedia_select".
+ */
+export interface ContractmediaSelect<T extends boolean = true> {
+  description?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

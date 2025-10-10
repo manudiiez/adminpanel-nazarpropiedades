@@ -13,6 +13,8 @@ import { Clientes } from './collections/Clientes'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Propiedades } from './collections/Propiedades'
 import { Contratos } from './collections/Contratos'
+import { MercadoLibreTokens } from './collections/MercadoLibreTokens'
+import { ContractMedia } from './collections/ContractMedia'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,7 +40,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Clientes, Propiedades, Contratos],
+  collections: [Users, Media, Clientes, Propiedades, Contratos, MercadoLibreTokens, ContractMedia],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -52,7 +54,23 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
     s3Storage({
-      collections: { media: { prefix: process.env.R2_PREFIX || '' } },
+      collections: {
+        media: {
+          prefix: process.env.R2_PREFIX || '',
+          // generateFileURL: ({ filename, prefix }) => {
+          //   console.log('=== generateFileURL ===')
+          //   console.log('filename:', filename)
+          //   console.log('prefix:', prefix)
+          //   // Opción 1: Si tienes un dominio público de R2
+          //   const baseURL =
+          //     process.env.R2_ENDPOINT || `https://${process.env.R2_BUCKET}.r2.cloudflarestorage.com`
+          //   return `${baseURL}/${prefix}${filename}`
+          // },
+        },
+        contractmedia: {
+          prefix: process.env.R2_PREFIX_contract || '',
+        },
+      },
       bucket: process.env.R2_BUCKET!,
       // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
       config: {

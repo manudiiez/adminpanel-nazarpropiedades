@@ -5,6 +5,7 @@ export interface SelectOption {
   value: string
   type?: string[]
   condition?: string[]
+  id?: string
 }
 
 // Condiciones de operación
@@ -13,6 +14,35 @@ export const conditionOptions: SelectOption[] = [
   { label: 'Alquiler', value: 'alquiler' },
   { label: 'Alquiler Temporario', value: 'alquiler_temporario' },
   { label: 'Permuta', value: 'permuta' },
+]
+
+// accesso
+export const accessOptions: SelectOption[] = [
+  {
+    id: '245049',
+    value: 'Tierra',
+    label: 'Tierra',
+  },
+  {
+    id: '245045',
+    value: 'Arena',
+    label: 'Arena',
+  },
+  {
+    id: '245046',
+    value: 'Asfalto',
+    label: 'Asfalto',
+  },
+  {
+    id: '245047',
+    value: 'Otro',
+    label: 'Otro',
+  },
+  {
+    id: '245048',
+    value: 'Ripio',
+    label: 'Ripio',
+  },
 ]
 
 // Monedas
@@ -925,6 +955,7 @@ export const propertySelectOptions = {
   type: tiposPropiedad,
   department: departmentOptions,
   locality: localityOptions,
+  access: accessOptions,
   amenityServices: amenityServicesOptions,
   amenityEnvironments: amenityEnvironmentsOptions,
   amenityNearbyZones: amenityNearbyZonesOptions,

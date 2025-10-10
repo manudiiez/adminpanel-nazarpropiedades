@@ -13,6 +13,16 @@ const nextConfig = {
 
     return webpackConfig
   },
+  // images: {
+  //   remotePatterns: [
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'nazarpropiedades-media.r2.cloudflarestorage.com',
+  //       port: '',
+  //       pathname: '/**',
+  //     },
+  //   ],
+  // },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })
