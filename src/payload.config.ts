@@ -57,15 +57,12 @@ export default buildConfig({
       collections: {
         media: {
           prefix: process.env.R2_PREFIX || '',
-          // generateFileURL: ({ filename, prefix }) => {
-          //   console.log('=== generateFileURL ===')
-          //   console.log('filename:', filename)
-          //   console.log('prefix:', prefix)
-          //   // Opción 1: Si tienes un dominio público de R2
-          //   const baseURL =
-          //     process.env.R2_ENDPOINT || `https://${process.env.R2_BUCKET}.r2.cloudflarestorage.com`
-          //   return `${baseURL}/${prefix}${filename}`
-          // },
+          generateFileURL: ({ filename, prefix }) => {
+            const baseURL =
+              process.env.R2_PUBLIC_BASE_URL ||
+              `https://${process.env.R2_BUCKET}.r2.cloudflarestorage.com`
+            return `${baseURL}/${prefix}/${filename}`
+          },
         },
         contractmedia: {
           prefix: process.env.R2_PREFIX_contract || '',
@@ -75,6 +72,24 @@ export default buildConfig({
       // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
       config: {
         endpoint: process.env.R2_ENDPOINT,
+        region: 'auto',
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+        forcePathStyle: true,
+      },
+    }),
+    s3Storage({
+      collections: {
+        contractmedia: {
+          prefix: process.env.R2_PREFIX_contract || '',
+        },
+      },
+      bucket: process.env.R2_BUCKET_CONTRACTS!,
+      // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
+      config: {
+        endpoint: process.env.R2_ENDPOINT_CONTRACTS,
         region: 'auto',
         credentials: {
           accessKeyId: process.env.R2_ACCESS_KEY_ID!,
