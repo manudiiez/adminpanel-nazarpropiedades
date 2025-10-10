@@ -2047,3 +2047,187 @@ const dataToSend = [
     attribute_group_name: 'Otros',
   },
 ]
+
+const LOCATION = {
+  id: 'AR-M',
+  name: 'Mendoza',
+  country: {
+    id: 'AR',
+    name: 'Argentina',
+  },
+  site: 'MLA',
+  geo_information: {
+    location: {
+      latitude: -34.5869034,
+      longitude: -68.1431414,
+    },
+  },
+  time_zone: 'GMT-03:00',
+  time_zone_name: 'America/Mendoza',
+  cities: [
+    {
+      id: 'QVItTTEyIERlIE9jdHVicmU',
+      name: '12 De Octubre',
+    },
+    {
+      id: 'QVItTUFsZ2Fycm9iYWwgQWJham8',
+      name: 'Algarrobal Abajo',
+    },
+    {
+      id: 'QVItTUFscGF0YWNhbA',
+      name: 'Alpatacal',
+    },
+    {
+      id: 'QVItTUFsdG8gR3JhbmRl',
+      name: 'Alto Grande',
+    },
+    {
+      id: 'QVItTUJhcnJpbyBWaWxsYSBBZGVsYQ',
+      name: 'Barrio Villa Adela',
+    },
+    {
+      id: 'QVItTUJ1ZW5hIE51ZXZh',
+      name: 'Buena Nueva',
+    },
+    {
+      id: 'QVItTUNhbmFsZWphcw',
+      name: 'Canalejas',
+    },
+    {
+      id: 'QVItTUNhcmJvbWV0YWw',
+      name: 'Carbometal',
+    },
+    {
+      id: 'QVItTUNvbG9uaWEgQWx2ZWFy',
+      name: 'Colonia Alvear',
+    },
+    {
+      id: 'QVItTUNvbG9uaWEgQm9tYmFsIFkgVGFiYW5lcmE',
+      name: 'Colonia Bombal Y Tabanera',
+    },
+    {
+      id: 'QVItTUNvcXVpbWJpdG8',
+      name: 'Coquimbito',
+    },
+    {
+      id: 'QVItTUNvcnJhbCBEZSBMb3JjYQ',
+      name: 'Corral De Lorca',
+    },
+    {
+      id: 'QVItTUN1cGlsZXM',
+      name: 'Cupiles',
+    },
+    {
+      id: 'QVItTUVsIENlbml6bw',
+      name: 'El Cenizo',
+    },
+    {
+      id: 'TUxBQ0dFTmI4MzRj',
+      name: 'General Alvear',
+    },
+    {
+      id: 'QVItTUdlbmVyYWwgR3V0aWVycmV6',
+      name: 'General Gutierrez',
+    },
+    {
+      id: 'QVItTUdvYmVybmFkb3IgQmVuZWdhcw',
+      name: 'Gobernador Benegas',
+    },
+    {
+      id: 'TUxBQ0dPRDIyMDlm',
+      name: 'Godoy Cruz',
+    },
+    {
+      id: 'TUxBQ0dVQTI0Yjcw',
+      name: 'Guaymallén',
+    },
+    {
+      id: 'TUxBQ0pVTjhkMzk1',
+      name: 'Junín',
+    },
+    {
+      id: 'TUxBQ0xBWmNkODhm',
+      name: 'La Paz',
+    },
+    {
+      id: 'TUxBQ0xBU2YzZWNh',
+      name: 'Las Heras',
+    },
+    {
+      id: 'TUxBQ0xBVjcxNjJh',
+      name: 'Lavalle',
+    },
+    {
+      id: 'QVItTUxvcyBDb3JyZWRvcmVz',
+      name: 'Los Corredores',
+    },
+    {
+      id: 'TUxBQ0xVSjRiOWZh',
+      name: 'Luján de Cuyo',
+    },
+    {
+      id: 'TUxBQ01BSWEyMzA',
+      name: 'Maipú',
+    },
+    {
+      id: 'TUxBQ01BTDZjYjM4',
+      name: 'Malargüe',
+    },
+    {
+      id: 'QVItTU1lZGlhIEx1bmE',
+      name: 'Media Luna',
+    },
+    {
+      id: 'TUxBQ0NBUDFmNDY3',
+      name: 'Mendoza',
+    },
+    {
+      id: 'QVItTU9jaGVudGEgWSBDdWF0cm8',
+      name: 'Ochenta Y Cuatro',
+    },
+    {
+      id: 'QVItTVBhc28gRGUgTG9zIEFuZGVz',
+      name: 'Paso De Los Andes',
+    },
+    {
+      id: 'QVItTUVsIENoYcOxYXI',
+      name: 'Puesto Los Chañares',
+    },
+    {
+      id: 'TUxBQ1JJVmNhOWUw',
+      name: 'Rivadavia',
+    },
+    {
+      id: 'TUxBQ1NBTmM0ZmYz',
+      name: 'San Carlos',
+    },
+    {
+      id: 'TUxBQ1NBTmQ4N2U4',
+      name: 'San Martín',
+    },
+    {
+      id: 'TUxBQ1NBTjdmNmMy',
+      name: 'San Rafael',
+    },
+    {
+      id: 'TUxBQ1NBTjQ2Y2Nm',
+      name: 'Santa Rosa',
+    },
+    {
+      id: 'TUxBQ1RVTjk4YjBm',
+      name: 'Tunuyán',
+    },
+    {
+      id: 'TUxBQ1RVUDk3Y2Nl',
+      name: 'Tupungato',
+    },
+    {
+      id: 'QVItTVZhbGxlIERlIExhcyBMZcOxYXM',
+      name: 'Valle De Las Leñas',
+    },
+    {
+      id: 'QVItTVZpbGxhIEhpcG9kcm9tbw',
+      name: 'Villa Hipodromo',
+    },
+  ],
+}

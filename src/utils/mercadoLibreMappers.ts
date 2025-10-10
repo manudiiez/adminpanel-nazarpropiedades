@@ -633,7 +633,7 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     currency_id: currency,
     available_quantity: 1,
     buying_mode: 'classified',
-    listing_type_id: 'gold_special', // Puedes cambiar a 'free', 'gold_premium', etc.
+    listing_type_id: 'free', // Puedes cambiar a 'free', 'gold_premium', etc.
     condition: 'not_specified',
 
     description: {
@@ -647,7 +647,8 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     location: {
       address_line: ubication.address || ubication.neighborhood || '',
       city: {
-        name: ubication.locality || 'Mendoza',
+        id: 'TUxBQ0dPRDIyMDlm',
+        name: 'Godoy Cruz',
       },
       state: {
         id: 'AR-M',

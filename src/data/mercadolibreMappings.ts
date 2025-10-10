@@ -1,7 +1,11 @@
 // Mapeos de valores internos a valores de Inmoup API
 
-export interface InmoupMapping {
+export interface MercadoLibreMappins {
   [key: string]: string | number
+}
+
+export interface MercadoLibreMappinsCity {
+  [key: string]: { id: string; name: string } | number | string
 }
 
 export const propertyType = [
@@ -92,7 +96,7 @@ export const propertyType = [
 ]
 
 // Tipos de operación
-export const conditionMappings: InmoupMapping = {
+export const conditionMappings: MercadoLibreMappins = {
   venta: 'Venta',
   alquiler: 'Alquiler',
   alquiler_temporario: 'Alquiler Temporario',
@@ -100,7 +104,7 @@ export const conditionMappings: InmoupMapping = {
 }
 
 // Tipos de propiedad
-export const propertyTypeMappings: InmoupMapping = {
+export const propertyTypeMappings: MercadoLibreMappins = {
   casa: 'Casas',
   departamento: 'Departamentos',
   lote: 'Terrenos y Lotes',
@@ -138,7 +142,7 @@ export const propertyTypeMappings: InmoupMapping = {
 }
 
 // Estados de conservación
-export const conservationStatusMappings: InmoupMapping = {
+export const conservationStatusMappings: MercadoLibreMappins = {
   excelente: 'excelente',
   muy_bueno: 'muy-bueno',
   bueno: 'bueno',
@@ -147,7 +151,7 @@ export const conservationStatusMappings: InmoupMapping = {
 }
 
 // Orientaciones
-export const orientationMappings: InmoupMapping = {
+export const orientationMappings: MercadoLibreMappins = {
   norte: 'norte',
   sur: 'sur',
   este: 'este',
@@ -159,7 +163,7 @@ export const orientationMappings: InmoupMapping = {
 }
 
 // Tipos de cochera
-export const garageTypeMappings: InmoupMapping = {
+export const garageTypeMappings: MercadoLibreMappins = {
   garage: 'Garage',
   garage_cochera: 'Garage/Cochera',
   garage_doble: 'Garage Doble',
@@ -168,13 +172,13 @@ export const garageTypeMappings: InmoupMapping = {
 }
 
 // Monedas
-export const currencyMappings: InmoupMapping = {
+export const currencyMappings: MercadoLibreMappins = {
   usd: 'dolar',
   ars: 'peso',
 }
 
 // Amueblado
-export const furnishedMappings: InmoupMapping = {
+export const furnishedMappings: MercadoLibreMappins = {
   si: 'si',
   no: 'no',
 }
@@ -238,29 +242,80 @@ export const antiquityMappings: { [key: string]: { value: number; tiempo: string
 }
 
 // Departamentos de Mendoza
-export const departmentMappings: InmoupMapping = {
+export const departmentMappings: MercadoLibreMappinsCity = {
   capital: 'Capital',
-  godoy_cruz: 'Godoy Cruz',
-  guaymallen: 'Guaymallen',
-  las_heras: 'Las Heras',
-  lujan_de_cuyo: 'Lujan de Cuyo',
-  maipu: 'Maipu',
-  san_martin: 'San Martin',
-  rivadavia: 'Rivadavia',
-  junin: 'Junin',
-  san_rafael: 'San Rafael',
-  general_alvear: 'General Alvear',
-  malargue: 'Malargue',
-  tupungato: 'Tupungato',
-  tunuyan: 'Tunuyan',
-  san_carlos: 'San Carlos',
-  lavalle: 'Lavalle',
-  santa_rosa: 'Santa Rosa',
-  la_paz: 'La Paz',
+  godoy_cruz: {
+    id: 'TUxBQ0dPRDIyMDlm',
+    name: 'Godoy Cruz',
+  },
+  guaymallen: {
+    id: 'TUxBQ0dVQTI0Yjcw',
+    name: 'Guaymallén',
+  },
+  las_heras: {
+    id: 'TUxBQ0xBU2YzZWNh',
+    name: 'Las Heras',
+  },
+  lujan_de_cuyo: {
+    id: 'TUxBQ0xVSjRiOWZh',
+    name: 'Luján de Cuyo',
+  },
+  maipu: {
+    id: 'TUxBQ01BSWEyMzA',
+    name: 'Maipú',
+  },
+  san_martin: {
+    id: 'TUxBQ1NBTmQ4N2U4',
+    name: 'San Martín',
+  },
+  rivadavia: {
+    id: 'TUxBQ1JJVmNhOWUw',
+    name: 'Rivadavia',
+  },
+  junin: {
+    id: 'TUxBQ0pVTjhkMzk1',
+    name: 'Junín',
+  },
+  san_rafael: {
+    id: 'TUxBQ1NBTjdmNmMy',
+    name: 'San Rafael',
+  },
+  general_alvear: {
+    id: 'TUxBQ0dFTmI4MzRj',
+    name: 'General Alvear',
+  },
+  malargue: {
+    id: 'TUxBQ01BTDZjYjM4',
+    name: 'Malargüe',
+  },
+  tupungato: {
+    id: 'TUxBQ1RVUDk3Y2Nl',
+    name: 'Tupungato',
+  },
+  tunuyan: {
+    id: 'TUxBQ1RVTjk4YjBm',
+    name: 'Tunuyán',
+  },
+  san_carlos: {
+    id: 'TUxBQ1NBTmM0ZmYz',
+    name: 'San Carlos',
+  },
+  lavalle: {
+    id: 'TUxBQ0xBVjcxNjJh',
+    name: 'Lavalle',
+  },
+  santa_rosa: {
+    id: 'TUxBQ1NBTjQ2Y2Nm',
+    name: 'Santa Rosa',
+  },
+  la_paz: {
+    id: 'TUxBQ0xBWmNkODhm',
+    name: 'La Paz',
+  },
 }
 
 // Localidades/Zonas de Mendoza
-export const localityMappings: InmoupMapping = {
+export const localityMappings: MercadoLibreMappinsCity = {
   // Capital
   '1a_seccion_parque_central': 192,
   '2a_seccion_barrio_civico': 195,
@@ -276,26 +331,35 @@ export const localityMappings: InmoupMapping = {
   '12a_seccion_piedemonte': 203,
 
   // Godoy Cruz
-  godoy_cruz_city: 1,
+  godoy_cruz_city: {
+    id: 'TUxBQkdPRDUzOTha',
+    name: 'Godoy Cruz',
+  },
   gobernador_benegas: 2,
   las_tortugas: 4,
   presidente_sarmiento: 5,
   san_francisco_del_monte_gc: 6,
   trapiche: 7,
   villa_marini: 8,
-  villa_hipodromo: 9,
+  villa_hipodromo: {
+    id: 'TVhYVmlsbGEgSGlww7Nkcm9tb1RVeEJRMGRQU',
+    name: 'Villa Hipódromo',
+  },
   villa_del_parque: 10,
 
   // Guaymallén
-  guaymallen_villa_nueva: 12,
+  guaymallen_villa_nueva: { id: 'TUxBQkdVQTEyMzRa', name: 'Guaymallén' },
   villa_nueva: 35,
-  la_primavera: 13,
-  los_corralitos: 14,
-  puente_de_hierro: 15,
-  el_bermejo: 16,
+  la_primavera: { id: 'TUxBQkxBUDIyNTha', name: 'La Primavera' },
+  los_corralitos: { id: 'TUxBQkxPUzc5MjVa', name: 'Los Corralitos' },
+  puente_de_hierro: { id: 'TUxBQlBVRTc2Njla', name: 'Puente de Hierro' },
+  el_bermejo: {
+    id: 'TVhYQmVybWVqb1RVeEJRMGRWUVRJMFlqY3c',
+    name: 'Bermejo',
+  },
   buena_nueva: 17,
   capilla_del_rosario: 18,
-  colonia_segovia: 20,
+  colonia_segovia: { id: 'TUxBQkNPTDE4MjVa', name: 'Colonia Segovia' },
   colonia_molina: 19,
   dorrego: 21,
   el_sauce: 22,
@@ -311,210 +375,633 @@ export const localityMappings: InmoupMapping = {
   belgrano_gm: 823,
 
   // Las Heras
-  blanco_encalada: 42,
-  jocoli_lh: 43,
-  el_algarrobal: 44,
+  blanco_encalada: {
+    id: 'TUxBQkJMQTY5NTBa',
+    name: 'Blanco Encalada',
+  },
+  jocoli_lh: {
+    id: 'TUxBQkpPQzE2ODNa',
+    name: 'Jocolí',
+  },
+  el_algarrobal: {
+    id: 'QVItTUFsZ2Fycm9iYWwgQWJham8',
+    name: 'Algarrobal Abajo',
+  },
   el_borbollon: 45,
   el_challao: 46,
   el_pastal: 47,
   el_plumerillo: 48,
   el_resguardo: 49,
   la_cieneguita: 50,
-  las_cuevas: 51,
-  las_heras_city: 52,
-  los_penitentes: 53,
-  panquehua: 54,
-  polvaredas: 55,
-  puente_del_inca: 56,
-  punta_de_vacas: 57,
-  uspallata: 58,
+  las_cuevas: {
+    id: 'TUxBQkxBUzgxMDla',
+    name: 'Las Cuevas',
+  },
+  las_heras_city: {
+    id: 'TUxBQkxBUzgzOTZa',
+    name: 'Las Heras',
+  },
+  los_penitentes: {
+    id: 'TUxBQkxPUzk4MzNa',
+    name: 'Los Penitentes',
+  },
+  panquehua: {
+    id: 'TVhYUGFucXVlaHVhVFV4QlEweEJVMll6WldOa',
+    name: 'Panquehua',
+  },
+  polvaredas: {
+    id: 'TUxBQlBPTDU4OTda',
+    name: 'Polvaredas',
+  },
+  puente_del_inca: {
+    id: 'TUxBQlBVRTk2ODha',
+    name: 'Puente del Inca',
+  },
+  punta_de_vacas: {
+    id: 'TUxBQlBVTjg5ODVa',
+    name: 'Punta de Vacas',
+  },
+  uspallata: {
+    id: 'TUxBQlVTUDQ5MjRa',
+    name: 'Uspallata',
+  },
 
   // Luján de Cuyo
-  agrelo: 74,
-  barrio_perdriel_iv: 75,
+  agrelo: {
+    id: 'TUxBQkFHUjUxNjNa',
+    name: 'Agrelo',
+  },
+  barrio_perdriel_iv: {
+    id: 'TUxBQkJBUjYyMzJa',
+    name: 'Barrio Perdriel IV',
+  },
   carrodilla: 76,
-  cacheuta: 77,
+  cacheuta: {
+    id: 'TUxBQkNBQzQwNTFa',
+    name: 'Cacheuta',
+  },
   chacras_de_coria: 78,
-  costa_flores: 79,
-  el_carrizal: 80,
-  el_salto: 81,
+  costa_flores: {
+    id: 'TUxBQkNPUzk0NzFa',
+    name: 'Costa Flores',
+  },
+  el_carrizal: {
+    id: 'TUxBQkVMQzQwMDBa',
+    name: 'El Carrizal',
+  },
+  el_salto: {
+    id: 'TUxBQkVMUzc0OTda',
+    name: 'El Salto',
+  },
   mayor_drummond: 82,
-  la_puntilla: 83,
-  las_compuertas: 84,
-  las_vegas: 85,
-  lujan_de_cuyo_city: 86,
-  perdriel: 87,
-  potrerillos: 88,
+  la_puntilla: {
+    id: 'TGEgUHVudGlsbGFUVXhCUTB4VlNqUmlPV1po',
+    name: 'La Puntilla',
+  },
+  las_compuertas: {
+    id: 'TUxBQkxBUzYzODBa',
+    name: 'Las Compuertas',
+  },
+  las_vegas: {
+    id: 'TUxBQkxBUzY4NTNa',
+    name: 'Las Vegas',
+  },
+  lujan_de_cuyo_city: {
+    id: 'TUxBQkxVSjI3OTBa',
+    name: 'Luján de Cuyo',
+  },
+  perdriel: {
+    id: 'TUxBQlBFUjczMzda',
+    name: 'Perdriel',
+  },
+  potrerillos: {
+    id: 'TUxBQlBPVDg5NjFa',
+    name: 'Potrerillos',
+  },
   vistalba: 89,
-  ugarteche: 90,
+  ugarteche: {
+    id: 'TUxBQlVHQTc3ODJa',
+    name: 'Ugarteche',
+  },
   vertientes_del_pedemonte: 91,
 
   // Maipú
-  barrancas: 59,
-  barrio_jesus_de_nazaret: 60,
+  barrancas: {
+    id: 'TUxBQkJBUjEzNjJa',
+    name: 'Barrancas',
+  },
+  barrio_jesus_de_nazaret: {
+    id: 'TUxBQkJBUjY2ODla',
+    name: 'Barrio Jesús de Nazaret',
+  },
   coquimbito: 61,
-  cruz_de_piedra: 62,
-  el_pedregal: 63,
-  fray_luis_beltran: 64,
+  cruz_de_piedra: {
+    id: 'TUxBQkNSVTQwMzVa',
+    name: 'Cruz de Piedra',
+  },
+  el_pedregal: {
+    id: 'TUxBQkVMUDIwMDJa',
+    name: 'El Pedregal',
+  },
+  fray_luis_beltran: {
+    id: 'TUxBQkZSQTg4NTJa',
+    name: 'Fray Luis Beltrán',
+  },
   general_gutierrez: 65,
   general_ortega: 66,
-  maipu_city: 67,
+  maipu_city: {
+    id: 'TUxBQk1BSTYwNTNa',
+    name: 'Maipú',
+  },
   lunlunta: 68,
-  luzuriaga: 69,
-  rodeo_del_medio: 70,
-  russell: 71,
-  san_roque: 72,
-  villa_teresa: 73,
+  luzuriaga: {
+    id: 'TVhYTHV6dXJpYWdhVFV4QlEwMUJTV0V5TXpB',
+    name: 'Luzuriaga',
+  },
+  rodeo_del_medio: {
+    id: 'TUxBQlJPRDI4NzNa',
+    name: 'Rodeo del Medio',
+  },
+  russell: {
+    id: 'TUxBQlJVUzQ4MTNa',
+    name: 'Russell',
+  },
+  san_roque: {
+    id: 'TUxBQlNBTjY4OTNa',
+    name: 'San Roque',
+  },
+  villa_teresa: {
+    id: 'TUxBQlZJTDM4OTBa',
+    name: 'Villa Teresa',
+  },
 
   // San Martín
-  alto_verde_sm: 108,
-  barrio_emanuel: 109,
+  alto_verde_sm: {
+    id: 'TUxBQkFMVDQzMjBa',
+    name: 'Alto Verde',
+  },
+  barrio_emanuel: {
+    id: 'TUxBQkJBUjQ0ODZa',
+    name: 'Barrio Emanuel',
+  },
   barrio_la_estacion: 110,
-  barrio_los_charabones: 111,
+  barrio_los_charabones: {
+    id: 'TUxBQkJBUjE4MjVa',
+    name: 'Barrio Los Charabones',
+  },
   barrio_nuestra_senora_de_fatima: 112,
-  chapanay: 113,
-  chivilcoy: 114,
+  chapanay: {
+    id: 'TUxBQkNIQTcyMDNa',
+    name: 'Chapanay',
+  },
+  chivilcoy: {
+    id: 'TUxBQkNISTg5NDZa',
+    name: 'Chivilcoy',
+  },
   el_espino: 115,
   el_central: 116,
   el_divisadero: 117,
   el_ramblon: 118,
-  montecaseros: 119,
-  nueva_california_est_moluches: 120,
-  palmira: 121,
-  san_martin_city: 122,
-  tres_portenas: 123,
+  montecaseros: {
+    id: 'TUxBQk1PTjQ3NDla',
+    name: 'Montecaseros',
+  },
+  nueva_california_est_moluches: {
+    id: 'TUxBQk5VRTgzNzBa',
+    name: 'Nueva California',
+  },
+  palmira: {
+    id: 'TVhYUGFsbWlyYVRVeEJRMU5CVG1RNE4yVTQ',
+    name: 'Palmira',
+  },
+  san_martin_city: {
+    id: 'TUxBQlNBTjU4MDJa',
+    name: 'San Martín',
+  },
+  tres_portenas: {
+    id: 'TUxBQlRSRTIzNjha',
+    name: 'Tres Porteñas',
+  },
 
   // Rivadavia
-  andrade: 204,
-  barrio_cooperativa_los_campamentos: 205,
-  barrio_rivadavia: 206,
-  el_mirador: 207,
-  la_central: 208,
-  la_esperanza: 209,
-  la_florida: 210,
-  la_libertad: 211,
-  los_arboles: 212,
-  los_campamentos: 213,
-  medrano_riv: 214,
-  mundo_nuevo_riv: 215,
-  reduccion_de_abajo: 216,
-  rivadavia_city: 217,
-  santa_maria_de_oro: 218,
+  andrade: {
+    id: 'TUxBQkFORDQ4OTha',
+    name: 'Andrade',
+  },
+  barrio_cooperativa_los_campamentos: {
+    id: 'TUxBQkJBUjQ4NjZa',
+    name: 'Barrio Cooperativa Los Campamentos',
+  },
+  barrio_rivadavia: {
+    id: 'TUxBQkJBUjgwMzBa',
+    name: 'Barrio Rivadavia',
+  },
+  el_mirador: {
+    id: 'TUxBQkVMTTc1NzFa',
+    name: 'El Mirador',
+  },
+  la_central: {
+    id: 'TUxBQkxBQzU0OTNa',
+    name: 'La Central',
+  },
+  la_esperanza: {
+    id: 'TUxBQkxBRTM3MjNa',
+    name: 'La Esperanza',
+  },
+  la_florida: {
+    id: 'TUxBQkxBRjE4MDFa',
+    name: 'La Florida',
+  },
+  la_libertad: {
+    id: 'TUxBQkxBTDEzNDda',
+    name: 'La Libertad',
+  },
+  los_arboles: {
+    id: 'TUxBQkxPUzQzNzVa',
+    name: 'Los Árboles',
+  },
+  los_campamentos: {
+    id: 'TUxBQkxPUzU4MTBa',
+    name: 'Los Campamentos',
+  },
+  medrano_riv: {
+    id: 'TUxBQk1FRDU1NDJa',
+    name: 'Medrano',
+  },
+  mundo_nuevo_riv: {
+    id: 'TUxBQk1VTjU0MzNa',
+    name: 'Mundo Nuevo',
+  },
+  reduccion_de_abajo: {
+    id: 'TUxBQlJFRDk1Njda',
+    name: 'Reducción de Abajo',
+  },
+  rivadavia_city: {
+    id: 'TUxBQlJJVjI5NzFa',
+    name: 'Rivadavia',
+  },
+  santa_maria_de_oro: {
+    id: 'TUxBQlNBTjM1NDNa',
+    name: 'Santa María de Oro',
+  },
 
   // Junín
-  junin_centro: 163,
-  los_barriales: 165,
-  philipps: 167,
-  medrano_jun: 166,
+  junin_centro: {
+    id: 'TUxBQkpVTjE4NzJa',
+    name: 'Junín',
+  },
+  los_barriales: {
+    id: 'TUxBQkxPUzUxOTVa',
+    name: 'Los Barriales',
+  },
+  philipps: {
+    id: 'TUxBQlBISTQ3MTVa',
+    name: 'Phillips',
+  },
+  medrano_jun: {
+    id: 'TUxBQk1FRDY0ODFa',
+    name: 'Medrano',
+  },
   algarrobo_grande: 160,
-  la_colonia: 164,
+  la_colonia: {
+    id: 'TUxBQkxBQzYzNDVa',
+    name: 'La Colonia',
+  },
   alto_verde_jun: 161,
-  rodriguez_pena: 168,
-  inge_giagnoni: 162,
+  rodriguez_pena: {
+    id: 'TUxBQlJPRDIyODRa',
+    name: 'Rodríguez Peña',
+  },
+  inge_giagnoni: {
+    id: 'TUxBQklORzk5Njda',
+    name: 'Ingeniero Giagnoni',
+  },
 
   // San Rafael
-  '25_de_mayo_villa_veinticinco_de_mayo': 124,
-  barrio_campos_el_toledano: 125,
-  barrio_el_nevado: 126,
-  barrio_empleados_de_comercio: 127,
-  barrio_intendencia: 128,
-  capitan_montoya: 129,
-  cuadro_benegas: 130,
-  el_nihuil: 131,
-  el_sosneado_sr: 132,
-  el_tropezon: 133,
-  goudge: 134,
-  jaime_prats_sr: 135,
-  la_llave_nueva: 136,
-  las_malvinas: 137,
-  los_reyunos: 138,
-  monte_coman: 139,
-  pobre_diablo: 140,
-  punta_del_agua: 141,
-  rama_caida: 142,
-  real_del_padre: 143,
-  salto_de_las_rosas: 144,
-  san_rafael_city: 145,
-  villa_atuel: 146,
+  '25_de_mayo_villa_veinticinco_de_mayo': {
+    id: 'TUxBQjI1RDU4MTNa',
+    name: '25 de Mayo',
+  },
+  barrio_campos_el_toledano: {
+    id: 'TUxBQkJBUjMwNDFa',
+    name: 'Barrio Campos El Toledano',
+  },
+  barrio_el_nevado: {
+    id: 'TUxBQkJBUjE0NzRa',
+    name: 'Barrio El Nevado',
+  },
+  barrio_empleados_de_comercio: {
+    id: 'TUxBQkJBUjMxNjRa',
+    name: 'Barrio Empleados de Comercio',
+  },
+  barrio_intendencia: {
+    id: 'TUxBQkJBUjE2ODVa',
+    name: 'Barrio Intendencia',
+  },
+  capitan_montoya: {
+    id: 'TUxBQkNBUDUzMjVa',
+    name: 'Capitán Montoya',
+  },
+  cuadro_benegas: {
+    id: 'TUxBQkNVQTYzMzNa',
+    name: 'Cuadro Benegas',
+  },
+  el_nihuil: {
+    id: 'TUxBQkVMTjIyMDFa',
+    name: 'El Nihuil',
+  },
+  el_sosneado_sr: {
+    id: 'TUxBQkVMUzUxMTBa',
+    name: 'El Sosneado',
+  },
+  el_tropezon: {
+    id: 'TUxBQkVMVDE0NDJa',
+    name: 'El Tropezón',
+  },
+  goudge: {
+    id: 'TUxBQkdPVTkyNDBa',
+    name: 'Goudge',
+  },
+  jaime_prats_sr: {
+    id: 'TUxBQkpBSTIwMzZa',
+    name: 'Jaime Prats',
+  },
+  la_llave_nueva: {
+    id: 'TUxBQkxBTDgwMTla',
+    name: 'La Llave Nueva',
+  },
+  las_malvinas: {
+    id: 'TUxBQkxBUzg4Mzla',
+    name: 'Las Malvinas',
+  },
+  los_reyunos: {
+    id: 'TUxBQkxPUzM0Mjda',
+    name: 'Los Reyunos',
+  },
+  monte_coman: {
+    id: 'TUxBQk1PTjEwMjVa',
+    name: 'Monte Comán',
+  },
+  pobre_diablo: {
+    id: 'TUxBQlBPQjcyNzda',
+    name: 'Pobre Diablo',
+  },
+  punta_del_agua: {
+    id: 'TUxBQlBVTjM3MDla',
+    name: 'Punta del Agua',
+  },
+  rama_caida: {
+    id: 'TUxBQlJBTTE1OTBa',
+    name: 'Rama Caída',
+  },
+  real_del_padre: {
+    id: 'TUxBQlJFQTUwNjNa',
+    name: 'Real del Padre',
+  },
+  salto_de_las_rosas: {
+    id: 'TUxBQlNBTDcyMTFa',
+    name: 'Salto de las Rosas',
+  },
+  san_rafael_city: {
+    id: 'TUxBQlNBTjYxMzla',
+    name: 'San Rafael',
+  },
+  villa_atuel: {
+    id: 'TUxBQlZJTDg5NDJa',
+    name: 'Villa Atuel',
+  },
 
   // General Alvear
-  general_alvear: 38,
-  bowen: 36,
-  carmensa: 37,
+  general_alvear: {
+    id: 'TUxBQkdFTjQwMzha',
+    name: 'General Alvear',
+  },
+  bowen: {
+    id: 'TUxBQkJPVzE1MTBa',
+    name: 'Bowen',
+  },
+  carmensa: {
+    id: 'TUxBQkNBUjQ2Njha',
+    name: 'Carmensa',
+  },
   san_pedro_del_atuel: 39,
   colonia_alvear_oeste: 40,
-  los_compartos: 41,
+  los_compartos: {
+    id: 'TUxBQkxPUzI0MTla',
+    name: 'Los Compartos',
+  },
 
   // Malargüe
-  agua_escondida: 188,
-  las_lenas: 189,
+  agua_escondida: {
+    id: 'TUxBQkFHVTYzMzda',
+    name: 'Agua Escondida',
+  },
+  las_lenas: {
+    id: 'TUxBQkxBUzY5Mjda',
+    name: 'Las Leñas',
+  },
   rio_grande: 190,
-  malargue_city: 191,
+  malargue_city: {
+    id: 'TUxBQk1BTDEzNDVa',
+    name: 'Malargüe',
+  },
 
   // Tupungato
   anchoris: 179,
-  barrio_belgrano_norte: 180,
-  cordon_del_plata: 181,
-  el_peral: 182,
+  barrio_belgrano_norte: {
+    id: 'TUxBQkJBUjU5Mjha',
+    name: 'Barrio Belgrano Norte',
+  },
+  cordon_del_plata: {
+    id: 'TUxBQkNPUjMxOTNa',
+    name: 'Cordón del Plata',
+  },
+  el_peral: {
+    id: 'TUxBQkVMUDY5ODBa',
+    name: 'El Peral',
+  },
   el_zampal: 183,
-  la_arboleda: 184,
-  san_jose_tup: 185,
-  tupungato_city: 186,
+  la_arboleda: {
+    id: 'TUxBQkxBQTM3NzFa',
+    name: 'La Arboleda',
+  },
+  san_jose_tup: {
+    id: 'TUxBQlNBTjc0NjJa',
+    name: 'San José',
+  },
+  tupungato_city: {
+    id: 'TUxBQlRVUDU0Nzha',
+    name: 'Tupungato',
+  },
   villa_bastias: 187,
 
   // Tunuyán
-  barrio_san_cayetano: 172,
-  campo_los_andes: 173,
-  colonia_las_rosas: 174,
-  el_manzano: 175,
-  los_sauces: 176,
-  tunuyan_city: 177,
-  vista_flores: 178,
+  barrio_san_cayetano: {
+    id: 'TUxBQkJBUjI3NTBa',
+    name: 'Barrio San Cayetano',
+  },
+  campo_los_andes: {
+    id: 'TUxBQkNBTTE2MjNa',
+    name: 'Campo Los Andes',
+  },
+  colonia_las_rosas: {
+    id: 'TUxBQkNPTDQzNTha',
+    name: 'Colonia Las Rosas',
+  },
+  el_manzano: {
+    id: 'TUxBQkVMTTYzNTRa',
+    name: 'El Manzano',
+  },
+  los_sauces: {
+    id: 'TUxBQkxPUzg5Mjla',
+    name: 'Los Sauces',
+  },
+  tunuyan_city: {
+    id: 'TUxBQlRVTjcxMjNa',
+    name: 'Tunuyán',
+  },
+  vista_flores: {
+    id: 'TUxBQlZJUzYxNzRa',
+    name: 'Vista Flores',
+  },
 
   // San Carlos
   barrio_carrasco: 153,
-  barrio_el_cepillo: 154,
-  chilecito: 155,
-  eugenio_bustos: 156,
-  la_consulta: 157,
-  pareditas_sc: 158,
-  san_carlos_city: 159,
+  barrio_el_cepillo: {
+    id: 'TUxBQkJBUjcxMDBa',
+    name: 'Barrio El Cepillo',
+  },
+  chilecito: {
+    id: 'TUxBQkNISTc2MDZa',
+    name: 'Chilecito',
+  },
+  eugenio_bustos: {
+    id: 'TUxBQkVVRzcwOTVa',
+    name: 'Eugenio Bustos',
+  },
+  la_consulta: {
+    id: 'TUxBQkxBQzIzMDRa',
+    name: 'La Consulta',
+  },
+  pareditas_sc: {
+    id: 'TUxBQlBBUjU0OTZa',
+    name: 'Pareditas',
+  },
+  san_carlos_city: {
+    id: 'TUxBQlNBTjYyMDVa',
+    name: 'San Carlos',
+  },
 
   // Lavalle
-  '3_de_mayo': 91,
-  barrio_alto_del_olvido: 92,
-  barrio_jocoli_ii: 93,
-  barrio_lagunas_de_bartoluzzi: 94,
-  barrio_la_palmera: 95,
-  barrio_la_pega: 96,
-  barrio_los_jarilleros: 97,
-  barrio_los_olivos: 98,
+  '3_de_mayo': {
+    id: 'TUxBQjNERTI0NDZa',
+    name: '3 de Mayo',
+  },
+  barrio_alto_del_olvido: {
+    id: 'TUxBQkJBUjcxMzda',
+    name: 'Barrio Alto del Olvido',
+  },
+  barrio_jocoli_ii: {
+    id: 'TUxBQkJBUjc2NDRa',
+    name: 'Barrio Jocolí II',
+  },
+  barrio_lagunas_de_bartoluzzi: {
+    id: 'TUxBQkJBUjE4OTla',
+    name: 'Barrio Lagunas de Bartoluzzi',
+  },
+  barrio_la_palmera: {
+    id: 'TUxBQkJBUjM0NDha',
+    name: 'Barrio La Palmera',
+  },
+  barrio_la_pega: {
+    id: 'TUxBQkJBUjkzMzha',
+    name: 'Barrio La Pega',
+  },
+  barrio_los_jarilleros: {
+    id: 'TUxBQkJBUjkwNDBa',
+    name: 'Barrio Los Jarilleros',
+  },
+  barrio_los_olivos: {
+    id: 'TUxBQkJBUjY4MDVa',
+    name: 'Barrio Los Olivos',
+  },
   barrio_virgen_del_rosario: 99,
-  costa_de_araujo: 100,
-  el_paramillo: 101,
-  el_vergel: 102,
-  ingeniero_gustavo_andre: 103,
-  jocoli_lav: 104,
-  jocoli_viejo: 105,
-  las_violetas: 106,
-  villa_tulumaya: 107,
+  costa_de_araujo: {
+    id: 'TUxBQkNPUzYzMzla',
+    name: 'Costa de Araujo',
+  },
+  el_paramillo: {
+    id: 'TUxBQkVMUDYzNzBa',
+    name: 'El Paramillo',
+  },
+  el_vergel: {
+    id: 'TUxBQkVMVjQ1Mjda',
+    name: 'El Vergel',
+  },
+  ingeniero_gustavo_andre: {
+    id: 'TUxBQklORzYzODJa',
+    name: 'Ingeniero Gustavo André',
+  },
+  jocoli_lav: {
+    id: 'TUxBQkpPQzk5OTRa',
+    name: 'Jocolí',
+  },
+  jocoli_viejo: {
+    id: 'TUxBQkpPQzQzMjZa',
+    name: 'Jocolí Viejo',
+  },
+  las_violetas: {
+    id: 'TUxBQkxBUzk4NjNa',
+    name: 'Las Violetas',
+  },
+  villa_tulumaya: {
+    id: 'TUxBQlZJTDgxODFa',
+    name: 'Villa Tulumaya',
+  },
 
   // Santa Rosa
-  barrio_12_de_octubre: 147,
-  barrio_maria_auxiliadora: 148,
-  barrio_molina_cabrera: 149,
-  la_dormida: 150,
-  las_catitas: 151,
-  santa_rosa_city: 152,
+  barrio_12_de_octubre: {
+    id: 'TUxBQkJBUjE3NzRa',
+    name: 'Barrio 12 de Octubre',
+  },
+  barrio_maria_auxiliadora: {
+    id: 'TUxBQkJBUjIwODJa',
+    name: 'Barrio María Auxiliadora',
+  },
+  barrio_molina_cabrera: {
+    id: 'TUxBQkJBUjEzMzha',
+    name: 'Barrio Molina Cabrera',
+  },
+  la_dormida: {
+    id: 'TUxBQkxBRDEyOTJa',
+    name: 'La Dormida',
+  },
+  las_catitas: {
+    id: 'TUxBQkxBUzYxMzla',
+    name: 'Las Catitas',
+  },
+  santa_rosa_city: {
+    id: 'TUxBQlNBTjEzNjZa',
+    name: 'Santa Rosa',
+  },
 
   // La Paz
-  villa_antigua: 171,
-  desaguadero: 169,
-  la_paz_city: 170,
+  villa_antigua: {
+    id: 'TUxBQlZJTDEzODZa',
+    name: 'Villa Antigua',
+  },
+  desaguadero: {
+    id: 'TUxBQkRFUzYyOTNa',
+    name: 'Desaguadero',
+  },
+  la_paz_city: {
+    id: 'TUxBQkxBUDU3ODha',
+    name: 'La Paz',
+  },
 }
 
 // Servicios/Amenities
-export const amenityServicesMappings: InmoupMapping = {
+export const amenityServicesMappings: MercadoLibreMappins = {
   barrio_abierto: 'barrio-abierto',
   barrio_privado: 'barrio-privado',
   aire_acondicionado: 'aire-acondicionado',
@@ -541,7 +1028,7 @@ export const amenityServicesMappings: InmoupMapping = {
 }
 
 // Ambientes/Amenities
-export const amenityEnvironmentsMappings: InmoupMapping = {
+export const amenityEnvironmentsMappings: MercadoLibreMappins = {
   parrilla: 'parrilla',
   balcon: 'balcon',
   patio: 'patio',
@@ -574,7 +1061,7 @@ export const amenityEnvironmentsMappings: InmoupMapping = {
 }
 
 // Zonas cercanas/Amenities
-export const amenityNearbyZonesMappings: InmoupMapping = {
+export const amenityNearbyZonesMappings: MercadoLibreMappins = {
   colegios: 'colegios',
   universidades: 'universidades',
   guarderias: 'guarderias',

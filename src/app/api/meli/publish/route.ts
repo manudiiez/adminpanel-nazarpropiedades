@@ -5,7 +5,7 @@ import { mapFormDataToMercadoLibre, validateMercadoLibreData } from '@/utils/mer
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { action, propertyData, images } = body
+    const { action, propertyData, images, propertyId } = body
     console.log('Cuerpo recibido en /api/meli/publish:', images)
     if (!propertyData) {
       return NextResponse.json({ error: 'propertyData es requerido' }, { status: 400 })
@@ -42,19 +42,19 @@ export async function POST(request: NextRequest) {
 
     let result
 
-    // switch (action) {
-    //   case 'publishToMercadoLibre':
-    //     result = await publishToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
-    //     break
-    //   case 'syncToMercadoLibre':
-    //     result = await syncToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
-    //     break
-    //   case 'deleteFromMercadoLibre':
-    //     result = await deleteFromMercadoLibre(tokenInfo, propertyId, body.externalId)
-    //     break
-    //   default:
-    //     return NextResponse.json({ error: 'Acción no válida' }, { status: 400 })
-    // }
+    switch (action) {
+      case 'publishToMercadoLibre':
+        result = await publishToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
+        break
+      case 'syncToMercadoLibre':
+        result = await syncToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
+        break
+      case 'deleteFromMercadoLibre':
+        result = await deleteFromMercadoLibre(tokenInfo, propertyId, body.externalId)
+        break
+      default:
+        return NextResponse.json({ error: 'Acción no válida' }, { status: 400 })
+    }
 
     return NextResponse.json(result)
   } catch (error: any) {
