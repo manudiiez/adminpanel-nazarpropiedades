@@ -1,10 +1,79 @@
-// Utilidad para mapear datos de formData al formato requerido por MercadoLibre API
+// src/utils/mercadolibreMapper.ts
 
 import { mercadolibreMappings, propertyType } from '@/data/mercadolibreMappings'
 
-/**
- * Función para obtener el category_id de MercadoLibre basado en el tipo de propiedad y condición
- */
+interface PropertyData {
+  // Classification
+  classification?: {
+    type?: string
+    condition?: string
+  }
+
+  // Ubication
+  ubication?: {
+    province?: string
+    department?: string
+    locality?: string
+    neighborhood?: string
+    address?: string
+    mapLocation?: {
+      lat?: number
+      lng?: number
+      address?: string
+      formattedAddress?: string
+    }
+  }
+
+  // Caracteristics
+  caracteristics?: {
+    price?: number
+    currency?: string
+    hasExpenses?: string
+    expenses?: number
+    expensesCurrency?: string
+    coveredArea?: number
+    totalArea?: number
+    frontMeters?: number
+    deepMeters?: number
+    antiquity?: string
+    conservationStatus?: string
+    orientation?: string
+  }
+
+  // Environments
+  environments?: {
+    bedrooms?: number
+    bathrooms?: number
+    garageType?: string
+    garages?: number
+    plantas?: number
+    ambientes?: string
+    furnished?: string
+  }
+
+  // Amenities
+  amenities?: {
+    barrioPrivado?: string
+    servicios?: string[]
+    ambientes?: string[]
+    zonasCercanas?: string[]
+  }
+
+  // AI Content
+  aiContent?: {
+    title?: string
+    description?: string
+  }
+
+  // Images
+  images?: {
+    coverImage?: any
+    gallery?: any[]
+    videoUrl?: string
+    virtualTourUrl?: string
+  }
+}
+
 function getMercadoLibreCategoryId(propertyTypeValue: string, condition: string): string {
   // Buscar el tipo de propiedad en el mapping
   const mappedPropertyType = mercadolibreMappings.propertyType[propertyTypeValue]
@@ -44,693 +113,669 @@ function getMercadoLibreCategoryId(propertyTypeValue: string, condition: string)
   return categoryId || 'MLA401685' // Fallback si no se encuentra
 }
 
-// Nueva interfaz para datos normales (sin .value)
-interface PropertyData {
-  // Classification
-  classification?: {
-    type?: string
-    condition?: string
+export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: any[]) {
+  const classification = propertyData.classification || {}
+  const ubication = propertyData.ubication || {}
+  const caracteristics = propertyData.caracteristics || {}
+  const environments = propertyData.environments || {}
+  const amenities = propertyData.amenities || {}
+  const aiContent = propertyData.aiContent || {}
+  const propertyImages = propertyData.images || {}
+  console.log('images en el mapper:', images)
+  // Determinar operación
+  const operation = classification.condition?.toLowerCase() === 'venta' ? 'Venta' : 'Alquiler'
+
+  // Construir título (máximo 60 caracteres)
+  const title = aiContent.title || `${mapPropertyTypeToLabel(classification.type)} en ${operation}`
+
+  // Precio
+  const price = caracteristics.price || 0
+  const currency = caracteristics.currency?.toUpperCase() === 'USD' ? 'USD' : 'ARS'
+
+  // Procesar imágenes - combinar gallery y coverImage
+  const allImages: any[] = []
+
+  // Agregar cover image si existe
+  if (propertyImages.coverImage?.url) {
+    allImages.push({
+      source: `${process.env.NEXT_PUBLIC_SERVER_URL}${propertyImages.coverImage.url}`,
+    })
   }
 
-  // Ubication
-  ubication?: {
-    province?: string
-    department?: string
-    locality?: string
-    neighborhood?: string
-    address?: string
-    mapLocation?: {
-      lat?: number
-      lng?: number
-      address?: string
-      formattedAddress?: string
-    }
-  }
-
-  // Caracteristics
-  caracteristics?: {
-    price?: number
-    currency?: string
-    hasExpenses?: string
-    expenses?: number
-    expensesCurrency?: string
-    coveredArea?: number
-    totalArea?: number
-    frontMeters?: number
-    deepMeters?: number
-    antiquity?: string
-    conservationStatus?: string
-    orientation?: string
-    guests?: number
-  }
-
-  // Environments
-  environments?: {
-    bedrooms?: number
-    bathrooms?: number
-    garageType?: string
-    garages?: number
-    plantas?: number
-    ambientes?: string
-    furnished?: string
-  }
-
-  // Amenities
-  amenities?: {
-    barrioPrivado?: string
-    servicios?: string[]
-    ambientes?: string[]
-    zonasCercanas?: string[]
-  }
-
-  // AI Content
-  aiContent?: {
-    title?: string
-    description?: string
-  }
-
-  // Images
-  images?: {
-    coverImage?: any
-    gallery?: any[]
-    videoUrl?: string
-    virtualTourUrl?: string
-  }
-}
-
-interface MercadoLibreData {
-  title: string
-  category_id: string
-  price: number
-  currency_id: string
-  available_quantity: number
-  buying_mode: string
-  condition: string
-  listing_type_id: string
-  description?: string
-  pictures?: Array<{ source: string }>
-  attributes?: Array<{
-    id: string
-    value_name?: string
-    value_unit?: string
-    value_id?: string
-  }>
-  location?: {
-    address_line?: string
-    zip_code?: string
-    city?: {
-      name?: string
-    }
-    state?: {
-      name?: string
-    }
-    country?: {
-      id: string
-    }
-  }
-  [key: string]: any
-}
-
-/**
- * Función para obtener el listing_type_id basado en el tipo de operación
- */
-function getListingTypeId(condition: string): string {
-  // Mapeo básico de operaciones a tipos de listado de MercadoLibre
-  const listingTypes = {
-    venta: 'gold_special',
-    alquiler: 'gold_special',
-    alquiler_temporario: 'gold_special',
-    permuta: 'gold_special',
-  }
-
-  return listingTypes[condition as keyof typeof listingTypes] || 'gold_special'
-}
-
-/**
- * Función helper para obtener el ID del tipo de propiedad
- */
-function getPropertyTypeId(propertyTypeName: string): string | null {
-  // Mapeo basado en el JSON proporcionado
-  const propertyTypeMapping: Record<string, string> = {
-    Casa: '242060',
-    // Agregar más mapeos según sea necesario
-  }
-
-  return propertyTypeMapping[propertyTypeName] || null
-}
-
-/**
- * Función helper para obtener el ID de la operación
- */
-function getOperationId(condition: string): string | null {
-  // Mapeo basado en el JSON proporcionado
-  const operationMapping: Record<string, string> = {
-    venta: '242073', // Asumiendo que existe (no está en el JSON pero es común)
-    alquiler: '242072', // Asumiendo que existe
-    alquiler_temporario: '242074', // Del JSON proporcionado
-    permuta: '242075', // Asumiendo que existe
-  }
-
-  return operationMapping[condition] || null
-}
-
-/**
- * Función helper para obtener el subtipo de casa
- */
-function getHouseSubtype(propertyData: PropertyData): string | null {
-  // Mapeo basado en el JSON proporcionado - HOUSE_PROPERTY_SUBTYPE
-  const houseSubtypes: Record<string, string> = {
-    duplex: '266259',
-    ph: '266260',
-    triplex: '266261',
-    cabaña: '266256',
-    casa: '266257',
-    chalet: '266258',
-  }
-
-  // Intentar determinar el subtipo basado en datos disponibles
-  const type = propertyData.classification?.type?.toLowerCase()
-
-  if (type?.includes('duplex')) return houseSubtypes['duplex']
-  if (type?.includes('ph')) return houseSubtypes['ph']
-  if (type?.includes('triplex')) return houseSubtypes['triplex']
-  if (type?.includes('cabaña')) return houseSubtypes['cabaña']
-  if (type?.includes('chalet')) return houseSubtypes['chalet']
-
-  // Default para casa normal
-  return houseSubtypes['casa']
-}
-
-/**
- * Función helper para convertir valores boolean a formato MercadoLibre
- */
-function getBooleanMeliValue(
-  value: string | boolean | undefined,
-  defaultValue: boolean = false,
-): string {
-  if (value === undefined || value === null) {
-    return defaultValue ? '242085' : '242084' // Sí : No
-  }
-
-  if (typeof value === 'boolean') {
-    return value ? '242085' : '242084'
-  }
-
-  if (typeof value === 'string') {
-    const normalizedValue = value.toLowerCase()
-    if (normalizedValue === 'si' || normalizedValue === 'sí' || normalizedValue === 'true') {
-      return '242085'
-    }
-    if (normalizedValue === 'no' || normalizedValue === 'false') {
-      return '242084'
-    }
-  }
-
-  return defaultValue ? '242085' : '242084'
-}
-
-/**
- * Función para mapear atributos específicos de MercadoLibre
- */
-function mapAttributes(
-  propertyData: PropertyData,
-): Array<{ id: string; value_name?: string; value_unit?: string; value_id?: string }> {
-  const attributes: Array<{
-    id: string
-    value_name?: string
-    value_unit?: string
-    value_id?: string
-  }> = []
-
-  // === CAMPOS REQUERIDOS ===
-
-  // Tipo de propiedad (PROPERTY_TYPE) - REQUERIDO para algunas categorías
-  if (propertyData.classification?.type) {
-    const mappedPropertyType = mercadolibreMappings.propertyType[propertyData.classification.type]
-    if (mappedPropertyType) {
-      // Buscar el ID correspondiente en los valores permitidos
-      const propertyTypeId = getPropertyTypeId(String(mappedPropertyType))
-      if (propertyTypeId) {
-        attributes.push({
-          id: 'PROPERTY_TYPE',
-          value_id: propertyTypeId,
+  // Agregar imágenes de la galería
+  if (propertyImages.gallery && Array.isArray(propertyImages.gallery)) {
+    propertyImages.gallery.forEach((img: any) => {
+      if (img.url) {
+        allImages.push({
+          source: `${process.env.NEXT_PUBLIC_SERVER_URL}${img.url}`,
         })
       }
-    }
+    })
   }
 
-  // Operación (OPERATION) - REQUERIDO
-  if (propertyData.classification?.condition) {
-    const operationId = getOperationId(propertyData.classification.condition)
-    if (operationId) {
-      attributes.push({
-        id: 'OPERATION',
-        value_id: operationId,
-      })
-    }
+  // Agregar imágenes adicionales del parámetro
+  if (images && Array.isArray(images)) {
+    images.forEach((img: any) => {
+      const imgUrl = typeof img === 'string' ? img : img.url
+      if (imgUrl && !allImages.some((i) => i.source === imgUrl)) {
+        allImages.push({ source: imgUrl })
+      }
+    })
   }
 
-  // Superficie total (TOTAL_AREA) - REQUERIDO
-  if (propertyData.caracteristics?.totalArea) {
+  // Construir atributos
+  const attributes: any[] = []
+
+  // ===== ATRIBUTOS OBLIGATORIOS =====
+
+  // Superficie total (REQUERIDO)
+  if (caracteristics.totalArea && caracteristics.totalArea > 0) {
     attributes.push({
       id: 'TOTAL_AREA',
-      value_name: propertyData.caracteristics.totalArea.toString(),
-      value_unit: 'm²',
+      value_name: `${caracteristics.totalArea} m²`,
+      value_struct: {
+        number: caracteristics.totalArea,
+        unit: 'm²',
+      },
     })
   }
 
-  // Superficie cubierta (COVERED_AREA) - REQUERIDO
-  if (propertyData.caracteristics?.coveredArea) {
+  // Superficie cubierta (REQUERIDO)
+  if (caracteristics.coveredArea && caracteristics.coveredArea > 0) {
     attributes.push({
       id: 'COVERED_AREA',
-      value_name: propertyData.caracteristics.coveredArea.toString(),
-      value_unit: 'm²',
+      value_name: `${caracteristics.coveredArea} m²`,
+      value_struct: {
+        number: caracteristics.coveredArea,
+        unit: 'm²',
+      },
     })
   }
 
-  // Huéspedes (GUESTS) - REQUERIDO para alquiler temporario
-  if (propertyData.caracteristics?.guests) {
-    attributes.push({
-      id: 'GUESTS',
-      value_name: propertyData.caracteristics.guests.toString(),
-    })
-  }
-
-  // Dormitorios (BEDROOMS) - REQUERIDO
-  if (propertyData.environments?.bedrooms) {
+  // Dormitorios (REQUERIDO)
+  if (environments.bedrooms !== undefined) {
     attributes.push({
       id: 'BEDROOMS',
-      value_name: propertyData.environments.bedrooms.toString(),
+      value_name: environments.bedrooms.toString(),
     })
   }
 
-  // Baños completos (FULL_BATHROOMS) - REQUERIDO
-  if (propertyData.environments?.bathrooms) {
+  // Baños (REQUERIDO)
+  if (environments.bathrooms !== undefined) {
     attributes.push({
       id: 'FULL_BATHROOMS',
-      value_name: propertyData.environments.bathrooms.toString(),
+      value_name: environments.bathrooms.toString(),
     })
   }
 
-  // Cocheras (PARKING_LOTS) - REQUERIDO
+  // Cocheras (REQUERIDO - si no tiene, enviar 0)
   attributes.push({
     id: 'PARKING_LOTS',
-    value_name: (propertyData.environments?.garages || 0).toString(),
+    value_name: (environments.garages || 0).toString(),
   })
 
-  // === CAMPOS OPCIONALES IMPORTANTES ===
+  // ===== ATRIBUTOS OPCIONALES =====
 
-  // Ambientes (ROOMS)
-  if (propertyData.environments?.totalRooms) {
-    attributes.push({
-      id: 'ROOMS',
-      value_name: propertyData.environments.totalRooms.toString(),
-    })
+  // Antigüedad
+  if (caracteristics.antiquity) {
+    const antiguedadValue = parseAntiquity(caracteristics.antiquity)
+    if (antiguedadValue > 0) {
+      attributes.push({
+        id: 'PROPERTY_AGE',
+        value_name: `${antiguedadValue} años`,
+        value_struct: {
+          number: antiguedadValue,
+          unit: 'años',
+        },
+      })
+    }
   }
 
-  // Camas (BEDS)
-  if (propertyData.environments?.bedrooms) {
-    // Asumimos 1-2 camas por dormitorio
-    const estimatedBeds = propertyData.environments.bedrooms * 1.5
-    attributes.push({
-      id: 'BEDS',
-      value_name: Math.ceil(estimatedBeds).toString(),
-    })
+  // Ambientes
+  if (environments.ambientes) {
+    const ambientesNum = parseAmbientes(environments.ambientes)
+    if (ambientesNum > 0) {
+      attributes.push({
+        id: 'ROOMS',
+        value_name: ambientesNum.toString(),
+      })
+    }
   }
 
-  // Pisos (FLOORS)
-  if (propertyData.environments?.plantas) {
+  // Cantidad de pisos
+  if (environments.plantas && environments.plantas > 0) {
     attributes.push({
       id: 'FLOORS',
-      value_name: propertyData.environments.plantas.toString(),
+      value_name: environments.plantas.toString(),
     })
   }
 
-  // Tipo de casa (HOUSE_PROPERTY_SUBTYPE)
-  if (propertyData.classification?.type === 'casa') {
-    const houseSubtype = getHouseSubtype(propertyData)
-    if (houseSubtype) {
+  // Tipo de casa
+  const houseSubtype = mapHouseSubtype(classification.type)
+  if (houseSubtype) {
+    attributes.push({
+      id: 'HOUSE_PROPERTY_SUBTYPE',
+      value_id: houseSubtype.id,
+      value_name: houseSubtype.name,
+    })
+  }
+
+  // Orientación
+  if (caracteristics.orientation) {
+    const orientacion = mapOrientation(caracteristics.orientation)
+    if (orientacion) {
       attributes.push({
-        id: 'HOUSE_PROPERTY_SUBTYPE',
-        value_id: houseSubtype,
+        id: 'FACING',
+        value_id: orientacion.id,
+        value_name: orientacion.name,
       })
     }
   }
 
-  // === AMENITIES Y CARACTERÍSTICAS ===
-
-  // Pileta (HAS_SWIMMING_POOL)
-  if (
-    propertyData.amenities?.servicios?.includes('pileta') ||
-    propertyData.amenities?.servicios?.includes('piscina')
-  ) {
+  // Expensas
+  if (caracteristics.expenses && caracteristics.expenses > 0) {
+    const expensesCurrency = caracteristics.expensesCurrency?.toUpperCase() || currency
     attributes.push({
-      id: 'HAS_SWIMMING_POOL',
-      value_id: '242085', // Sí
+      id: 'MAINTENANCE_FEE',
+      value_name: `${caracteristics.expenses} ${expensesCurrency}`,
+      value_struct: {
+        number: caracteristics.expenses,
+        unit: expensesCurrency,
+      },
     })
   }
 
-  // Aire acondicionado (HAS_AIR_CONDITIONING)
-  if (
-    propertyData.amenities?.servicios?.includes('aire_acondicionado') ||
-    propertyData.amenities?.servicios?.includes('climatizacion')
-  ) {
+  // ===== AMENITIES BOOLEANOS =====
+
+  const servicios = amenities.servicios || []
+  const ambientesArray = amenities.ambientes || []
+
+  // Acceso a internet
+  if (servicios.includes('internet')) {
+    attributes.push({
+      id: 'HAS_INTERNET_ACCESS',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Aire acondicionado
+  if (servicios.includes('aire_acondicionado')) {
     attributes.push({
       id: 'HAS_AIR_CONDITIONING',
-      value_id: '242085', // Sí
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Calefacción (HAS_HEATING)
-  if (propertyData.amenities?.servicios?.includes('calefaccion')) {
+  // Alarma
+  if (ambientesArray.includes('seguridad')) {
+    attributes.push({
+      id: 'HAS_ALARM',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Balcón
+  if (ambientesArray.includes('balcon')) {
+    attributes.push({
+      id: 'HAS_BALCONY',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Calefacción
+  if (servicios.includes('calefaccion_central')) {
     attributes.push({
       id: 'HAS_HEATING',
-      value_id: '242085', // Sí
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Jardín (HAS_GARDEN)
-  if (
-    propertyData.amenities?.ambientes?.includes('jardin') ||
-    propertyData.amenities?.ambientes?.includes('patio') ||
-    propertyData.amenities?.ambientes?.includes('parque')
-  ) {
+  // Chimenea
+  if (ambientesArray.includes('chimenea')) {
     attributes.push({
-      id: 'HAS_GARDEN',
-      value_id: '242085', // Sí
+      id: 'HAS_INDOOR_FIREPLACE',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Parrilla (HAS_GRILL)
-  if (
-    propertyData.amenities?.servicios?.includes('parrilla') ||
-    propertyData.amenities?.servicios?.includes('asador')
-  ) {
+  // Cocina
+  if (ambientesArray.includes('cocina')) {
     attributes.push({
-      id: 'HAS_GRILL',
-      value_id: '242085', // Sí
+      id: 'HAS_KITCHEN',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Mascotas (PETS_ALLOWED)
-  if (propertyData.amenities?.mascotas) {
-    const petsAllowed = getBooleanMeliValue(propertyData.amenities.mascotas)
+  // Comedor
+  if (ambientesArray.includes('comedor') || ambientesArray.includes('living_comedor')) {
     attributes.push({
-      id: 'PETS_ALLOWED',
-      value_id: petsAllowed,
+      id: 'HAS_DINNING_ROOM',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Amoblado - mapeo desde environments.furnished
-  if (propertyData.environments?.furnished) {
-    const furnishedValue = getBooleanMeliValue(propertyData.environments.furnished)
-    // Note: No hay campo FURNISHED exacto en el JSON, pero podríamos usar otro campo
+  // Dependencia de servicio
+  if (ambientesArray.includes('dependencia_de_servicio')) {
+    attributes.push({
+      id: 'HAS_MAID_ROOM',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
   }
 
-  // Dormitorio en suite (HAS_BEDROOM_SUITE)
-  if (
-    propertyData.amenities?.ambientes?.includes('suite') ||
-    propertyData.amenities?.ambientes?.includes('dormitorio_principal')
-  ) {
+  // Dormitorio en suite
+  if (ambientesArray.includes('dormitorio_en_suite')) {
     attributes.push({
       id: 'HAS_BEDROOM_SUITE',
-      value_id: '242085', // Sí
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Toilette (HAS_HALF_BATH)
-  if (propertyData.environments?.toilettes && propertyData.environments.toilettes > 0) {
+  // Estudio
+  if (ambientesArray.includes('estudio') || ambientesArray.includes('escritorio')) {
     attributes.push({
-      id: 'HAS_HALF_BATH',
-      value_id: '242085', // Sí
+      id: 'HAS_STUDY',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Placards (HAS_CLOSETS)
-  if (propertyData.amenities?.servicios?.includes('placards')) {
+  // Gas natural
+  if (servicios.includes('gas_natural')) {
     attributes.push({
-      id: 'HAS_CLOSETS',
-      value_id: '242085', // Sí
+      id: 'HAS_NATURAL_GAS',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Electrodomésticos
-  if (propertyData.amenities?.servicios?.includes('heladera')) {
+  // Gimnasio
+  if (ambientesArray.includes('gimnasio')) {
     attributes.push({
-      id: 'HAS_REFRIGERATOR',
-      value_id: '242085', // Sí
+      id: 'HAS_GYM',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  if (propertyData.amenities?.servicios?.includes('microondas')) {
+  // Jardín
+  if (ambientesArray.includes('jardin')) {
     attributes.push({
-      id: 'HAS_MICROWAVE',
-      value_id: '242085', // Sí
+      id: 'HAS_GARDEN',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  if (propertyData.amenities?.servicios?.includes('lavarropa')) {
+  // Línea telefónica
+  if (servicios.includes('telefono')) {
     attributes.push({
-      id: 'HAS_WASHING_MACHINE',
-      value_id: '242085', // Sí
+      id: 'HAS_TELEPHONE_LINE',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Deportes y recreación
-  if (propertyData.amenities?.servicios?.includes('cancha_tenis')) {
+  // Living
+  if (ambientesArray.includes('living') || ambientesArray.includes('living_comedor')) {
     attributes.push({
-      id: 'HAS_TENNIS_COURT',
-      value_id: '242085', // Sí
+      id: 'HAS_LIVING_ROOM',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  if (propertyData.amenities?.servicios?.includes('cancha_basquet')) {
+  // Parrilla
+  if (ambientesArray.includes('parrilla')) {
     attributes.push({
-      id: 'HAS_BASKETBALL_COURT',
-      value_id: '242085', // Sí
+      id: 'HAS_GRILL',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  if (propertyData.amenities?.servicios?.includes('cancha_paddle')) {
+  // Patio
+  if (ambientesArray.includes('patio')) {
     attributes.push({
-      id: 'HAS_PADDLE_COURT',
-      value_id: '242085', // Sí
+      id: 'HAS_PATIO',
+      value_id: '242085',
+      value_name: 'Sí',
     })
   }
 
-  // Superficie de terreno (LAND_AREA)
-  if (propertyData.caracteristics?.totalArea && propertyData.caracteristics?.coveredArea) {
-    const landArea = propertyData.caracteristics.totalArea - propertyData.caracteristics.coveredArea
-    if (landArea > 0) {
-      attributes.push({
-        id: 'LAND_AREA',
-        value_name: landArea.toString(),
-        value_unit: 'm²',
-      })
-    }
+  // Pileta/Piscina
+  if (servicios.includes('piscina') || ambientesArray.includes('piscina')) {
+    attributes.push({
+      id: 'HAS_SWIMMING_POOL',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
   }
 
-  return attributes
-}
+  // Playroom
+  if (ambientesArray.includes('area_de_juegos_infantiles')) {
+    attributes.push({
+      id: 'HAS_PLAYROOM',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
 
-/**
- * Función principal para convertir propertyData al formato de MercadoLibre
- */
-export function mapFormDataToMercadoLibre(propertyData: PropertyData): MercadoLibreData {
-  // Mapeo básico de la propiedad
-  const mappedData: MercadoLibreData = {
-    // === CAMPOS BÁSICOS REQUERIDOS ===
-    title: propertyData.aiContent?.title || propertyData.title || '',
+  // Portón automático
+  if (ambientesArray.includes('porton_automatico')) {
+    attributes.push({
+      id: 'HAS_ELECTRIC_GATE_OPENER',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Terraza
+  if (ambientesArray.includes('terraza')) {
+    attributes.push({
+      id: 'HAS_TERRACE',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Vestidor
+  if (ambientesArray.includes('vestidor')) {
+    attributes.push({
+      id: 'HAS_DRESSING_ROOM',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Seguridad
+  if (ambientesArray.includes('seguridad')) {
+    attributes.push({
+      id: 'HAS_SECURITY',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Apto crédito hipotecario
+  if (servicios.includes('apto_credito_hipotecario')) {
+    attributes.push({
+      id: 'SUITABLE_FOR_MORTGAGE_LOAN',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // TV por cable
+  if (servicios.includes('cable_tv')) {
+    attributes.push({
+      id: 'HAS_CABLE_TV',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Barrio cerrado
+  if (amenities.barrioPrivado === 'Si') {
+    attributes.push({
+      id: 'WITH_GATED_COMMUNITY',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Área de cine
+  if (ambientesArray.includes('area_de_cine')) {
+    attributes.push({
+      id: 'HAS_CINEMA_HALL',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Área de juegos infantiles
+  if (ambientesArray.includes('area_de_juegos_infantiles')) {
+    attributes.push({
+      id: 'HAS_PLAYGROUND',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Área verde
+  if (ambientesArray.includes('area_verde')) {
+    attributes.push({
+      id: 'WITH_GREEN_AREA',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Ascensor
+  if (ambientesArray.includes('ascensor')) {
+    attributes.push({
+      id: 'HAS_LIFT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Desayunador
+  if (ambientesArray.includes('desayunador')) {
+    attributes.push({
+      id: 'HAS_BREAKFAST_BAR',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Salón de usos múltiples
+  if (ambientesArray.includes('salon_de_usos_multiples')) {
+    attributes.push({
+      id: 'HAS_PARTY_ROOM',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Sauna
+  if (ambientesArray.includes('sauna')) {
+    attributes.push({
+      id: 'HAS_SAUNA',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Amoblado
+  if (environments.furnished === 'si') {
+    attributes.push({
+      id: 'FURNISHED',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Estacionamiento para visitantes
+  if (ambientesArray.includes('estacionamiento_para_visitantes')) {
+    attributes.push({
+      id: 'HAS_GUEST_PARKING',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Con tour virtual
+  if (propertyImages.virtualTourUrl) {
+    attributes.push({
+      id: 'WITH_VIRTUAL_TOUR',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  return {
+    title: title.substring(0, 60),
     category_id: getMercadoLibreCategoryId(
       propertyData.classification?.type || '',
       propertyData.classification?.condition || '',
-    ),
-    price: propertyData.caracteristics?.price || 0,
-    currency_id: propertyData.caracteristics?.currency === 'usd' ? 'USD' : 'ARS',
-
-    // === CONFIGURACIÓN DE LISTADO ===
+    ), // Inmuebles en Argentina
+    price: price,
+    currency_id: currency,
     available_quantity: 1,
-    buying_mode: 'classified', // Para inmuebles
-    condition: 'new', // MercadoLibre usa 'new' para inmuebles
-    listing_type_id: getListingTypeId(propertyData.classification?.condition || ''),
+    buying_mode: 'classified',
+    listing_type_id: 'gold_special', // Puedes cambiar a 'free', 'gold_premium', etc.
+    condition: 'not_specified',
 
-    // === CONTENIDO ===
-    description: buildDescription(propertyData),
+    description: {
+      plain_text: aiContent.description || 'Propiedad disponible',
+    },
 
-    // === IMÁGENES ===
-    pictures: propertyData.images?.map((img) => ({ source: img.url })) || [],
+    pictures: allImages.length > 0 ? allImages : undefined,
 
-    // === ATRIBUTOS ESPECÍFICOS ===
-    attributes: mapAttributes(propertyData),
+    attributes: attributes,
 
-    // === UBICACIÓN ===
     location: {
-      address_line: propertyData.ubication?.address || '',
+      address_line: ubication.address || ubication.neighborhood || '',
       city: {
-        name: propertyData.ubication?.locality || propertyData.ubication?.department || '',
+        name: ubication.locality || 'Mendoza',
       },
       state: {
-        name: propertyData.ubication?.province || 'Mendoza',
+        id: 'AR-M',
+        name: 'Mendoza',
       },
       country: {
-        id: 'AR', // Argentina
+        id: 'AR',
+        name: 'Argentina',
       },
+      latitude: ubication.mapLocation?.lat,
+      longitude: ubication.mapLocation?.lng,
     },
-  }
 
-  return mappedData
+    // Video URL (si existe)
+    ...(propertyImages.videoUrl && {
+      video_id: extractYoutubeId(propertyImages.videoUrl),
+    }),
+  }
 }
 
-/**
- * Función helper para construir una descripción más completa
- */
-function buildDescription(propertyData: PropertyData): string {
-  let description = propertyData.aiContent?.description || propertyData.description || ''
+// Funciones auxiliares
 
-  // Si no hay descripción, construir una básica
-  if (!description.trim()) {
-    const parts: string[] = []
-
-    // Tipo de propiedad
-    if (propertyData.classification?.type) {
-      parts.push(
-        `${propertyData.classification.type.charAt(0).toUpperCase() + propertyData.classification.type.slice(1)}`,
-      )
-    }
-
-    // Operación
-    if (propertyData.classification?.condition) {
-      const conditionText =
-        propertyData.classification.condition === 'venta'
-          ? 'en venta'
-          : propertyData.classification.condition === 'alquiler'
-            ? 'en alquiler'
-            : propertyData.classification.condition === 'alquiler_temporario'
-              ? 'en alquiler temporario'
-              : ''
-      if (conditionText) parts.push(conditionText)
-    }
-
-    // Ubicación
-    if (propertyData.ubication?.locality) {
-      parts.push(`en ${propertyData.ubication.locality}`)
-    }
-
-    description = parts.join(' ')
-
-    // Agregar características principales
-    const features: string[] = []
-    if (propertyData.environments?.bedrooms) {
-      features.push(
-        `${propertyData.environments.bedrooms} dormitorio${propertyData.environments.bedrooms > 1 ? 's' : ''}`,
-      )
-    }
-    if (propertyData.environments?.bathrooms) {
-      features.push(
-        `${propertyData.environments.bathrooms} baño${propertyData.environments.bathrooms > 1 ? 's' : ''}`,
-      )
-    }
-    if (propertyData.caracteristics?.totalArea) {
-      features.push(`${propertyData.caracteristics.totalArea}m² totales`)
-    }
-
-    if (features.length > 0) {
-      description += `. ${features.join(', ')}.`
-    }
+function mapPropertyTypeToLabel(type?: string): string {
+  const typeMap: Record<string, string> = {
+    casa: 'Casa',
+    departamento: 'Departamento',
+    ph: 'PH',
+    local: 'Local',
+    oficina: 'Oficina',
+    terreno: 'Terreno',
+    campo: 'Campo',
+    galpon: 'Galpón',
+    quinta: 'Quinta',
   }
 
-  return description
+  return typeMap[type?.toLowerCase() || ''] || 'Propiedad'
 }
 
-/**
- * Función para validar que los datos mínimos requeridos estén presentes
- */
-export function validateMercadoLibreData(data: MercadoLibreData): {
-  isValid: boolean
-  errors: string[]
-} {
+function mapHouseSubtype(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    casa: { id: '266257', name: 'Casa' },
+    duplex: { id: '266259', name: 'Dúplex' },
+    ph: { id: '266260', name: 'Ph' },
+    triplex: { id: '266261', name: 'Tríplex' },
+    cabana: { id: '266256', name: 'Cabaña' },
+    chalet: { id: '266258', name: 'Chalet' },
+  }
+
+  return subtypeMap[type?.toLowerCase() || ''] || null
+}
+
+function mapOrientation(orientation?: string): { id: string; name: string } | null {
+  const orientationMap: Record<string, { id: string; name: string }> = {
+    norte: { id: '242327', name: 'Norte' },
+    sur: { id: '242328', name: 'Sur' },
+    este: { id: '242329', name: 'Este' },
+    oeste: { id: '242330', name: 'Oeste' },
+  }
+
+  return orientationMap[orientation?.toLowerCase() || ''] || null
+}
+
+function parseAntiquity(antiquity?: string): number {
+  if (!antiquity) return 0
+
+  const match = antiquity.match(/(\d+)/)
+  return match ? parseInt(match[1]) : 0
+}
+
+function parseAmbientes(ambientes?: string): number {
+  if (!ambientes) return 0
+
+  // Si es "6 o mas", devolver 6
+  if (ambientes.toLowerCase().includes('mas')) return 6
+
+  // Extraer número
+  const match = ambientes.match(/(\d+)/)
+  return match ? parseInt(match[1]) : 0
+}
+
+function extractYoutubeId(url?: string): string | undefined {
+  if (!url) return undefined
+
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
+  return match ? match[1] : undefined
+}
+
+export function validateMercadoLibreData(data: any) {
   const errors: string[] = []
 
-  // === CAMPOS BÁSICOS REQUERIDOS ===
-  if (!data.title) {
-    errors.push('Título es requerido')
+  if (!data.title || data.title.length === 0) {
+    errors.push('El título es obligatorio')
   }
 
-  if (!data.category_id) {
-    errors.push('Categoría es requerida')
+  if (data.title && data.title.length > 60) {
+    errors.push('El título no puede superar los 60 caracteres')
   }
 
   if (!data.price || data.price <= 0) {
-    errors.push('Precio debe ser mayor a 0')
+    errors.push('El precio debe ser mayor a 0')
   }
 
-  if (!data.currency_id) {
-    errors.push('Moneda es requerida')
-  }
-
-  if (!data.description) {
-    errors.push('Descripción es requerida')
-  }
-
-  // === VALIDAR ATRIBUTOS REQUERIDOS ===
-  const attributes = data.attributes || []
-  const attributeIds = attributes.map((attr) => attr.id)
-
-  // Campos requeridos según mercadolibredata.json
-  const requiredAttributes = [
-    { id: 'TOTAL_AREA', name: 'Superficie total' },
-    { id: 'COVERED_AREA', name: 'Superficie cubierta' },
-    { id: 'BEDROOMS', name: 'Dormitorios' },
-    { id: 'FULL_BATHROOMS', name: 'Baños' },
-    { id: 'PARKING_LOTS', name: 'Cocheras' },
-  ]
-
-  // Validar atributos requeridos para alquiler temporario
-  const hasGuestsAttribute = attributeIds.includes('GUESTS')
-  if (data.category_id === 'MLA50278' && !hasGuestsAttribute) {
-    // Alquiler temporario
-    errors.push('Huéspedes es requerido para alquiler temporario')
-  }
-
-  // Validar atributos básicos requeridos
-  requiredAttributes.forEach((reqAttr) => {
-    const hasAttribute = attributeIds.includes(reqAttr.id)
-    if (!hasAttribute) {
-      errors.push(`${reqAttr.name} es requerido`)
-    } else {
-      // Validar que tenga valor
-      const attribute = attributes.find((attr) => attr.id === reqAttr.id)
-      if (attribute && !attribute.value_name && !attribute.value_id) {
-        errors.push(`${reqAttr.name} debe tener un valor`)
-      }
-    }
-  })
-
-  // === VALIDACIONES DE NEGOCIO ===
-
-  // Validar que tenga al menos una imagen
   if (!data.pictures || data.pictures.length === 0) {
     errors.push('Se requiere al menos una imagen')
   }
 
-  // Validar ubicación
-  if (!data.location?.city?.name) {
-    errors.push('Ubicación (ciudad) es requerida')
+  if (!data.description?.plain_text) {
+    errors.push('La descripción es obligatoria')
   }
+
+  // Validar atributos obligatorios
+  const requiredAttributes = [
+    'TOTAL_AREA',
+    'COVERED_AREA',
+    'BEDROOMS',
+    'FULL_BATHROOMS',
+    'PARKING_LOTS',
+  ]
+  const presentAttributes = data.attributes?.map((attr: any) => attr.id) || []
+
+  requiredAttributes.forEach((reqAttr) => {
+    if (!presentAttributes.includes(reqAttr)) {
+      errors.push(`Falta el atributo obligatorio: ${reqAttr}`)
+    }
+  })
 
   return {
     isValid: errors.length === 0,
     errors,
   }
-}
-
-/**
- * Función helper para debug - muestra el mapeo completo
- */
-export function debugMercadoLibreMapping(propertyData: PropertyData): void {
-  console.log('Original propertyData:', propertyData)
-  const mapped = mapFormDataToMercadoLibre(propertyData)
-  console.log('Mapped to MercadoLibre:', mapped)
-  const validation = validateMercadoLibreData(mapped)
-  console.log('Validation result:', validation)
 }
