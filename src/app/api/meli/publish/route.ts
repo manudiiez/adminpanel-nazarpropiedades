@@ -103,7 +103,7 @@ async function publishToMercadoLibre(mappedPropertyData: any, tokenInfo: any, pr
     }
 
     const publishedItem = await publishResponse.json()
-
+    console.log('Respuesta de publicación en MercadoLibre:', publishedItem)
     return {
       success: true,
       message: 'Propiedad publicada exitosamente en MercadoLibre',

@@ -108,12 +108,12 @@ export default function MercadoLibrePortal({
           })
         }
 
-        alert('Propiedad publicada exitosamente en MercadoLibre')
+        // alert('Propiedad publicada exitosamente en MercadoLibre')
 
         // Forzar recarga para refrescar datos
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500)
+        // setTimeout(() => {
+        //   window.location.reload()
+        // }, 1500)
       }
     } catch (error) {
       console.error('Error publicando en MercadoLibre:', error)

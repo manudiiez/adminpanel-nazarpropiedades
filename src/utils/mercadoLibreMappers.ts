@@ -122,6 +122,35 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   const aiContent = propertyData.aiContent || {}
   const propertyImages = propertyData.images || {}
   console.log('images en el mapper:', images)
+
+  // Normalizar texto plano: mantener solo saltos de línea `\n`, recortar espacios
+  const normalizePlainText = (input: any): string => {
+    if (input === undefined || input === null) return 'Propiedad disponible'
+    // Si vienen como array de strings
+    if (Array.isArray(input)) {
+      input = input.join('\n')
+    }
+    let text = String(input)
+    // Normalizar retornos de carro
+    text = text.replace(/\r\n?/g, '\n')
+    // Dividir en líneas, recortar cada una y colapsar espacios internos
+    const lines = text.split('\n').map((l) => l.replace(/\s+/g, ' ').trim())
+    // Eliminar líneas vacías consecutivas y trim de inicio/fin
+    const out: string[] = []
+    for (const line of lines) {
+      if (line === '') {
+        if (out.length === 0) continue
+        if (out[out.length - 1] === '') continue
+        out.push('')
+      } else {
+        out.push(line)
+      }
+    }
+    // Quitar posibles líneas vacías al inicio/fin
+    while (out.length && out[0] === '') out.shift()
+    while (out.length && out[out.length - 1] === '') out.pop()
+    return out.join('\n') || 'Propiedad disponible'
+  }
   // Determinar operación
   const operation = classification.condition?.toLowerCase() === 'venta' ? 'Venta' : 'Alquiler'
 
@@ -637,19 +666,49 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     condition: 'not_specified',
 
     description: {
-      plain_text: aiContent.description || 'Propiedad disponible',
+      plain_text: normalizePlainText(aiContent.description),
     },
 
     pictures: allImages.length > 0 ? allImages : undefined,
 
     attributes: attributes,
 
+    // Mapear la ciudad usando los mapeos disponibles (locality)
     location: {
       address_line: ubication.address || ubication.neighborhood || '',
-      city: {
-        id: 'TUxBQ0dPRDIyMDlm',
-        name: 'Godoy Cruz',
-      },
+      city: (() => {
+        const mapped = mapValue(ubication.locality || '', 'locality')
+
+        // Si el mapping es un objeto con id y name, devolverlo tal cual
+        if (mapped && typeof mapped === 'object' && 'id' in mapped && 'name' in mapped) {
+          return mapped as { id: string; name: string }
+        }
+
+        // Si el mapping es un número, la city no existe en MercadoLibre -> usar el department mapeado
+        if (typeof mapped === 'number') {
+          const deptMapped = mapValue(ubication.department || '', 'department')
+          if (
+            deptMapped &&
+            typeof deptMapped === 'object' &&
+            'id' in deptMapped &&
+            'name' in deptMapped
+          ) {
+            return deptMapped as { id: string; name: string }
+          }
+          if (deptMapped !== undefined && deptMapped !== null && deptMapped !== '') {
+            return { name: String(deptMapped) }
+          }
+          return { name: ubication.department || 'Mendoza' }
+        }
+
+        // Si es un valor primitivo (string), usar como name
+        if (mapped !== undefined && mapped !== null && mapped !== '') {
+          return { name: String(mapped) }
+        }
+
+        // Fallback si no hay mapping ni localidad
+        return { name: ubication.locality || 'Godoy Cruz' }
+      })(),
       state: {
         id: 'AR-M',
         name: 'Mendoza',
@@ -670,6 +729,16 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
 }
 
 // Funciones auxiliares
+function mapValue(
+  value: string,
+  mappingType: Exclude<keyof typeof mercadolibreMappings, 'antiquity'>,
+): any {
+  if (!value) return value
+
+  const mapping = mercadolibreMappings[mappingType] as any
+  const mappedValue = mapping[value] as any
+  return mappedValue !== undefined && mappedValue !== null ? mappedValue : value
+}
 
 function mapPropertyTypeToLabel(type?: string): string {
   const typeMap: Record<string, string> = {
