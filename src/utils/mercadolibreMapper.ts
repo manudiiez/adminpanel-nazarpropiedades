@@ -1,4 +1,4 @@
-// src/utils/mercadolibreMapper.ts
+// src/utils/mercadoLibreMapper.ts
 
 import { mercadolibreMappings, propertyType } from '@/data/mercadolibreMappings'
 
