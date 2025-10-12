@@ -8,7 +8,7 @@
 
 ## Faltan
 - banos (cuando sen envian dos banos no figura como 2 banos, figura indefinido, pero en la api si aparece el 2)
-
+- Cuando hago una publicacion o algo en portales y vuelvo a detalles y vuelvo a portale sno aparece, debo actualizar.
 
 ## Apps utilizadas
 - Github: [text](https://github.com/manudiiez/adminpanel-nazarpropiedades/actions)

@@ -76,39 +76,53 @@ export const Propiedades: CollectionConfig = {
       ({ data, originalDoc, operation }) => {
         // Solo para actualizaciones (no creaciones)
         if (operation === 'update' && originalDoc) {
-          // No marcar como desactualizado si el estado está cambiando a "terminada"
-          // (esto ocurre cuando se crea un contrato)
+          // Campos a ignorar para no marcar como desactualizado
+          const fieldsToIgnore = [
+            'inmoup.lastSyncAt',
+            'inmoup.lastError',
+            'inmoup.status',
+            'inmoup.uploaded',
+            'inmoup.externalId',
+            'inmoup.externalUrl',
+            'mercadolibre.lastSyncAt',
+            'mercadolibre.lastError',
+            'mercadolibre.status',
+            'mercadolibre.uploaded',
+            'mercadolibre.externalId',
+            'mercadolibre.externalUrl',
+            'notes',
+            'updatedAt',
+            'createdAt',
+            'status', // Agregar status a los campos a ignorar para cambios automáticos
+          ]
 
-          // Verificar si Inmoup está publicado (status: 'ok')
-          if (originalDoc.inmoup?.status === 'ok') {
-            // Si hay cambios en la propiedad, marcar Inmoup como desactualizado
-            // Excluir cambios solo en campos internos como lastSyncAt, notes, etc.
-            const fieldsToIgnore = [
-              'inmoup.lastSyncAt',
-              'inmoup.lastError',
-              'notes',
-              'updatedAt',
-              'createdAt',
-              'status', // Agregar status a los campos a ignorar para cambios automáticos
-            ]
+          // Verificar si hay cambios significativos comparando data vs originalDoc
+          const hasSignificantChanges = Object.keys(data).some((key) => {
+            if (fieldsToIgnore.some((field) => field.startsWith(key))) {
+              return false
+            }
 
-            // Verificar si hay cambios significativos comparando data vs originalDoc
-            const hasSignificantChanges = Object.keys(data).some((key) => {
-              if (fieldsToIgnore.some((field) => field.startsWith(key))) {
-                return false
-              }
+            // Comparación profunda simplificada para detectar cambios
+            return JSON.stringify(data[key]) !== JSON.stringify(originalDoc[key])
+          })
 
-              // Comparación profunda simplificada para detectar cambios
-              return JSON.stringify(data[key]) !== JSON.stringify(originalDoc[key])
-            })
-
-            if (hasSignificantChanges) {
-              // Actualizar el estado de Inmoup a desactualizado
+          if (hasSignificantChanges) {
+            // Verificar si Inmoup está publicado (status: 'ok') y marcarlo como desactualizado
+            if (originalDoc.inmoup?.status === 'ok') {
               if (!data.inmoup) {
                 data.inmoup = { ...originalDoc.inmoup }
               }
               data.inmoup.status = 'desactualizado'
               data.inmoup.lastSyncAt = new Date().toISOString()
+            }
+
+            // Verificar si MercadoLibre está publicado (status: 'ok') y marcarlo como desactualizado
+            if (originalDoc.mercadolibre?.status === 'ok') {
+              if (!data.mercadolibre) {
+                data.mercadolibre = { ...originalDoc.mercadolibre }
+              }
+              data.mercadolibre.status = 'desactualizado'
+              data.mercadolibre.lastSyncAt = new Date().toISOString()
             }
           }
         }

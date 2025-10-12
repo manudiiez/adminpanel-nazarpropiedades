@@ -322,6 +322,7 @@ export async function PUT(request: NextRequest) {
     // Remover descripción para actualización del item
     const mlDataWithoutDescription = { ...mlData }
     delete mlDataWithoutDescription.description
+    delete mlDataWithoutDescription.listing_type_id
 
     // PASO 1: Actualizar item principal
     const mlResponse = await fetch(`https://api.mercadolibre.com/items/${mlItemId}`, {
