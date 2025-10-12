@@ -3,6 +3,11 @@ import type { CollectionConfig } from 'payload'
 
 export const ContractMedia: CollectionConfig = {
   slug: 'contractmedia',
+  admin: {
+    hidden: ({ user }) => {
+      return user?.role !== 'admin'
+    },
+  },
   access: {
     read: authenticated,
     create: authenticated,

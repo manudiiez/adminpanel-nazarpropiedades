@@ -14,6 +14,9 @@ export const MercadoLibreTokens: CollectionConfig = {
     useAsTitle: 'accountName',
     defaultColumns: ['accountName', 'isActive', 'expiresAt', 'createdAt'],
     description: 'Gestión de tokens de acceso para MercadoLibre OAuth2',
+    hidden: ({ user }) => {
+      return user?.role !== 'admin'
+    },
   },
   fields: [
     {

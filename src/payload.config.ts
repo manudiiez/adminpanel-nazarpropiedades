@@ -40,7 +40,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Clientes, Propiedades, Contratos, MercadoLibreTokens, ContractMedia],
+  collections: [Users, Clientes, Propiedades, Contratos, Media, MercadoLibreTokens, ContractMedia],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -1088,7 +1088,7 @@ export const Propiedades: CollectionConfig = {
     {
       name: 'inmoup',
       label: 'Configuración de Inmoup',
-      // admin: { hidden: true },
+      admin: { hidden: true },
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'Inmoup' },
@@ -1114,7 +1114,7 @@ export const Propiedades: CollectionConfig = {
     {
       name: 'mercadolibre',
       label: 'Configuración de MercadoLibre',
-      // admin: { hidden: true },
+      admin: { hidden: true },
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'MercadoLibre' },
