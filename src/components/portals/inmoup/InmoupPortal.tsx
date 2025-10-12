@@ -18,6 +18,7 @@ interface InmoupPortalProps {
   images?: Array<{ url: string; orden: number }>
   propertyId?: string
   inmoupData?: InmoupData
+  onDataUpdate?: (newData: InmoupData) => void
 }
 
 export default function InmoupPortal({
@@ -26,6 +27,7 @@ export default function InmoupPortal({
   images,
   propertyId,
   inmoupData,
+  onDataUpdate,
 }: InmoupPortalProps) {
   const [loading, setLoading] = useState(false)
   const [localInmoupData, setLocalInmoupData] = useState<InmoupData>(inmoupData || {})
@@ -33,7 +35,12 @@ export default function InmoupPortal({
 
   useEffect(() => {
     console.log('inmoupData cambió: ', localInmoupData)
-  }, [localInmoupData])
+
+    // Notificar al componente padre cuando cambie el estado local
+    if (onDataUpdate) {
+      onDataUpdate(localInmoupData)
+    }
+  }, [localInmoupData, onDataUpdate])
 
   // Función para obtener el badge de estado
   const getStatusBadge = (status: string) => {

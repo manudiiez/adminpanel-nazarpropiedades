@@ -133,11 +133,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Guardar la descripción para después
-    const description = mlData.description?.plain_text
-
     // Remover descripción del objeto inicial
-    const mlDataWithoutDescription = { ...mlData }
-    delete mlDataWithoutDescription.description
+    const { description, ...mlDataWithoutDescription } = mlData
 
     // PASO 1: Publicar item en Mercado Libre (sin descripción)
     console.log('📤 Creando item en Mercado Libre...')
@@ -189,7 +186,7 @@ export async function POST(request: NextRequest) {
 
     // PASO 2: Agregar la descripción
     let descriptionAdded = false
-    if (description && description.trim().length > 0) {
+    if (description?.plain_text && description?.plain_text.trim().length > 0) {
       try {
         console.log('📝 Agregando descripción al item...')
         const descriptionResponse = await fetch(
@@ -201,7 +198,7 @@ export async function POST(request: NextRequest) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              plain_text: description,
+              plain_text: description?.plain_text,
             }),
           },
         )

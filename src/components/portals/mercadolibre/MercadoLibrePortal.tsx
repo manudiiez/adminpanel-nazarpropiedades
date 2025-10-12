@@ -18,6 +18,7 @@ interface MercadoLibrePortalProps {
   images?: Array<{ url: string; orden: number }>
   propertyId?: string
   mercadoLibreData?: MercadoLibreData
+  onDataUpdate?: (newData: MercadoLibreData) => void
 }
 
 export default function MercadoLibrePortal({
@@ -26,6 +27,7 @@ export default function MercadoLibrePortal({
   images,
   propertyId,
   mercadoLibreData,
+  onDataUpdate,
 }: MercadoLibrePortalProps) {
   const [loading, setLoading] = useState(false)
   const [localMercadoLibreData, setLocalMercadoLibreData] = useState<MercadoLibreData>(
@@ -36,7 +38,12 @@ export default function MercadoLibrePortal({
   useEffect(() => {
     console.log('mercadoLibreData cambió: ', localMercadoLibreData)
     console.log('Imágenes en MercadoLibrePortal:', images)
-  }, [localMercadoLibreData])
+
+    // Notificar al componente padre cuando cambie el estado local
+    if (onDataUpdate) {
+      onDataUpdate(localMercadoLibreData)
+    }
+  }, [localMercadoLibreData, images, onDataUpdate])
 
   // Función para obtener el badge de estado
   const getStatusBadge = (status: string) => {

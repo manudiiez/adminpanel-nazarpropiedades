@@ -213,8 +213,8 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
     mercadolibre: {
       name: mercadolibreData.name || 'MercadoLibre',
       logo: '🏠',
-      status: getPortalStatus(inmoupData),
-      publishedDate: inmoupData.lastSyncAt || null,
+      status: getPortalStatus(mercadolibreData),
+      publishedDate: mercadolibreData.lastSyncAt || null,
       notes:
         mercadolibreData.lastError ||
         (mercadolibreData.status === 'ok'
