@@ -41,12 +41,8 @@ async function updatePortalStatus(
 
 // POST - Publicar nueva propiedad
 export async function POST(request: NextRequest) {
-  let propertyId: string | undefined
-
+  const { propertyData, images, propertyId } = await request.json()
   try {
-    const { propertyData, images, propertyId: requestPropertyId } = await request.json()
-    propertyId = requestPropertyId
-
     console.log('📤 Iniciando publicación en Mercado Libre para propiedad:', propertyId)
 
     if (!propertyData) {
@@ -132,10 +128,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Guardar la descripción para después
     // Remover descripción del objeto inicial
     const { description, ...mlDataWithoutDescription } = mlData
-
     // PASO 1: Publicar item en Mercado Libre (sin descripción)
     console.log('📤 Creando item en Mercado Libre...')
     const mlResponse = await fetch('https://api.mercadolibre.com/items', {
@@ -269,13 +263,10 @@ export async function POST(request: NextRequest) {
 
 // PUT - Actualizar propiedad existente
 export async function PUT(request: NextRequest) {
-  let propertyId: string | undefined
   let initialState: any = null
 
+  const { propertyData, images, propertyId, action } = await request.json()
   try {
-    const { propertyData, images, propertyId: requestPropertyId, action } = await request.json()
-    propertyId = requestPropertyId
-
     console.log('🔄 Iniciando sincronización en Mercado Libre para propiedad:', propertyId)
 
     if (action !== 'sync') {
@@ -421,12 +412,8 @@ export async function PUT(request: NextRequest) {
 
 // DELETE - Pausar publicación
 export async function DELETE(request: NextRequest) {
-  let propertyId: string | undefined
-
+  const { propertyId, action, externalId } = await request.json()
   try {
-    const { propertyId: requestPropertyId, action, externalId } = await request.json()
-    propertyId = requestPropertyId
-
     if (action !== 'delete') {
       return NextResponse.json({ error: 'Acción no válida' }, { status: 400 })
     }
