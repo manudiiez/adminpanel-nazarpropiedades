@@ -1,265 +1,521 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { getValidMercadoLibreToken } from '@/utils/mercadoLibreTokens'
-import { mapFormDataToMercadoLibre, validateMercadoLibreData } from '@/utils/mercadoLibreMappers'
+import { getValidMercadoLibreToken as getValidAccessToken } from '@/utils/mercadoLibreTokens'
+import {
+  mapFormDataToMercadoLibre as mapPropertyToMercadoLibre,
+  validateMercadoLibreData,
+} from '@/utils/mercadoLibreMappers'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 
-export async function POST(request: NextRequest) {
+async function updatePortalStatus(
+  propertyId: string,
+  status: 'queued' | 'ok' | 'error',
+  externalId?: string,
+  externalUrl?: string,
+  lastError?: string,
+) {
   try {
-    const body = await request.json()
-    const { action, propertyData, images, propertyId } = body
-    console.log('Cuerpo recibido en /api/meli/publish:', images)
-    if (!propertyData) {
-      return NextResponse.json({ error: 'propertyData es requerido' }, { status: 400 })
-    }
+    const payload = await getPayload({ config })
 
-    if (!action) {
-      return NextResponse.json({ error: 'action es requerido' }, { status: 400 })
-    }
-
-    // Obtener token válido (solo hay una cuenta de MercadoLibre)
-    const tokenInfo = await getValidMercadoLibreToken()
-    // Mapear los datos usando el mapper de MercadoLibre
-    const mappedPropertyData = mapFormDataToMercadoLibre(
-      {
-        ...propertyData,
-      },
-      images || [],
-    )
-
-    console.log('Token válido obtenido:', tokenInfo)
-    console.log('Datos mapeados para MercadoLibre:', mappedPropertyData)
-
-    // Validar datos mapeados
-    const validation = validateMercadoLibreData(mappedPropertyData)
-    if (!validation.isValid) {
-      return NextResponse.json(
-        {
-          error: 'Datos inválidos para MercadoLibre',
-          details: validation.errors,
+    await payload.update({
+      collection: 'propiedades',
+      id: propertyId,
+      data: {
+        mercadolibre: {
+          uploaded: status === 'ok',
+          externalId: externalId || null,
+          externalUrl: externalUrl || null,
+          status: status,
+          lastSyncAt: new Date().toISOString(),
+          lastError: lastError || null,
         },
+      },
+    })
+
+    return true
+  } catch (error) {
+    console.error('Error actualizando portal status:', error)
+    return false
+  }
+}
+
+// POST - Publicar nueva propiedad
+export async function POST(request: NextRequest) {
+  let propertyId: string | undefined
+
+  try {
+    const { propertyData, images, propertyId: requestPropertyId } = await request.json()
+    propertyId = requestPropertyId
+
+    console.log('📤 Iniciando publicación en Mercado Libre para propiedad:', propertyId)
+
+    if (!propertyData) {
+      return NextResponse.json(
+        { error: 'No se encontraron datos válidos de propertyData' },
         { status: 400 },
       )
     }
 
-    let result
-
-    switch (action) {
-      case 'publishToMercadoLibre':
-        result = await publishToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
-        break
-      case 'syncToMercadoLibre':
-        result = await syncToMercadoLibre(mappedPropertyData, tokenInfo, propertyId)
-        break
-      case 'deleteFromMercadoLibre':
-        result = await deleteFromMercadoLibre(tokenInfo, propertyId, body.externalId)
-        break
-      default:
-        return NextResponse.json({ error: 'Acción no válida' }, { status: 400 })
+    // Marcar como en cola
+    if (propertyId) {
+      await updatePortalStatus(propertyId, 'queued')
     }
 
-    return NextResponse.json(result)
-  } catch (error: any) {
-    console.error('Error en POST /api/meli/publish:', error)
+    // Obtener access token válido
+    const tokenInfo = await getValidAccessToken()
+    if (!tokenInfo) {
+      if (propertyId) {
+        await updatePortalStatus(
+          propertyId,
+          'error',
+          undefined,
+          undefined,
+          'No se pudo obtener access token de Mercado Libre. Por favor, reconecta tu cuenta.',
+        )
+      }
 
-    // Si el error es de token, devolver información específica
-    if (error.message.includes('token') || error.message.includes('Token')) {
+      const updatedMercadolibreData = {
+        name: 'MercadoLibre',
+        uploaded: false,
+        externalId: null,
+        externalUrl: null,
+        status: 'error' as const,
+        lastSyncAt: new Date().toISOString(),
+        lastError: 'No hay autenticación válida con Mercado Libre',
+      }
+
       return NextResponse.json(
         {
-          error: error.message,
-          needsReauth: true,
+          error: 'No hay autenticación válida con Mercado Libre',
+          details: 'Por favor, conecta tu cuenta de Mercado Libre primero',
+          updatedMercadolibreData,
         },
         { status: 401 },
       )
     }
 
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
-  }
-}
+    // Mapear datos
+    const mlData = mapPropertyToMercadoLibre(propertyData, images || [])
 
-async function publishToMercadoLibre(mappedPropertyData: any, tokenInfo: any, propertyId: string) {
-  try {
-    // Publicar en MercadoLibre
-    const publishResponse = await fetch('https://api.mercadolibre.com/items', {
+    console.log('📋 Datos mapeados para Mercado Libre:', mlData)
+
+    // Validar
+    const validation = validateMercadoLibreData(mlData)
+    if (!validation.isValid) {
+      if (propertyId) {
+        await updatePortalStatus(
+          propertyId,
+          'error',
+          undefined,
+          undefined,
+          `Datos inválidos: ${validation.errors.join(', ')}`,
+        )
+      }
+
+      const updatedMercadolibreData = {
+        name: 'MercadoLibre',
+        uploaded: false,
+        externalId: null,
+        externalUrl: null,
+        status: 'error' as const,
+        lastSyncAt: new Date().toISOString(),
+        lastError: `Datos inválidos: ${validation.errors.join(', ')}`,
+      }
+
+      return NextResponse.json(
+        {
+          error: 'Datos inválidos para Mercado Libre',
+          validationErrors: validation.errors,
+          updatedMercadolibreData,
+        },
+        { status: 400 },
+      )
+    }
+
+    // Guardar la descripción para después
+    const description = mlData.description?.plain_text
+
+    // Remover descripción del objeto inicial
+    const mlDataWithoutDescription = { ...mlData }
+    delete mlDataWithoutDescription.description
+
+    // PASO 1: Publicar item en Mercado Libre (sin descripción)
+    console.log('📤 Creando item en Mercado Libre...')
+    const mlResponse = await fetch('https://api.mercadolibre.com/items', {
       method: 'POST',
       headers: {
-        Authorization: `${tokenInfo.tokenType} ${tokenInfo.accessToken}`,
+        Authorization: `Bearer ${tokenInfo.accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(mappedPropertyData),
+      body: JSON.stringify(mlDataWithoutDescription),
     })
 
-    if (!publishResponse.ok) {
-      const errorData = await publishResponse.text()
-      console.error('Error al publicar en MercadoLibre:', errorData)
+    if (!mlResponse.ok) {
+      const errorData = await mlResponse.json().catch(() => ({}))
+      console.error('❌ Error de MercadoLibre API:', errorData)
 
-      return {
-        error: 'Error al publicar en MercadoLibre',
-        details: errorData,
-        updatedMercadoLibreData: {
-          status: 'error',
-          lastError: errorData,
-          lastSyncAt: new Date().toISOString(),
-        },
+      const errorMessage =
+        errorData.message || errorData.error || 'Error desconocido de Mercado Libre'
+
+      if (propertyId) {
+        await updatePortalStatus(propertyId, 'error', undefined, undefined, errorMessage)
       }
-    }
 
-    const publishedItem = await publishResponse.json()
-    console.log('Respuesta de publicación en MercadoLibre:', publishedItem)
-    return {
-      success: true,
-      message: 'Propiedad publicada exitosamente en MercadoLibre',
-      updatedMercadoLibreData: {
-        externalId: publishedItem.id,
-        externalUrl: publishedItem.permalink,
-        status: publishedItem.status,
-        uploaded: true,
-        lastSyncAt: new Date().toISOString(),
-        lastError: undefined,
-      },
-      tokenUsed: tokenInfo.tokenId,
-    }
-  } catch (error: any) {
-    console.error('Error publicando en MercadoLibre:', error)
-    return {
-      error: 'Error al publicar en MercadoLibre',
-      updatedMercadoLibreData: {
-        status: 'error',
-        lastError: error.message,
-        lastSyncAt: new Date().toISOString(),
-      },
-    }
-  }
-}
-
-async function syncToMercadoLibre(mappedPropertyData: any, tokenInfo: any, propertyId: string) {
-  try {
-    // Primero necesitamos obtener el ID externo de la propiedad
-    // Esto debería venir del propertyData o de la base de datos
-    const externalId = mappedPropertyData.externalId || propertyId
-
-    if (!externalId) {
-      return {
-        error: 'No se encontró ID externo para sincronizar',
-        updatedMercadoLibreData: {
-          status: 'error',
-          lastError: 'No se encontró ID externo para sincronizar',
-          lastSyncAt: new Date().toISOString(),
-        },
-      }
-    }
-
-    // Actualizar en MercadoLibre
-    const updateResponse = await fetch(`https://api.mercadolibre.com/items/${externalId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `${tokenInfo.tokenType} ${tokenInfo.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(mappedPropertyData),
-    })
-
-    if (!updateResponse.ok) {
-      const errorData = await updateResponse.text()
-      console.error('Error al sincronizar con MercadoLibre:', errorData)
-
-      return {
-        error: 'Error al sincronizar con MercadoLibre',
-        details: errorData,
-        updatedMercadoLibreData: {
-          status: 'error',
-          lastError: errorData,
-          lastSyncAt: new Date().toISOString(),
-        },
-      }
-    }
-
-    const updatedItem = await updateResponse.json()
-
-    return {
-      success: true,
-      message: 'Propiedad sincronizada exitosamente con MercadoLibre',
-      updatedMercadoLibreData: {
-        externalId: updatedItem.id,
-        externalUrl: updatedItem.permalink,
-        status: updatedItem.status,
-        uploaded: true,
-        lastSyncAt: new Date().toISOString(),
-        lastError: undefined,
-      },
-      tokenUsed: tokenInfo.tokenId,
-    }
-  } catch (error: any) {
-    console.error('Error sincronizando con MercadoLibre:', error)
-    return {
-      error: 'Error al sincronizar con MercadoLibre',
-      updatedMercadoLibreData: {
-        status: 'error',
-        lastError: error.message,
-        lastSyncAt: new Date().toISOString(),
-      },
-    }
-  }
-}
-
-async function deleteFromMercadoLibre(tokenInfo: any, propertyId: string, externalId?: string) {
-  try {
-    if (!externalId) {
-      return {
-        error: 'No se encontró ID externo para eliminar',
-        updatedMercadoLibreData: {
-          status: 'error',
-          lastError: 'No se encontró ID externo para eliminar',
-          lastSyncAt: new Date().toISOString(),
-        },
-      }
-    }
-
-    // Eliminar de MercadoLibre (pausar o eliminar)
-    const deleteResponse = await fetch(`https://api.mercadolibre.com/items/${externalId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `${tokenInfo.tokenType} ${tokenInfo.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: 'paused' }), // MercadoLibre usa 'paused' para desactivar
-    })
-
-    if (!deleteResponse.ok) {
-      const errorData = await deleteResponse.text()
-      console.error('Error al eliminar de MercadoLibre:', errorData)
-
-      return {
-        error: 'Error al eliminar de MercadoLibre',
-        details: errorData,
-        updatedMercadoLibreData: {
-          status: 'error',
-          lastError: errorData,
-          lastSyncAt: new Date().toISOString(),
-        },
-      }
-    }
-
-    return {
-      success: true,
-      message: 'Propiedad eliminada exitosamente de MercadoLibre',
-      updatedMercadoLibreData: {
-        externalId: undefined,
-        externalUrl: undefined,
-        status: 'not_published',
+      const updatedMercadolibreData = {
+        name: 'MercadoLibre',
         uploaded: false,
+        externalId: null,
+        externalUrl: null,
+        status: 'error' as const,
         lastSyncAt: new Date().toISOString(),
-        lastError: undefined,
-      },
-      tokenUsed: tokenInfo.tokenId,
+        lastError: errorMessage,
+      }
+
+      return NextResponse.json(
+        {
+          error: 'Error publicando en Mercado Libre',
+          details: errorMessage,
+          mercadolibreError: errorData,
+          updatedMercadolibreData,
+        },
+        { status: mlResponse.status },
+      )
     }
-  } catch (error: any) {
-    console.error('Error eliminando de MercadoLibre:', error)
-    return {
-      error: 'Error al eliminar de MercadoLibre',
-      updatedMercadoLibreData: {
-        status: 'error',
-        lastError: error.message,
-        lastSyncAt: new Date().toISOString(),
-      },
+
+    const mlResult = await mlResponse.json()
+    const itemId = mlResult.id
+
+    console.log('✅ Item creado exitosamente en Mercado Libre:', itemId)
+
+    // PASO 2: Agregar la descripción
+    let descriptionAdded = false
+    if (description && description.trim().length > 0) {
+      try {
+        console.log('📝 Agregando descripción al item...')
+        const descriptionResponse = await fetch(
+          `https://api.mercadolibre.com/items/${itemId}/description`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${tokenInfo.accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              plain_text: description,
+            }),
+          },
+        )
+
+        if (descriptionResponse.ok) {
+          console.log('✅ Descripción agregada exitosamente')
+          descriptionAdded = true
+        } else {
+          const descError = await descriptionResponse.json().catch(() => ({}))
+          console.warn('⚠️ No se pudo agregar la descripción:', descError)
+        }
+      } catch (descError) {
+        console.error('❌ Error agregando descripción:', descError)
+        // No fallar la publicación completa por esto
+      }
     }
+
+    // PASO 3: Actualizar estado exitoso en BD
+    if (propertyId) {
+      await updatePortalStatus(propertyId, 'ok', mlResult.id, mlResult.permalink)
+    }
+
+    const updatedMercadolibreData = {
+      name: 'MercadoLibre',
+      uploaded: true,
+      externalId: mlResult.id,
+      externalUrl: mlResult.permalink,
+      status: 'ok' as const,
+      lastSyncAt: new Date().toISOString(),
+      lastError: null,
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Propiedad publicada exitosamente en Mercado Libre',
+      mercadolibreResponse: mlResult,
+      updatedMercadolibreData,
+      descriptionAdded,
+    })
+  } catch (error) {
+    console.error('❌ Error en API de MercadoLibre:', error)
+
+    const errorMessage = error instanceof Error ? error.message : 'Error interno'
+    if (propertyId) {
+      await updatePortalStatus(propertyId, 'error', undefined, undefined, errorMessage)
+    }
+
+    const updatedMercadolibreData = {
+      name: 'MercadoLibre',
+      uploaded: false,
+      externalId: null,
+      externalUrl: null,
+      status: 'error' as const,
+      lastSyncAt: new Date().toISOString(),
+      lastError: errorMessage,
+    }
+
+    return NextResponse.json(
+      {
+        error: 'Error interno del servidor',
+        details: errorMessage,
+        updatedMercadolibreData,
+      },
+      { status: 500 },
+    )
   }
+}
+
+// PUT - Actualizar propiedad existente
+export async function PUT(request: NextRequest) {
+  let propertyId: string | undefined
+  let initialState: any = null
+
+  try {
+    const { propertyData, images, propertyId: requestPropertyId, action } = await request.json()
+    propertyId = requestPropertyId
+
+    console.log('🔄 Iniciando sincronización en Mercado Libre para propiedad:', propertyId)
+
+    if (action !== 'sync') {
+      return NextResponse.json({ error: 'Acción no válida para sincronización' }, { status: 400 })
+    }
+
+    if (!propertyData?.mercadolibre?.externalId) {
+      return NextResponse.json(
+        { error: 'No se encontró ID de Mercado Libre para sincronizar' },
+        { status: 400 },
+      )
+    }
+
+    // Guardar estado inicial
+    const payload = await getPayload({ config })
+    const currentProperty = await payload.findByID({
+      collection: 'propiedades',
+      id: propertyId!,
+    })
+
+    if (currentProperty?.mercadolibre) {
+      initialState = { ...currentProperty.mercadolibre }
+    }
+
+    await updatePortalStatus(propertyId!, 'queued')
+
+    const tokenInfo = await getValidAccessToken()
+    if (!tokenInfo) {
+      return NextResponse.json(
+        { error: 'No hay autenticación válida con Mercado Libre' },
+        { status: 401 },
+      )
+    }
+
+    const mlData = mapPropertyToMercadoLibre(propertyData, images || [])
+    const mlItemId = propertyData.mercadolibre.externalId
+    const description = mlData.description?.plain_text
+
+    console.log('📋 Actualizando item:', mlItemId)
+
+    // Remover descripción para actualización del item
+    const mlDataWithoutDescription = { ...mlData }
+    delete mlDataWithoutDescription.description
+
+    // PASO 1: Actualizar item principal
+    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${mlItemId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${tokenInfo.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mlDataWithoutDescription),
+    })
+
+    if (!mlResponse.ok) {
+      const errorData = await mlResponse.json().catch(() => ({}))
+      console.error('❌ Error actualizando en ML:', errorData)
+
+      const errorMessage = errorData.message || 'Error actualizando en Mercado Libre'
+
+      if (propertyId && initialState) {
+        await updatePortalStatus(
+          propertyId,
+          initialState.status,
+          initialState.externalId,
+          initialState.externalUrl,
+          errorMessage,
+        )
+      }
+
+      throw new Error(errorMessage)
+    }
+
+    const mlResult = await mlResponse.json()
+    console.log('✅ Item actualizado en Mercado Libre')
+
+    // PASO 2: Actualizar descripción
+    let descriptionUpdated = false
+    if (description && description.trim().length > 0) {
+      try {
+        console.log('📝 Actualizando descripción...')
+        const descriptionResponse = await fetch(
+          `https://api.mercadolibre.com/items/${mlItemId}/description`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${tokenInfo.accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              plain_text: description,
+            }),
+          },
+        )
+
+        if (descriptionResponse.ok) {
+          console.log('✅ Descripción actualizada exitosamente')
+          descriptionUpdated = true
+        } else {
+          const descError = await descriptionResponse.json().catch(() => ({}))
+          console.warn('⚠️ No se pudo actualizar la descripción:', descError)
+        }
+      } catch (descError) {
+        console.error('❌ Error actualizando descripción:', descError)
+      }
+    }
+
+    await updatePortalStatus(propertyId!, 'ok', mlResult.id, mlResult.permalink)
+
+    const updatedMercadolibreData = {
+      name: 'MercadoLibre',
+      uploaded: true,
+      externalId: mlResult.id,
+      externalUrl: mlResult.permalink,
+      status: 'ok' as const,
+      lastSyncAt: new Date().toISOString(),
+      lastError: null,
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Propiedad actualizada en Mercado Libre',
+      mercadolibreResponse: mlResult,
+      updatedMercadolibreData,
+      descriptionUpdated,
+      sync: true,
+    })
+  } catch (error) {
+    console.error('❌ Error actualizando en MercadoLibre:', error)
+
+    const errorMessage = error instanceof Error ? error.message : 'Error en sincronización'
+
+    if (propertyId && initialState) {
+      await updatePortalStatus(
+        propertyId,
+        initialState.status,
+        initialState.externalId,
+        initialState.externalUrl,
+        errorMessage,
+      )
+    }
+
+    return NextResponse.json(
+      { error: 'Error en sincronización', details: errorMessage },
+      { status: 500 },
+    )
+  }
+}
+
+// DELETE - Pausar publicación
+export async function DELETE(request: NextRequest) {
+  let propertyId: string | undefined
+
+  try {
+    const { propertyId: requestPropertyId, action, externalId } = await request.json()
+    propertyId = requestPropertyId
+
+    if (action !== 'delete') {
+      return NextResponse.json({ error: 'Acción no válida' }, { status: 400 })
+    }
+
+    const payload = await getPayload({ config })
+
+    if (!externalId) {
+      return NextResponse.json(
+        { error: 'La propiedad no está publicada en Mercado Libre' },
+        { status: 400 },
+      )
+    }
+
+    const tokenInfo = await getValidAccessToken()
+    if (!tokenInfo) {
+      return NextResponse.json({ error: 'No hay autenticación válida' }, { status: 401 })
+    }
+
+    // Pausar publicación
+    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${externalId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${tokenInfo.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status: 'closed' }),
+    })
+
+    if (!mlResponse.ok) {
+      const errorData = await mlResponse.json().catch(() => ({}))
+      throw new Error(errorData.message || 'Error pausando publicación')
+    }
+
+    console.log('✅ Publicación pausada en Mercado Libre')
+
+    await payload.update({
+      collection: 'propiedades',
+      id: propertyId,
+      data: {
+        mercadolibre: {
+          uploaded: false,
+          externalId: null,
+          externalUrl: null,
+          status: 'not_sent',
+          lastSyncAt: new Date().toISOString(),
+          lastError: null,
+        },
+      },
+    })
+
+    const updatedMercadolibreData = {
+      name: 'MercadoLibre',
+      uploaded: false,
+      externalId: null,
+      externalUrl: null,
+      status: 'not_sent' as const,
+      lastSyncAt: new Date().toISOString(),
+      lastError: null,
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Publicación pausada en Mercado Libre',
+      updatedMercadolibreData,
+      deleted: true,
+    })
+  } catch (error) {
+    console.error('❌ Error eliminando de MercadoLibre:', error)
+    return NextResponse.json({ error: 'Error en eliminación' }, { status: 500 })
+  }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: 'API de MercadoLibre',
+    endpoints: {
+      POST: '/api/meli - Publicar nueva propiedad',
+      PUT: '/api/meli - Sincronizar propiedad existente (action: sync)',
+      DELETE: '/api/meli - Pausar publicación (action: delete)',
+    },
+    note: 'Requiere autenticación OAuth 2.0. Conecta tu cuenta primero en /api/meli/auth',
+  })
 }

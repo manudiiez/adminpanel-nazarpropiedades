@@ -86,7 +86,7 @@ export default function InmoupPortal({
           propertyId: propertyId,
         }),
       })
-
+      console.log('Respuesta de la publicación en Inmoup:', response)
       if (!response.ok) {
         const errorData = await response.json()
 
@@ -117,7 +117,7 @@ export default function InmoupPortal({
       }
 
       const result = await response.json()
-
+      console.log('Respuesta completa de publicación:', result)
       // Usar los datos actualizados que vienen del backend
       if (result.updatedInmoupData) {
         const updatedData = result.updatedInmoupData

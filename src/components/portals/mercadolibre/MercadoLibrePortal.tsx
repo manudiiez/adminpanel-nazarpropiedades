@@ -58,8 +58,24 @@ export default function MercadoLibrePortal({
   // Función para publicar en Mercado Libre
   const publishToMercadoLibre = async () => {
     try {
+      // Guardar el estado actual antes de empezar la publicación
       setPreviousState(localMercadoLibreData?.status || 'not_published')
+
       setLoading(true)
+
+      // Limpiar datos del propietario para evitar referencias circulares (igual que Inmoup)
+      const cleanOwnerData = ownerData
+        ? {
+            fullname: ownerData.fullname || '',
+            email: ownerData.email || '',
+            phone: ownerData.phone || '',
+            address: ownerData.address || '',
+            province: ownerData.province || '',
+            locality: ownerData.locality || '',
+            notes: ownerData.notes || '',
+          }
+        : null
+
       const response = await fetch('/api/meli/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,62 +83,98 @@ export default function MercadoLibrePortal({
           action: 'publishToMercadoLibre',
           propertyId: propertyId,
           propertyData: propertyData,
-          ownerData: ownerData,
+          ownerData: cleanOwnerData,
           images: images,
         }),
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
 
-      const result = await response.json()
-
-      if (result.error) {
-        console.error('Error publicando en MercadoLibre:', result.error)
-
-        // Si hay datos actualizados, usarlos
-        if (result.updatedMercadoLibreData) {
+        // Si el backend envía updatedMercadolibreData en el error, usarlo
+        if (errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData) {
+          const updatedData = errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData
           setLocalMercadoLibreData({
-            ...localMercadoLibreData,
-            ...result.updatedMercadoLibreData,
+            name: updatedData.name,
+            uploaded: updatedData.uploaded,
+            externalId: updatedData.externalId,
+            externalUrl: updatedData.externalUrl,
+            status: updatedData.status,
+            lastSyncAt: updatedData.lastSyncAt,
+            lastError: updatedData.lastError || errorData.error,
           })
+          console.log('Datos de error actualizados desde backend:', updatedData)
         } else {
+          // Si no hay updatedMercadoLibreData, actualizar manualmente el estado
           setLocalMercadoLibreData({
             ...localMercadoLibreData,
             status: 'error',
-            lastError: result.error,
+            lastError:
+              errorData.error || `Error al publicar en MercadoLibre (status ${response.status})`,
             lastSyncAt: new Date().toISOString(),
           })
+          console.log('Error actualizado manualmente:', errorData.error)
         }
 
-        alert(result.error)
+        throw new Error(errorData.error || `HTTP error ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log('Respuesta completa de publicación:', result)
+
+      // Usar los datos actualizados que vienen del backend
+      if (result.updatedMercadolibreData || result.updatedMercadoLibreData) {
+        const updatedData = result.updatedMercadolibreData || result.updatedMercadoLibreData
+
+        // Limpiar el estado anterior si la operación fue exitosa
+        setPreviousState('')
+        console.log('Publicación exitosa:', updatedData)
+        // Actualizar los datos locales de MercadoLibre con los datos del backend
+        setLocalMercadoLibreData({
+          name: updatedData.name,
+          uploaded: updatedData.uploaded,
+          externalId: updatedData.externalId,
+          externalUrl: updatedData.externalUrl,
+          status: updatedData.status,
+          lastSyncAt: updatedData.lastSyncAt,
+          lastError: undefined, // Limpiar error en operación exitosa
+        })
+
+        console.log('Datos de MercadoLibre actualizados desde backend:', updatedData)
       } else {
-        console.log('Publicación exitosa:', result)
+        // Fallback al método anterior si no viene updatedMercadoLibreData
+        setPreviousState('')
 
-        // Actualizar con los datos devueltos por el servidor
-        if (result.updatedMercadoLibreData) {
-          setLocalMercadoLibreData({
-            ...localMercadoLibreData,
-            ...result.updatedMercadoLibreData,
-          })
+        // Primero combinar cualquier campo devuelto top-level
+        const mergedFromServer = {
+          externalId: result.externalId ?? undefined,
+          externalUrl: result.externalUrl ?? undefined,
+          lastSyncAt: result.lastSyncAt ?? new Date().toISOString(),
+          status: result.status ?? 'paused',
+          uploaded: result.uploaded ?? true,
         }
 
-        // alert('Propiedad publicada exitosamente en MercadoLibre')
+        // Limpiar lastError en operación exitosa
+        setLocalMercadoLibreData({
+          ...localMercadoLibreData,
+          ...mergedFromServer,
+          lastError: undefined,
+        })
 
-        // Forzar recarga para refrescar datos
-        // setTimeout(() => {
-        //   window.location.reload()
-        // }, 1500)
+        console.log('Usando fallback - respuesta completa:', result)
       }
     } catch (error) {
       console.error('Error publicando en MercadoLibre:', error)
-      setLocalMercadoLibreData({
-        ...localMercadoLibreData,
-        status: 'error',
-        lastError: error instanceof Error ? error.message : 'Error desconocido',
-        lastSyncAt: new Date().toISOString(),
-      })
+
+      // Solo actualizar lastError si no se actualizó desde el backend
+      if (!localMercadoLibreData?.lastError || localMercadoLibreData.lastError === undefined) {
+        setLocalMercadoLibreData({
+          ...localMercadoLibreData,
+          status: 'error',
+          lastError: error instanceof Error ? error.message : 'Error desconocido',
+          lastSyncAt: new Date().toISOString(),
+        })
+      }
       alert('Error al publicar en MercadoLibre. Inténtalo de nuevo.')
     } finally {
       setLoading(false)
@@ -132,67 +184,101 @@ export default function MercadoLibrePortal({
   // Función para sincronizar en Mercado Libre
   const syncToMercadoLibre = async () => {
     try {
+      // Guardar el estado actual antes de empezar la sincronización
       setPreviousState(localMercadoLibreData?.status || 'not_published')
+
       setLoading(true)
 
+      // Limpiar datos del propietario para evitar referencias circulares (igual que Inmoup)
+      const cleanOwnerData = ownerData
+        ? {
+            fullname: ownerData.fullname || '',
+            email: ownerData.email || '',
+            phone: ownerData.phone || '',
+            address: ownerData.address || '',
+            province: ownerData.province || '',
+            locality: ownerData.locality || '',
+            notes: ownerData.notes || '',
+          }
+        : null
+
       const response = await fetch('/api/meli/publish', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'syncToMercadoLibre',
+          action: 'sync',
           propertyId: propertyId,
           propertyData: propertyData,
-          ownerData: ownerData,
+          ownerData: cleanOwnerData,
           images: images,
           externalId: localMercadoLibreData?.externalId,
         }),
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
 
-      const result = await response.json()
-
-      if (result.error) {
-        console.error('Error sincronizando en MercadoLibre:', result.error)
-
-        // Si hay datos actualizados, usarlos
-        if (result.updatedMercadoLibreData) {
+        // Si el backend envía updatedMercadolibreData en el error, usarlo SOLO para el lastError
+        if (errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData) {
+          const updatedData = errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData
           setLocalMercadoLibreData({
             ...localMercadoLibreData,
-            ...result.updatedMercadoLibreData,
+            lastError: updatedData.lastError || errorData.error,
+            lastSyncAt: updatedData.lastSyncAt || new Date().toISOString(),
           })
+          console.log('Error de sincronización actualizado desde backend:', updatedData.lastError)
         } else {
+          // Si no hay updatedMercadolibreData, solo actualizar el lastError local
           setLocalMercadoLibreData({
             ...localMercadoLibreData,
-            status: 'error',
-            lastError: result.error,
+            lastError: errorData.error || 'Error al sincronizar en MercadoLibre',
             lastSyncAt: new Date().toISOString(),
           })
         }
 
-        alert(result.error)
-      } else {
-        console.log('Sincronización exitosa:', result)
-
-        // Actualizar con los datos devueltos por el servidor
-        if (result.updatedMercadoLibreData) {
-          setLocalMercadoLibreData({
-            ...localMercadoLibreData,
-            ...result.updatedMercadoLibreData,
-          })
-        }
-
-        alert('Propiedad sincronizada exitosamente con MercadoLibre')
-
-        // Forzar recarga para refrescar datos
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500)
+        throw new Error(errorData.error || `HTTP error ${response.status}`)
       }
+
+      const result = await response.json()
+
+      // Usar los datos actualizados que vienen del backend
+      if (result.updatedMercadolibreData || result.updatedMercadoLibreData) {
+        const updatedData = result.updatedMercadolibreData || result.updatedMercadoLibreData
+
+        // Limpiar el estado anterior si la operación fue exitosa
+        setPreviousState('')
+
+        // Actualizar los datos locales de MercadoLibre con los datos del backend
+        setLocalMercadoLibreData({
+          name: updatedData.name,
+          uploaded: updatedData.uploaded,
+          externalId: updatedData.externalId,
+          externalUrl: updatedData.externalUrl,
+          status: updatedData.status,
+          lastSyncAt: updatedData.lastSyncAt,
+          lastError: undefined, // Limpiar error en operación exitosa
+        })
+
+        console.log('Datos de MercadoLibre sincronizados desde backend:', updatedData)
+      } else {
+        // Fallback al método anterior si no viene updatedMercadolibreData
+        setPreviousState('')
+
+        // Limpiar lastError en operación exitosa
+        setLocalMercadoLibreData({
+          ...localMercadoLibreData,
+          lastError: undefined,
+          lastSyncAt: new Date().toISOString(),
+        })
+
+        console.log('Usando fallback - respuesta completa de sincronización:', result)
+      }
+
+      console.log('Propiedad sincronizada exitosamente en MercadoLibre:', result)
     } catch (error) {
       console.error('Error sincronizando en MercadoLibre:', error)
+
+      // Para errores de sincronización, mantener el estado actual y solo actualizar el lastError
       setLocalMercadoLibreData({
         ...localMercadoLibreData,
         lastError: error instanceof Error ? error.message : 'Error desconocido',
@@ -212,48 +298,87 @@ export default function MercadoLibrePortal({
     if (!confirmDelete) return
 
     try {
+      // Guardar el estado actual antes de empezar la eliminación
       setPreviousState(localMercadoLibreData?.status || 'not_published')
+
       setLoading(true)
 
       const response = await fetch('/api/meli/publish', {
-        method: 'POST',
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'deleteFromMercadoLibre',
+          action: 'delete',
           propertyId: propertyId,
           externalId: localMercadoLibreData?.externalId,
         }),
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
+
+        // Si el backend envía updatedMercadolibreData en el error, usarlo SOLO para el lastError
+        if (errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData) {
+          const updatedData = errorData.updatedMercadolibreData || errorData.updatedMercadoLibreData
+          setLocalMercadoLibreData({
+            ...localMercadoLibreData,
+            lastError: updatedData.lastError || errorData.error,
+            lastSyncAt: updatedData.lastSyncAt || new Date().toISOString(),
+          })
+          console.log('Error de eliminación actualizado desde backend:', updatedData.lastError)
+        } else {
+          // Si no hay updatedMercadolibreData, solo actualizar el lastError local
+          setLocalMercadoLibreData({
+            ...localMercadoLibreData,
+            lastError: errorData.error || 'Error al eliminar de MercadoLibre',
+            lastSyncAt: new Date().toISOString(),
+          })
+        }
+
+        throw new Error(errorData.error || `HTTP error ${response.status}`)
       }
 
       const result = await response.json()
 
-      if (result.error) {
-        console.error('Error eliminando de MercadoLibre:', result.error)
-        alert(result.error)
+      // Usar los datos actualizados que vienen del backend
+      if (result.updatedMercadolibreData || result.updatedMercadoLibreData) {
+        const updatedData = result.updatedMercadolibreData || result.updatedMercadoLibreData
+
+        // Limpiar el estado anterior si la operación fue exitosa
+        setPreviousState('')
+
+        // Actualizar los datos locales de MercadoLibre con los datos del backend
+        setLocalMercadoLibreData({
+          name: updatedData.name,
+          uploaded: updatedData.uploaded,
+          externalId: updatedData.externalId,
+          externalUrl: updatedData.externalUrl,
+          status: updatedData.status,
+          lastSyncAt: updatedData.lastSyncAt,
+          lastError: undefined, // Limpiar error en operación exitosa
+        })
+
+        console.log('Datos de MercadoLibre después de eliminación:', updatedData)
       } else {
-        console.log('Eliminación exitosa:', result)
+        // Fallback - marcar como no publicado
+        setPreviousState('')
 
-        // Actualizar con los datos devueltos por el servidor
-        if (result.updatedMercadoLibreData) {
-          setLocalMercadoLibreData({
-            ...localMercadoLibreData,
-            ...result.updatedMercadoLibreData,
-          })
-        }
-
-        alert('Propiedad eliminada exitosamente de MercadoLibre')
-
-        // Forzar recarga para refrescar datos
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500)
+        setLocalMercadoLibreData({
+          ...localMercadoLibreData,
+          uploaded: false,
+          externalId: undefined,
+          externalUrl: undefined,
+          status: 'not_published',
+          lastSyncAt: new Date().toISOString(),
+          lastError: undefined,
+        })
+        console.log('Usando fallback para eliminación - respuesta completa:', result)
       }
+
+      console.log('Propiedad eliminada exitosamente de MercadoLibre:', result)
     } catch (error) {
       console.error('Error eliminando de MercadoLibre:', error)
+
+      // Para errores de eliminación, mantener el estado actual y solo actualizar el lastError
       setLocalMercadoLibreData({
         ...localMercadoLibreData,
         lastError: error instanceof Error ? error.message : 'Error desconocido',

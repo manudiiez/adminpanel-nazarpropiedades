@@ -14,3 +14,27 @@
 - Github: [text](https://github.com/manudiiez/adminpanel-nazarpropiedades/actions)
 - Nube de CloudFlare: [text](https://dash.cloudflare.com/c14fa1adf8db74d2102398802057e4ca/r2/default/buckets/nazarpropiedades-media?prefix=media%2F)
 - Proyecto easypanel: [text](http://31.97.87.170:3000/projects/nazarpropiedades-admin/app/adminpanel-nazarpropiedades/deployments)
+
+
+# Datos flatantes de mercado libre 
+### Casas en venta
+- Bauleras
+- Agua corrriente
+- Caldera
+- Cisterna
+- Energia Solar
+- Conexion para lavarropas
+- Grupo electrogeno
+- Cancha de paddle
+- Cancah de tenis
+- Cancha de basquet
+- Cancha de futbol
+- Cancha polideportiva
+- Heladera
+- Jacuzzi
+- Acceso Controlado 
+- Altillo
+- lacards
+- Con lavadero
+- Vestidor
+- Toilette

@@ -131,6 +131,8 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   // Obtener datos de inmoup desde formData
   const inmoupData = formData.inmoup || {}
   const mercadolibreData = formData.mercadolibre || {}
+  console.log('inmoupData:', inmoupData)
+  console.log('mercadolibreData:', mercadolibreData)
 
   // Función para determinar el estado de publicación
   const getPortalStatus = (portalData: any) => {
@@ -669,6 +671,7 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                     images={portalImages}
                     propertyId={propertyId}
                     inmoupData={inmoupData}
+                    mercadoLibreData={mercadolibreData}
                   />
                 </PropertyTabs>
               </div>
