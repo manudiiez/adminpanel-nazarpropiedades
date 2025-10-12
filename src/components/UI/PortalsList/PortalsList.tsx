@@ -62,7 +62,6 @@ interface PortalsListProps {
 }
 
 export default function PortalsList({
-  portalsConfig,
   propertyData,
   ownerData,
   images,

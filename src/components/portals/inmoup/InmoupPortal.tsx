@@ -284,6 +284,10 @@ export default function InmoupPortal({
   // Función específica para eliminar de Inmoup
   const deleteFromInmoup = async () => {
     try {
+      const confirmDelete = window.confirm(
+        '¿Estás seguro de que quieres eliminar esta propiedad de Inmoup?',
+      )
+      if (!confirmDelete) return
       // Guardar el estado actual antes de empezar la eliminación
       setPreviousState(localInmoupData?.status || 'not_published')
 

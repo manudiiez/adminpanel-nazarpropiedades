@@ -665,7 +665,6 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
 
                   {/* Tab de Portales */}
                   <PortalsList
-                    portalsConfig={portalsConfig}
                     propertyData={formData}
                     ownerData={ownerData}
                     images={portalImages}

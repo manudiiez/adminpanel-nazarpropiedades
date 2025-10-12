@@ -315,15 +315,8 @@ export async function PUT(request: NextRequest) {
 
     const mlData = mapPropertyToMercadoLibre(propertyData, images || [])
     const mlItemId = propertyData.mercadolibre.externalId
-    const description = mlData.description?.plain_text
-
-    console.log('📋 Actualizando item:', mlItemId)
-
-    // Remover descripción para actualización del item
-    const mlDataWithoutDescription = { ...mlData }
-    delete mlDataWithoutDescription.description
-    delete mlDataWithoutDescription.listing_type_id
-
+    // const description = mlData.description?.plain_text
+    const { description, listing_type_id, ...mlDataFormatted } = mlData
     // PASO 1: Actualizar item principal
     const mlResponse = await fetch(`https://api.mercadolibre.com/items/${mlItemId}`, {
       method: 'PUT',
@@ -331,7 +324,7 @@ export async function PUT(request: NextRequest) {
         Authorization: `Bearer ${tokenInfo.accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(mlDataWithoutDescription),
+      body: JSON.stringify(mlDataFormatted),
     })
 
     if (!mlResponse.ok) {
@@ -358,7 +351,7 @@ export async function PUT(request: NextRequest) {
 
     // PASO 2: Actualizar descripción
     let descriptionUpdated = false
-    if (description && description.trim().length > 0) {
+    if (description?.plain_text && description?.plain_text.trim().length > 0) {
       try {
         console.log('📝 Actualizando descripción...')
         const descriptionResponse = await fetch(
@@ -370,7 +363,7 @@ export async function PUT(request: NextRequest) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              plain_text: description,
+              plain_text: description?.plain_text,
             }),
           },
         )

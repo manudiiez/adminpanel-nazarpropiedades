@@ -107,6 +107,7 @@ export const Propiedades: CollectionConfig = {
           })
 
           if (hasSignificantChanges) {
+            console.log('Cambios significativos detectados, marcando como desactualizado...')
             // Verificar si Inmoup está publicado (status: 'ok') y marcarlo como desactualizado
             if (originalDoc.inmoup?.status === 'ok') {
               if (!data.inmoup) {
