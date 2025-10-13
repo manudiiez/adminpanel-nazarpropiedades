@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { es } from '@payloadcms/translations/languages/es' // español
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import { Media } from './collections/Media/Index'
 import { Clientes } from './collections/Clientes'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Propiedades } from './collections/Propiedades'
