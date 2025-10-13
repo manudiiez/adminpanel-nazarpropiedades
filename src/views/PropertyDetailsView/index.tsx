@@ -27,8 +27,8 @@ async function processGalleryImages(
         })
         if (imageData) {
           galleryImages.push({
-            url: imageData.url || '',
-            filename: imageData.filename || '',
+            url: imageData?.sizes?.og?.url || imageData.url || '',
+            filename: imageData?.sizes?.og?.filename || imageData.filename || '',
           })
         }
       } catch (error) {
@@ -52,11 +52,10 @@ async function processCoverImage(
         collection: 'media',
         id: coverImageValue,
       })
-      console.log('processCoverImage imageData:', imageData)
       if (imageData) {
         return {
-          url: imageData.url || '',
-          filename: imageData.filename || '',
+          url: imageData?.sizes?.og?.url || imageData.url || '',
+          filename: imageData?.sizes?.og?.filename || imageData.filename || '',
         }
       }
     } catch (error) {

@@ -31,11 +31,11 @@ export const Media: CollectionConfig = {
       },
       {
         name: 'watermark',
-        width: 1000,
+        width: 768,
       },
       {
         name: 'og',
-        width: 1000,
+        width: 900,
       },
     ],
   },

@@ -1,9 +1,9 @@
 import { getWatermarkBuffer } from '@/utils/getWatermarkBuffer'
-import { s3Bucket, s3Client, s3Prefix } from '@/utils/s3Client'
 import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import path from 'path'
 import sharp from 'sharp'
 import { CollectionAfterChangeHook } from 'payload'
+import { getR2Client, getS3Config } from '@/utils/s3Client'
 const WATERMARK_TARGET_SIZE = 'watermark'
 
 async function streamToBuffer(stream: any): Promise<Buffer> {
@@ -29,14 +29,15 @@ export const afterChangeHook: CollectionAfterChangeHook = async ({ doc, req, ope
       logger.warn(`[Hook afterChange] No se encontró el tamaño '${WATERMARK_TARGET_SIZE}'.`)
       return doc
     }
-
+    const { prefix: s3Prefix, bucket: s3Bucket } = getS3Config()
+    const s3Client = getR2Client()
     // =================== CAMBIO IMPORTANTE ===================
     // Construimos la ruta (Key) del objeto en S3 usando el prefijo
     const key = path.join(s3Prefix, imageSizeToEdit.filename).replace(/\\/g, '/')
     // =======================================================
     const getObjectCmd = new GetObjectCommand({ Bucket: s3Bucket, Key: key })
-    const response = await s3Client.send(getObjectCmd)
-    const originalBuffer = await streamToBuffer(response.Body)
+    const response = await s3Client?.send(getObjectCmd)
+    const originalBuffer = await streamToBuffer(response?.Body)
 
     const watermarkBuffer = await getWatermarkBuffer()
     if (!watermarkBuffer) {
@@ -54,7 +55,7 @@ export const afterChangeHook: CollectionAfterChangeHook = async ({ doc, req, ope
       Body: watermarkedBuffer,
       ContentType: imageSizeToEdit.mimeType,
     })
-    await s3Client.send(putObjectCmd)
+    await s3Client?.send(putObjectCmd)
 
     logger.info(`[Hook afterChange] ✅ Proceso completado para ${doc.filename}.`)
   } catch (error) {

@@ -1,28 +1,45 @@
 import { S3Client } from '@aws-sdk/client-s3'
 
-// Lee las variables de entorno que estás usando en tu payload.config.ts
-const R2_BUCKET = process.env.R2_BUCKET
-const R2_ENDPOINT = process.env.R2_ENDPOINT
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY
-const R2_PREFIX = process.env.R2_PREFIX || '' // Leemos el prefijo para la colección 'media'
+const hasR2Vars = Boolean(
+  process.env.R2_ACCESS_KEY_ID &&
+    process.env.R2_SECRET_ACCESS_KEY &&
+    process.env.R2_BUCKET &&
+    process.env.R2_ENDPOINT &&
+    process.env.R2_PREFIX,
+)
 
-// Valida que todas las variables necesarias para la conexión estén definidas
-if (!R2_BUCKET || !R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
-  throw new Error('Faltan variables de entorno R2_... críticas para la configuración de S3.')
+export function getR2Client() {
+  if (!hasR2Vars) {
+    // During build, avoid throwing — return null to let callers degrade gracefully
+    return null
+  } else {
+    // Lee las variables de entorno que estás usando en tu payload.config.ts
+    const R2_ENDPOINT = process.env.R2_ENDPOINT
+    const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID
+    const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY
+    return new S3Client({
+      endpoint: R2_ENDPOINT,
+      region: 'auto',
+      credentials: {
+        accessKeyId: R2_ACCESS_KEY_ID!,
+        secretAccessKey: R2_SECRET_ACCESS_KEY!,
+      },
+      forcePathStyle: true, // Coincide con tu configuración
+    })
+  }
 }
 
-// Crea y exporta una instancia del cliente S3 que usaremos en nuestro hook
-export const s3Client = new S3Client({
-  endpoint: R2_ENDPOINT,
-  region: 'auto', // Coincide con tu configuración
-  credentials: {
-    accessKeyId: R2_ACCESS_KEY_ID,
-    secretAccessKey: R2_SECRET_ACCESS_KEY,
-  },
-  forcePathStyle: true, // Coincide con tu configuración
-})
+export const getS3Config = () => {
+  const R2_BUCKET = process.env.R2_BUCKET || ''
+  const R2_PREFIX = process.env.R2_PREFIX || ''
 
-// Exporta el nombre del bucket y el prefijo para fácil acceso
-export const s3Bucket = R2_BUCKET
-export const s3Prefix = R2_PREFIX
+  if (!R2_BUCKET) {
+    // Solo lanzamos error si el bucket no está definido, el prefijo es opcional
+    throw new Error('La variable de entorno R2_BUCKET no está definida.')
+  }
+
+  return {
+    bucket: R2_BUCKET,
+    prefix: R2_PREFIX,
+  }
+}

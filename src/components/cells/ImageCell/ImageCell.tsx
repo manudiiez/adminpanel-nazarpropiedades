@@ -40,8 +40,6 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         }
 
         const data = await response.json()
-        console.log('Fetched image data:', data)
-        console.log('ImageCell data:', data)
         setImageData(data)
       } catch (err) {
         console.error('Error fetching image:', err)
