@@ -1,5 +1,8 @@
+// src/collections/Media.ts
+
 import { authenticated } from '@/access/authenticated'
 import type { CollectionConfig } from 'payload'
+import { afterChangeHook } from './hooks/afterChangeHook'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -9,11 +12,13 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     update: authenticated,
   },
+  hooks: {
+    afterChange: [afterChangeHook],
+  },
   fields: [
     {
       name: 'alt',
       type: 'text',
-      // required: true,
     },
   ],
   upload: {
@@ -22,21 +27,15 @@ export const Media: CollectionConfig = {
     imageSizes: [
       {
         name: 'thumbnail',
-        width: 300,
+        width: 250,
       },
       {
-        name: 'small',
-        width: 600,
-      },
-      {
-        name: 'medium',
-        width: 1280,
+        name: 'watermark',
+        width: 1000,
       },
       {
         name: 'og',
-        width: 1200,
-        height: 630,
-        crop: 'center',
+        width: 1000,
       },
     ],
   },

@@ -13,6 +13,7 @@ interface ImageData {
   width?: number
   height?: number
   sizes?: any
+  thumbnailURL?: string
 }
 
 export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
@@ -39,6 +40,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         }
 
         const data = await response.json()
+        console.log('Fetched image data:', data)
         console.log('ImageCell data:', data)
         setImageData(data)
       } catch (err) {
@@ -121,8 +123,8 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            // src={imageData.url}
-            src={imageData?.sizes?.thumbnail?.url || imageData.url}
+            // src={imageData?.sizes?.thumbnail?.url}
+            src={imageData?.thumbnailURL}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
             height={150}

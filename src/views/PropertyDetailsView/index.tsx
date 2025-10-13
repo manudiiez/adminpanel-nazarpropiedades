@@ -52,7 +52,7 @@ async function processCoverImage(
         collection: 'media',
         id: coverImageValue,
       })
-
+      console.log('processCoverImage imageData:', imageData)
       if (imageData) {
         return {
           url: imageData.url || '',
