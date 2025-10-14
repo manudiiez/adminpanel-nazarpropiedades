@@ -1,6 +1,5 @@
 'use client'
 
-import './styles.scss'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -13,18 +12,16 @@ interface ImageData {
   width?: number
   height?: number
   sizes?: any
-  thumbnailURL?: string
 }
 
 export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
   const [imageData, setImageData] = useState<ImageData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [imageKey, setImageKey] = useState(0) // ✅ Key para forzar re-render
   const router = useRouter()
-
   useEffect(() => {
     const fetchImage = async () => {
+      // Si no hay cellData o no es un string (ID), no hacer nada
       if (!cellData || typeof cellData !== 'string') {
         return
       }
@@ -33,21 +30,16 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
       setError(null)
 
       try {
+        // Hacer petición a la API para obtener los datos de la imagen
         const response = await fetch(`/api/media/${cellData}`)
-
-        console.log('Payload image data:', imageData)
 
         if (!response.ok) {
           throw new Error(`Error al cargar imagen: ${response.status}`)
         }
 
         const data = await response.json()
-        console.log('Fetched image data:', data)
-        console.log('Thumbnail URL:', data?.sizes?.thumbnail?.url)
-        console.log('Main URL:', data?.url)
-
+        console.log('ImageCell data:', data)
         setImageData(data)
-        setImageKey((prev) => prev + 1) // ✅ Forzar re-render cuando los datos cambian
       } catch (err) {
         console.error('Error fetching image:', err)
         setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -59,201 +51,87 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
     fetchImage()
   }, [cellData])
 
+  // Función para manejar el click en la imagen
   const handleImageClick = () => {
     if (rowData?.id) {
+      // Navegar al elemento de la colección (asumiendo que es propiedades)
       router.push(`/admin/collections/propiedades/${rowData.id}`)
     }
   }
 
+  // Si no hay cellData, mostrar mensaje
   if (!cellData) {
     return (
       <div className="cell-portada">
-        <span className="cell-portada__text">Sin imagen</span>
+        <span style={{ color: '#666', fontStyle: 'italic' }}>Sin imagen</span>
       </div>
     )
   }
 
+  // Si está cargando, mostrar mensaje de carga
   if (loading) {
     return (
       <div className="cell-portada">
-        <span className="cell-portada__text">Cargando...</span>
+        <span>Cargando...</span>
       </div>
     )
   }
 
+  // Si hay error, mostrar mensaje de error
   if (error) {
     return (
       <div className="cell-portada">
-        <div
-          onClick={handleImageClick}
-          role="img"
-          aria-label="Imagen no disponible"
-          title={error}
-          className="cell-portada__error-placeholder"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <path d="M21 15l-5-5-4 4-3-3-4 4" />
-          </svg>
-        </div>
+        <span style={{ color: '#d32f2f', fontSize: '0.875rem' }}>Error: {error}</span>
       </div>
     )
   }
 
+  // Si hay datos de imagen, mostrarla
   if (imageData) {
-    const imageUrl = imageData?.sizes?.thumbnail?.url || imageData?.url
-
-    // ✅ Validar que la URL existe antes de renderizar
-    if (!imageUrl) {
-      console.error('No image URL found in imageData:', imageData)
-      return (
-        <div className="cell-portada">
-          <span className="cell-portada__text">URL no disponible</span>
-        </div>
-      )
-    }
-
     return (
       <div className="cell-portada">
         <div
           onClick={handleImageClick}
-          className={`cell-portada__image-wrapper ${rowData?.id ? 'clickable' : ''}`}
+          style={{
+            cursor: rowData?.id ? 'pointer' : 'default',
+            display: 'inline-block',
+            transition: 'transform 0.2s ease, opacity 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (rowData?.id) {
+              e.currentTarget.style.transform = 'scale(1.05)'
+              e.currentTarget.style.opacity = '0.9'
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)'
+            e.currentTarget.style.opacity = '1'
+          }}
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            key={imageKey} // ✅ Key única para forzar re-mount en cambios
-            // src={imageUrl}
-            src="https://pub-6a5cb6d849a44154bf47b48930e9e9ff.r2.dev/predeploy/image-1-250x333.jpg"
+            // src={imageData.url}
+            src={imageData?.sizes?.thumbnail?.url || imageData.url}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
             height={150}
-            className="cell-portada__img"
-            onError={(e) => {
-              console.error('Image load error:', imageUrl)
-              console.error('Event:', e)
-              setError('Error al cargar la imagen')
+            style={{
+              objectFit: 'cover',
+              borderRadius: '4px',
+              border: '1px solid #e0e0e0',
+              display: 'block',
             }}
-            loading="lazy"
-            unoptimized={false} // ✅ Usar optimización de Next.js
+            onError={() => setError('Error al cargar la imagen')}
           />
         </div>
       </div>
     )
   }
 
-  return (
-    <div className="cell-portada" onClick={handleImageClick}>
-      <span style={{ color: 'var(--theme-elevation-600)', fontStyle: 'italic' }}>Sin imagen</span>
-    </div>
-  )
-}
-
-// ===== ALTERNATIVA: Usar img nativa para evitar problemas =====
-
-/*
-'use client'
-
-import './styles.scss'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-
-interface ImageData {
-  id: string
-  url: string
-  alt?: string
-  filename?: string
-  sizes?: any
-}
-
-export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
-  const [imageData, setImageData] = useState<ImageData | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      if (!cellData || typeof cellData !== 'string') return
-
-      setLoading(true)
-      setError(null)
-
-      try {
-        const response = await fetch(`/api/media/${cellData}`)
-        if (!response.ok) throw new Error(`Error: ${response.status}`)
-        
-        const data = await response.json()
-        setImageData(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchImage()
-  }, [cellData])
-
-  const handleImageClick = () => {
-    if (rowData?.id) {
-      router.push(`/admin/collections/propiedades/${rowData.id}`)
-    }
-  }
-
-  if (!cellData) {
-    return <div className="cell-portada"><span>Sin imagen</span></div>
-  }
-
-  if (loading) {
-    return <div className="cell-portada"><span>Cargando...</span></div>
-  }
-
-  if (error || !imageData) {
-    return (
-      <div className="cell-portada">
-        <div className="cell-portada__error-placeholder" onClick={handleImageClick}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <path d="M21 15l-5-5-4 4-3-3-4 4" />
-          </svg>
-        </div>
-      </div>
-    )
-  }
-
-  const imageUrl = imageData?.sizes?.thumbnail?.url || imageData?.url
-
+  // Fallback si no hay imagen
   return (
     <div className="cell-portada">
-      <div
-        onClick={handleImageClick}
-        className={`cell-portada__image-wrapper ${rowData?.id ? 'clickable' : ''}`}
-      >
-        <img
-          src={imageUrl}
-          alt={imageData.alt || imageData.filename || 'Imagen'}
-          width={180}
-          height={150}
-          className="cell-portada__img"
-          onError={() => setError('Error al cargar imagen')}
-          loading="lazy"
-          style={{ objectFit: 'cover', width: '180px', height: '150px' }}
-        />
-      </div>
+      <span style={{ color: '#666', fontStyle: 'italic' }}>Sin imagen</span>
     </div>
   )
 }
-*/
