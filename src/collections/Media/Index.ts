@@ -23,20 +23,42 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     adminThumbnail: 'thumbnail',
+    disableLocalStorage: true, // ✅ Deshabilitar almacenamiento local del original
     focalPoint: true,
+    mimeTypes: ['image/*'],
+
     imageSizes: [
       {
         name: 'thumbnail',
         width: 250,
+        height: undefined, // Mantiene proporción
+        withoutEnlargement: false, // Permitir agrandar
       },
       {
         name: 'watermark',
         width: 768,
+        height: undefined, // Mantiene proporción
+        withoutEnlargement: false, // Permitir agrandar
       },
       {
         name: 'og',
         width: 900,
+        height: undefined, // Mantiene proporción
+        withoutEnlargement: false, // Permitir agrandar
       },
     ],
+    // ✅ Comprimir y redimensionar el original antes de guardarlo
+    resizeOptions: {
+      width: 1200, // Tamaño máximo del "original"
+      height: undefined, // Mantiene proporción
+      fit: 'inside', // Mantener proporción
+    },
+
+    formatOptions: {
+      format: 'jpeg', // Convertir todo a JPEG
+      options: {
+        quality: 85, // Comprimir al 85%
+      },
+    },
   },
 }

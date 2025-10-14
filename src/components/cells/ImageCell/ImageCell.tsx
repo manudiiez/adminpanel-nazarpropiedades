@@ -73,7 +73,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
   // Si está cargando, mostrar mensaje de carga
   if (loading) {
     return (
-      <div className="cell-portada">
+      <div className="cell-portada" onClick={handleImageClick}>
         <span className="cell-portada__text">Cargando...</span>
       </div>
     )
