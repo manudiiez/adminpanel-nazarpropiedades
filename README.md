@@ -44,3 +44,5 @@
 ### Tener en cuenta un peso maximo para las imagenes, ya que una imagen de un ihpone pesa como 3mb y es de 4000 px y eso no es necesario. 
 
 ### No se ve la foto de la propiedad en la cell
+
+### La cuenta de facebook e instagram es la de facebook de lili
