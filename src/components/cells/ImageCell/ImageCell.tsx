@@ -1,5 +1,6 @@
 'use client'
 
+import './styles.scss'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -12,6 +13,7 @@ interface ImageData {
   width?: number
   height?: number
   sizes?: any
+  thumbnailURL?: string
 }
 
 export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
@@ -38,7 +40,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         }
 
         const data = await response.json()
-        console.log('ImageCell data:', data)
+        console.log('Fetched image data:', data) // --- IGNORE ---
         setImageData(data)
       } catch (err) {
         console.error('Error fetching image:', err)
@@ -63,7 +65,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
   if (!cellData) {
     return (
       <div className="cell-portada">
-        <span style={{ color: '#666', fontStyle: 'italic' }}>Sin imagen</span>
+        <span className="cell-portada__text">Sin imagen</span>
       </div>
     )
   }
@@ -72,16 +74,40 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
   if (loading) {
     return (
       <div className="cell-portada">
-        <span>Cargando...</span>
+        <span className="cell-portada__text">Cargando...</span>
       </div>
     )
   }
 
-  // Si hay error, mostrar mensaje de error
+  // Si hay error, mostrar un placeholder cuadrado con un icono
   if (error) {
     return (
       <div className="cell-portada">
-        <span style={{ color: '#d32f2f', fontSize: '0.875rem' }}>Error: {error}</span>
+        <div
+          onClick={handleImageClick}
+          role="img"
+          aria-label="Imagen no disponible"
+          title={error}
+          className="cell-portada__error-placeholder"
+        >
+          {/* Icono de imagen simple en SVG */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="M21 15l-5-5-4 4-3-3-4 4" />
+          </svg>
+        </div>
       </div>
     )
   }
@@ -92,35 +118,17 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
       <div className="cell-portada">
         <div
           onClick={handleImageClick}
-          style={{
-            cursor: rowData?.id ? 'pointer' : 'default',
-            display: 'inline-block',
-            transition: 'transform 0.2s ease, opacity 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (rowData?.id) {
-              e.currentTarget.style.transform = 'scale(1.05)'
-              e.currentTarget.style.opacity = '0.9'
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)'
-            e.currentTarget.style.opacity = '1'
-          }}
+          className={`cell-portada__image-wrapper ${rowData?.id ? 'clickable' : ''}`}
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            // src={imageData.url}
-            src={imageData?.sizes?.thumbnail?.url || imageData.url}
+            src={imageData?.sizes?.thumbnail?.url || imageData?.url}
+            // src={imageData?.thumbnailURL}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
             height={150}
-            style={{
-              objectFit: 'cover',
-              borderRadius: '4px',
-              border: '1px solid #e0e0e0',
-              display: 'block',
-            }}
+            className="cell-portada__img"
+            unoptimized
             onError={() => setError('Error al cargar la imagen')}
           />
         </div>
@@ -130,8 +138,8 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
 
   // Fallback si no hay imagen
   return (
-    <div className="cell-portada">
-      <span style={{ color: '#666', fontStyle: 'italic' }}>Sin imagen</span>
+    <div className="cell-portada" onClick={handleImageClick}>
+      <span style={{ color: 'var(--theme-elevation-600)', fontStyle: 'italic' }}>Sin imagen</span>
     </div>
   )
 }
