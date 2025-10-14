@@ -40,6 +40,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         }
 
         const data = await response.json()
+        console.log('Fetched image data:', data)
         setImageData(data)
       } catch (err) {
         console.error('Error fetching image:', err)
@@ -121,7 +122,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            src={imageData?.sizes?.thumbnail?.url}
+            src={imageData?.sizes?.thumbnail?.url || imageData?.url}
             // src={imageData?.thumbnailURL}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
