@@ -662,7 +662,7 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     currency_id: currency,
     available_quantity: 1,
     buying_mode: 'classified',
-    listing_type_id: 'free', // Puedes cambiar a 'free', 'gold_premium', etc.
+    listing_type_id: 'silver', // Puedes cambiar a 'free', 'gold_premium', etc.
     condition: 'not_specified',
 
     description: {
@@ -676,39 +676,48 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     // Mapear la ciudad usando los mapeos disponibles (locality)
     location: {
       address_line: ubication.address || ubication.neighborhood || '',
-      city: (() => {
-        const mapped = mapValue(ubication.locality || '', 'locality')
+      zip_code: '5001',
+      city: {
+        id: 'TUxBQ0dPRDIyMDlm',
+        name: 'Godoy Cruz',
+      },
+      // city: (() => {
+      //   const mapped = mapValue(ubication.locality || '', 'locality')
 
-        // Si el mapping es un objeto con id y name, devolverlo tal cual
-        if (mapped && typeof mapped === 'object' && 'id' in mapped && 'name' in mapped) {
-          return mapped as { id: string; name: string }
-        }
+      //   // Si el mapping es un objeto con id y name, devolverlo tal cual
+      //   if (mapped && typeof mapped === 'object' && 'id' in mapped && 'name' in mapped) {
+      //     return mapped as { id: string; name: string }
+      //   }
 
-        // Si el mapping es un número, la city no existe en MercadoLibre -> usar el department mapeado
-        if (typeof mapped === 'number') {
-          const deptMapped = mapValue(ubication.department || '', 'department')
-          if (
-            deptMapped &&
-            typeof deptMapped === 'object' &&
-            'id' in deptMapped &&
-            'name' in deptMapped
-          ) {
-            return deptMapped as { id: string; name: string }
-          }
-          if (deptMapped !== undefined && deptMapped !== null && deptMapped !== '') {
-            return { name: String(deptMapped) }
-          }
-          return { name: ubication.department || 'Mendoza' }
-        }
+      //   // Si el mapping es un número, la city no existe en MercadoLibre -> usar el department mapeado
+      //   if (typeof mapped === 'number') {
+      //     const deptMapped = mapValue(ubication.department || '', 'department')
+      //     if (
+      //       deptMapped &&
+      //       typeof deptMapped === 'object' &&
+      //       'id' in deptMapped &&
+      //       'name' in deptMapped
+      //     ) {
+      //       return deptMapped as { id: string; name: string }
+      //     }
+      //     if (deptMapped !== undefined && deptMapped !== null && deptMapped !== '') {
+      //       return { name: String(deptMapped) }
+      //     }
+      //     return { name: ubication.department || 'Mendoza' }
+      //   }
 
-        // Si es un valor primitivo (string), usar como name
-        if (mapped !== undefined && mapped !== null && mapped !== '') {
-          return { name: String(mapped) }
-        }
+      //   // Si es un valor primitivo (string), usar como name
+      //   if (mapped !== undefined && mapped !== null && mapped !== '') {
+      //     return { name: String(mapped) }
+      //   }
 
-        // Fallback si no hay mapping ni localidad
-        return { name: ubication.locality || 'Godoy Cruz' }
-      })(),
+      //   // Fallback si no hay mapping ni localidad
+      //   return { name: ubication.locality || 'Godoy Cruz' }
+      // })(),
+      neighborhood: {
+        id: 'TUxBQkdPRDUzOTha',
+        name: 'Godoy Cruz',
+      },
       state: {
         id: 'AR-M',
         name: 'Mendoza',

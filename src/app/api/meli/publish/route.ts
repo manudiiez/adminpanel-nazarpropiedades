@@ -144,6 +144,7 @@ export async function POST(request: NextRequest) {
     if (!mlResponse.ok) {
       const errorData = await mlResponse.json().catch(() => ({}))
       console.error('❌ Error de MercadoLibre API:', errorData)
+      console.log(errorData.cause[0].references)
 
       const errorMessage =
         errorData.message || errorData.error || 'Error desconocido de Mercado Libre'

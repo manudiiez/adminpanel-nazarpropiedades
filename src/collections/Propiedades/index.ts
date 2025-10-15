@@ -658,8 +658,10 @@ export const Propiedades: CollectionConfig = {
             {
               name: 'garages',
               label: 'Cocheras',
+              required: true,
               admin: {
                 placeholder: 'Cantidad de espacios de cochera',
+                description: 'Este campo es importanten para mercado libre',
                 width: '50%',
                 condition: (data, siblingData) => {
                   return siblingData?.garageType && siblingData?.garageType !== 'sin_cochera'
