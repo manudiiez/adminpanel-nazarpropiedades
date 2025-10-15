@@ -657,7 +657,7 @@ export const Propiedades: CollectionConfig = {
             },
             {
               name: 'garages',
-              label: 'Cocheras',
+              label: '¿Cuantos autos entran?',
               required: true,
               admin: {
                 placeholder: 'Cantidad de espacios de cochera',
@@ -680,9 +680,8 @@ export const Propiedades: CollectionConfig = {
             },
             {
               name: 'ambientes',
-              type: 'select',
+              type: 'number',
               label: 'Cantidad de Ambientes',
-              options: ['Monoambiente', '1', '2', '3', '4', '5', '6 o mas'],
               admin: {
                 width: '50%',
                 placeholder: 'Ingresa la cantidad de ambientes',
@@ -700,7 +699,6 @@ export const Propiedades: CollectionConfig = {
               type: 'radio',
               options: propertySelectOptions.furnished,
               admin: {
-                description: 'Controla si la propiedad está amueblada',
                 layout: 'horizontal',
                 width: '50%',
                 condition: (data, siblingData) => {
@@ -713,6 +711,27 @@ export const Propiedades: CollectionConfig = {
                     data?.classification.type !== 'negocio' &&
                     data?.classification.type !== 'playa_de_estacionamiento' &&
                     data?.classification.type !== 'vinedo'
+                  )
+                },
+              },
+            },
+            {
+              name: 'monoambiente',
+              label: '¿Monoambiente?',
+              type: 'radio',
+              options: [
+                { label: 'Sí', value: 'si' },
+                { label: 'No', value: 'no' },
+              ],
+              admin: {
+                layout: 'horizontal',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return (
+                    (data?.classification.type !== 'cochera' &&
+                      data?.classification.type !== 'playa_de_estacionamiento' &&
+                      siblingData?.ambientes === 0) ||
+                    !siblingData?.ambientes
                   )
                 },
               },
@@ -957,6 +976,37 @@ export const Propiedades: CollectionConfig = {
             placeholder: 'Selecciona las zonas cercanas relevantes',
           },
           options: propertySelectOptions.amenityNearbyZones,
+        },
+      ],
+    },
+    {
+      name: 'extra',
+      type: 'group',
+      label: 'Campos extra para otros portales',
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              type: 'number',
+              name: 'bauleras',
+              label: 'Cantidad de Bauleras',
+              admin: {
+                width: '25%',
+                description: 'Este campo solo sera visible para mercado libre (importante)',
+              },
+            },
+            {
+              type: 'text',
+              name: 'numeroCasa',
+              label: 'Número de la Casa',
+              admin: {
+                width: '25%',
+                description:
+                  'Este campo no sera visible pero es importante para la calidad de mercado libre',
+              },
+            },
+          ],
         },
       ],
     },

@@ -574,13 +574,14 @@ export interface Propiedade {
     bedrooms?: number | null;
     bathrooms?: number | null;
     garageType?: ('garage' | 'garage_cochera' | 'garage_doble' | 'cochera_pasante' | 'sin_cochera') | null;
+    /**
+     * Este campo es importanten para mercado libre
+     */
     garages?: number | null;
     plantas?: number | null;
-    ambientes?: ('Monoambiente' | '1' | '2' | '3' | '4' | '5' | '6 o mas') | null;
-    /**
-     * Controla si la propiedad está amueblada
-     */
+    ambientes?: number | null;
     furnished?: ('si' | 'no') | null;
+    monoambiente?: ('si' | 'no') | null;
   };
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
@@ -611,6 +612,11 @@ export interface Propiedade {
           | 'agua'
           | 'luz_electrica'
           | 'recibe_permuta'
+          | 'caldera'
+          | 'cisterna'
+          | 'energia_solar'
+          | 'conexion_para_lavarropas'
+          | 'alarma'
         )[]
       | null;
     ambientes?:
@@ -644,6 +650,9 @@ export interface Propiedade {
           | 'salon_de_usos_multiples'
           | 'sauna'
           | 'terraza'
+          | 'jacuzzi'
+          | 'vestidor'
+          | 'toilette'
         )[]
       | null;
     zonasCercanas?:
@@ -658,6 +667,10 @@ export interface Propiedade {
           | 'supermercados'
           | 'club_deportivo'
           | 'zona_deportiva'
+          | 'cancha_de_padel'
+          | 'cancha_de_tenis'
+          | 'cancha_de_basquet'
+          | 'cancha_de_futbol'
           | 'ciclovia'
           | 'paradas_de_colectivo'
           | 'estacion_de_tren'
@@ -666,6 +679,16 @@ export interface Propiedade {
           | 'plaza'
         )[]
       | null;
+  };
+  extra?: {
+    /**
+     * Este campo solo sera visible para mercado libre (importante)
+     */
+    bauleras?: number | null;
+    /**
+     * Este campo no sera visible pero es importante para la calidad de mercado libre
+     */
+    numeroCasa?: string | null;
   };
   /**
    * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
@@ -1059,6 +1082,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
         plantas?: T;
         ambientes?: T;
         furnished?: T;
+        monoambiente?: T;
       };
   amenities?:
     | T
@@ -1074,6 +1098,12 @@ export interface PropiedadesSelect<T extends boolean = true> {
         servicios?: T;
         ambientes?: T;
         zonasCercanas?: T;
+      };
+  extra?:
+    | T
+    | {
+        bauleras?: T;
+        numeroCasa?: T;
       };
   aiContent?:
     | T
