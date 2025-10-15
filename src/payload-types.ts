@@ -581,7 +581,6 @@ export interface Propiedade {
     plantas?: number | null;
     ambientes?: number | null;
     furnished?: ('si' | 'no') | null;
-    monoambiente?: ('si' | 'no') | null;
   };
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
@@ -630,7 +629,6 @@ export interface Propiedade {
           | 'escritorio'
           | 'estudio'
           | 'comedor'
-          | 'jardin'
           | 'living'
           | 'living_comedor'
           | 'seguridad'
@@ -1082,7 +1080,6 @@ export interface PropiedadesSelect<T extends boolean = true> {
         plantas?: T;
         ambientes?: T;
         furnished?: T;
-        monoambiente?: T;
       };
   amenities?:
     | T

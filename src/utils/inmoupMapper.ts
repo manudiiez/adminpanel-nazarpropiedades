@@ -40,7 +40,7 @@ interface PropertyData {
     diningRooms?: number
     totalRooms?: number
     plantas?: number
-    ambientes?: string
+    ambientes?: number
     garageType?: string
     furnished?: string
   }
@@ -79,8 +79,8 @@ interface InmoupData {
   currency: string | number
   totalArea?: number
   coveredArea?: number
-  bedrooms?: number
-  bathrooms?: number
+  bedrooms?: number | string
+  bathrooms?: number | string
   garages?: number
   toilettes?: number
   livingRooms?: number
@@ -88,7 +88,7 @@ interface InmoupData {
   diningRooms?: number
   totalRooms?: number
   plantas?: number
-  ambientes?: string
+  ambientes?: number
   estrellas?: number
   agua?: string
   cloacas?: string

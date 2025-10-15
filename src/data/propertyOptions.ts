@@ -662,7 +662,6 @@ export const amenityEnvironmentsOptions: SelectOption[] = [
   { label: 'Escritorio', value: 'escritorio' },
   { label: 'Estudio', value: 'estudio' },
   { label: 'Comedor', value: 'comedor' },
-  { label: 'Jardín', value: 'jardin' },
   { label: 'Living', value: 'living' },
   { label: 'Living comedor', value: 'living_comedor' },
   { label: 'Seguridad', value: 'seguridad' },

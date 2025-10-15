@@ -600,7 +600,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error: 'Error en la validación de Inmoup',
+            error: `Error en la validación de Inmoup: ${errorMessages.join(', ')}`,
             inmoupErrors: errorMessages,
             details: allErrors,
             updatedInmoupData, // Datos actualizados para el frontend
