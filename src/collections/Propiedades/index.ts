@@ -11,6 +11,7 @@ import {
   validateBathrooms,
   validateGarageType,
   validateMascotas,
+  validateAmbientes,
 } from '@/utils/validateFields'
 
 type ExtendedOption = {
@@ -73,6 +74,41 @@ export const Propiedades: CollectionConfig = {
         }
         return data
       },
+      ({ data, operation, originalDoc }) => {
+        // Detectar duplicación: es una creación pero tiene datos de portales
+        // (los documentos nuevos no deberían tener estos campos poblados)
+        const isDuplicate =
+          operation === 'create' && (data.inmoup?.externalId || data.mercadolibre?.externalId)
+        if (isDuplicate) {
+          console.log('Documento duplicado detectado, limpiando campos de portales...')
+
+          // Limpiar información de Inmoup
+          if (data.inmoup) {
+            data.inmoup = {
+              status: null,
+              uploaded: false,
+              externalId: null,
+              externalUrl: null,
+              lastSyncAt: null,
+              lastError: null,
+            }
+          }
+
+          // Limpiar información de MercadoLibre
+          if (data.mercadolibre) {
+            data.mercadolibre = {
+              status: null,
+              uploaded: false,
+              externalId: null,
+              externalUrl: null,
+              lastSyncAt: null,
+              lastError: null,
+            }
+          }
+        }
+
+        return data
+      },
       ({ data, originalDoc, operation }) => {
         // Solo para actualizaciones (no creaciones)
         if (operation === 'update' && originalDoc) {
@@ -93,7 +129,7 @@ export const Propiedades: CollectionConfig = {
             'notes',
             'updatedAt',
             'createdAt',
-            'status', // Agregar status a los campos a ignorar para cambios automáticos
+            'status',
           ]
 
           // Verificar si hay cambios significativos comparando data vs originalDoc
@@ -101,13 +137,13 @@ export const Propiedades: CollectionConfig = {
             if (fieldsToIgnore.some((field) => field.startsWith(key))) {
               return false
             }
-
             // Comparación profunda simplificada para detectar cambios
             return JSON.stringify(data[key]) !== JSON.stringify(originalDoc[key])
           })
 
           if (hasSignificantChanges) {
             console.log('Cambios significativos detectados, marcando como desactualizado...')
+
             // Verificar si Inmoup está publicado (status: 'ok') y marcarlo como desactualizado
             if (originalDoc.inmoup?.status === 'ok') {
               if (!data.inmoup) {
@@ -127,7 +163,6 @@ export const Propiedades: CollectionConfig = {
             }
           }
         }
-
         return data
       },
     ],
@@ -691,6 +726,7 @@ export const Propiedades: CollectionConfig = {
                   )
                 },
               },
+              validate: validateAmbientes,
             },
             {
               name: 'furnished',
@@ -950,17 +986,27 @@ export const Propiedades: CollectionConfig = {
               label: 'Cantidad de Bauleras',
               admin: {
                 width: '25%',
-                description: 'Este campo solo sera visible para mercado libre (importante)',
+                description: 'Este campo solo sera visible para mercado libre',
               },
             },
             {
               type: 'text',
               name: 'numeroCasa',
-              label: 'Número de la Casa',
+              label: 'Número de casa o departamento',
               admin: {
                 width: '25%',
                 description:
                   'Este campo no sera visible pero es importante para la calidad de mercado libre',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'casa' ||
+                    data?.classification.type === 'chalet' ||
+                    data?.classification.type === 'cabaña' ||
+                    data?.classification.type === 'duplex' ||
+                    data?.classification.type === 'triplex' ||
+                    data?.classification.type === 'departamento'
+                  )
+                },
               },
             },
             {
@@ -1056,6 +1102,73 @@ export const Propiedades: CollectionConfig = {
               },
               options: propertySelectOptions.checkinTimeOptions,
             },
+            {
+              name: 'pisosEdificio',
+              label: 'Cantidad de pisos del edificio',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la cantidad de pisos del edificio',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'departamento'
+                },
+              },
+            },
+            {
+              name: 'departamentosPorPiso',
+              label: 'Cantidad de departamentos por piso',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la cantidad de departamentos por piso',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'departamento'
+                },
+              },
+            },
+            {
+              name: 'superficieBalcon',
+              label: 'Superficie del balcon',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la superficie del balcon',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'departamento'
+                },
+              },
+            },
+            {
+              name: 'disposicion',
+              label: 'Disposición',
+              type: 'select',
+              options: propertySelectOptions.disposition,
+              admin: {
+                placeholder: 'Selecciona la disposición',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'departamento'
+                },
+              },
+            },
+            // {
+            //   name: 'monoambiente',
+            //   label: '¿Es Monoambiente?',
+            //   type: 'radio',
+            //   options: ['Si', 'No'],
+            //   admin: {
+            //     description: 'Este campo solo sera visible para mercado libre',
+            //     width: '25%',
+            //     layout: 'horizontal',
+            //     condition: (data, siblingData) => {
+            //       return data?.classification.type === 'departamento'
+            //     },
+            //   },
+            // },
           ],
         },
       ],

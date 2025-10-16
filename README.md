@@ -20,9 +20,5 @@
 
 ### La cuenta de facebook e instagram es la de facebook de lili
 
-### Recordar que cuando se duplica una propiedad los portales no se pueden duplicar, por lo que se debe actualizar la propiedad en los portales.
-
-# Arreglos en ml
-- Jardin patio, es lo mismo
-- Alquiler temporario (estadia minima, camas, checkin, checkout)
-- ALquiler (superficie del terreno)
+# Campos departmentos
+- Disposición

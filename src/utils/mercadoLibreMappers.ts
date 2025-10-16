@@ -82,6 +82,10 @@ interface PropertyData {
     checkoutTime?: string
     camas?: number
     minimumStay?: number
+    disposicion?: string
+    superficieBalcon?: number
+    departamentosPorPiso?: number
+    pisosEdificio?: number
   }
 }
 
@@ -310,6 +314,10 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
 
   if (extra.numeroCasa) {
     attributes.push({
+      id: 'APARTMENT_NUMBER',
+      value_name: extra.numeroCasa,
+    })
+    attributes.push({
       id: 'HOUSE_NUMBER',
       value_name: extra.numeroCasa,
     })
@@ -322,16 +330,79 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
-  if (extra.checkinTime) {
+  if (extra.minimumStay) {
     attributes.push({
-      id: 'CHECK_IN',
-      value_name: extra.checkinTime,
+      id: 'MINIMUM_STAY',
+      value_name: extra.minimumStay,
     })
   }
-  if (extra.checkoutTime) {
+
+  if (extra.camas) {
     attributes.push({
-      id: 'CHECK_OUT',
-      value_name: extra.checkoutTime,
+      id: 'BEDS',
+      value_name: extra.camas,
+    })
+  }
+
+  // Check-in time
+  if (extra.checkinTime) {
+    const checkinMapped = mapCheckinTime(extra.checkinTime)
+    if (checkinMapped) {
+      attributes.push({
+        id: 'CHECK_IN',
+        value_id: checkinMapped.id,
+        value_name: checkinMapped.name,
+      })
+    }
+  }
+
+  // Check-out time
+  if (extra.checkoutTime) {
+    const checkoutMapped = mapCheckoutTime(extra.checkoutTime)
+    if (checkoutMapped) {
+      attributes.push({
+        id: 'CHECK_OUT',
+        value_id: checkoutMapped.id,
+        value_name: checkoutMapped.name,
+      })
+    }
+  }
+  // Disposición
+  if (extra.disposicion) {
+    const dispositionMapped = mapDisposition(extra.disposicion)
+    if (dispositionMapped) {
+      attributes.push({
+        id: 'DISPOSITION',
+        value_id: dispositionMapped.id,
+        value_name: dispositionMapped.name,
+      })
+    }
+  }
+
+  // Superficie balcón
+  if (extra.superficieBalcon) {
+    attributes.push({
+      id: 'BALCONY_AREA',
+      value_name: `${extra.superficieBalcon} m²`,
+      value_struct: {
+        number: extra.superficieBalcon,
+        unit: 'm²',
+      },
+    })
+  }
+
+  // Cantidad de pisos en el edificio
+  if (extra.pisosEdificio) {
+    attributes.push({
+      id: 'FLOORS',
+      value_name: extra.pisosEdificio,
+    })
+  }
+  // Cantidad de pisos en el edificio
+  if (extra.departamentosPorPiso) {
+    attributes.push({
+      id: 'APARTMENTS_PER_FLOOR',
+      value_name: extra.departamentosPorPiso,
     })
   }
 
@@ -342,6 +413,16 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       id: 'HOUSE_PROPERTY_SUBTYPE',
       value_id: houseSubtype.id,
       value_name: houseSubtype.name,
+    })
+  }
+
+  // Tipo de departamento
+  const apartmentSubtype = mapDepartmentSubtype(classification.type)
+  if (apartmentSubtype) {
+    attributes.push({
+      id: 'APARTMENT_PROPERTY_SUBTYPE',
+      value_id: apartmentSubtype.id,
+      value_name: apartmentSubtype.name,
     })
   }
 
@@ -1016,6 +1097,15 @@ function mapHouseSubtype(type?: string): { id: string; name: string } | null {
 
   return subtypeMap[type?.toLowerCase() || ''] || null
 }
+function mapDepartmentSubtype(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    departamento: { id: '266319', name: 'Departamento' },
+    loft: { id: '280798', name: 'Loft' },
+    semipiso: { id: '266324', name: 'Semi piso' },
+  }
+
+  return subtypeMap[type?.toLowerCase() || ''] || null
+}
 
 function mapOrientation(orientation?: string): { id: string; name: string } | null {
   const orientationMap: Record<string, { id: string; name: string }> = {
@@ -1028,11 +1118,98 @@ function mapOrientation(orientation?: string): { id: string; name: string } | nu
   return orientationMap[orientation?.toLowerCase() || ''] || null
 }
 
+function mapCheckinTime(time?: string): { id: string; name: string } | null {
+  const checkinMap: Record<string, { id: string; name: string }> = {
+    '00:00': { id: '242331', name: '00:00' },
+    '01:00': { id: '242342', name: '01:00' },
+    '02:00': { id: '242347', name: '02:00' },
+    '03:00': { id: '242348', name: '03:00' },
+    '04:00': { id: '242349', name: '04:00' },
+    '05:00': { id: '242350', name: '05:00' },
+    '06:00': { id: '242351', name: '06:00' },
+    '07:00': { id: '242352', name: '07:00' },
+    '08:00': { id: '242353', name: '08:00' },
+    '09:00': { id: '242354', name: '09:00' },
+    '10:00': { id: '242332', name: '10:00' },
+    '11:00': { id: '242333', name: '11:00' },
+    '12:00': { id: '242334', name: '12:00' },
+    '13:00': { id: '242335', name: '13:00' },
+    '14:00': { id: '242336', name: '14:00' },
+    '15:00': { id: '242337', name: '15:00' },
+    '16:00': { id: '242338', name: '16:00' },
+    '17:00': { id: '242339', name: '17:00' },
+    '18:00': { id: '242340', name: '18:00' },
+    '19:00': { id: '242341', name: '19:00' },
+    '20:00': { id: '242343', name: '20:00' },
+    '21:00': { id: '242344', name: '21:00' },
+    '22:00': { id: '242345', name: '22:00' },
+    '23:00': { id: '242346', name: '23:00' },
+  }
+
+  return checkinMap[time || ''] || null
+}
+
+function mapCheckoutTime(time?: string): { id: string; name: string } | null {
+  const checkoutMap: Record<string, { id: string; name: string }> = {
+    '00:00': { id: '242355', name: '00:00' },
+    '01:00': { id: '242366', name: '01:00' },
+    '02:00': { id: '242371', name: '02:00' },
+    '03:00': { id: '242372', name: '03:00' },
+    '04:00': { id: '242373', name: '04:00' },
+    '05:00': { id: '242374', name: '05:00' },
+    '06:00': { id: '242375', name: '06:00' },
+    '07:00': { id: '242376', name: '07:00' },
+    '08:00': { id: '242377', name: '08:00' },
+    '09:00': { id: '242378', name: '09:00' },
+    '10:00': { id: '242356', name: '10:00' },
+    '11:00': { id: '242357', name: '11:00' },
+    '12:00': { id: '242358', name: '12:00' },
+    '13:00': { id: '242359', name: '13:00' },
+    '14:00': { id: '242360', name: '14:00' },
+    '15:00': { id: '242361', name: '15:00' },
+    '16:00': { id: '242362', name: '16:00' },
+    '17:00': { id: '242363', name: '17:00' },
+    '18:00': { id: '242364', name: '18:00' },
+    '19:00': { id: '242365', name: '19:00' },
+    '20:00': { id: '242367', name: '20:00' },
+    '21:00': { id: '242368', name: '21:00' },
+    '22:00': { id: '242369', name: '22:00' },
+    '23:00': { id: '242370', name: '23:00' },
+  }
+
+  return checkoutMap[time || ''] || null
+}
+
+function mapDisposition(object?: string): { id: string; name: string } | null {
+  const dispositionMap: Record<string, { id: string; name: string }> = {
+    contrafrente: {
+      id: '242076',
+      name: 'Contrafrente',
+    },
+    frente: {
+      id: '242077',
+      name: 'Frente',
+    },
+    interno: {
+      id: '242078',
+      name: 'Interno',
+    },
+    lateral: {
+      id: '242079',
+      name: 'Lateral',
+    },
+  }
+
+  return dispositionMap[object || ''] || null
+}
+
 function parseAntiquity(antiquity?: string): number {
   if (!antiquity) return 0
-
+  if (antiquity === '6_meses') {
+    return 1
+  }
   const match = antiquity.match(/(\d+)/)
-  return match ? parseInt(match[1]) : 0
+  return match ? parseInt(match[1]) : 1
 }
 
 function extractYoutubeId(url?: string): string | undefined {

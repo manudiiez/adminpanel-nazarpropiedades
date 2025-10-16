@@ -345,3 +345,15 @@ export const validateMascotas = (value: any, { data }: ValidationArgs) => {
 
   return true
 }
+export const validateAmbientes = (value: any, { data }: ValidationArgs) => {
+  // Requerido para ciertos tipos básicos
+  const requiredTypes = ['departamento']
+
+  if (requiredTypes.includes(data?.classification?.type || '')) {
+    if (!value) {
+      return 'Este campo es obligatorio.'
+    }
+  }
+
+  return true
+}

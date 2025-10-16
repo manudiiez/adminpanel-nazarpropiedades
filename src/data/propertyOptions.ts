@@ -45,6 +45,26 @@ export const accessOptions: SelectOption[] = [
   },
 ]
 
+// accesso
+export const disposicionOptions: SelectOption[] = [
+  {
+    label: 'Contrafrente',
+    value: 'contrafrente',
+  },
+  {
+    label: 'Frente',
+    value: 'frente',
+  },
+  {
+    label: 'Interno',
+    value: 'interno',
+  },
+  {
+    label: 'Lateral',
+    value: 'lateral',
+  },
+]
+
 // Monedas
 export const currencyOptions: SelectOption[] = [
   { label: 'USD', value: 'usd' },
@@ -1219,6 +1239,7 @@ export const propertySelectOptions = {
   amenityEnvironments: amenityEnvironmentsOptions,
   amenityNearbyZones: amenityNearbyZonesOptions,
   checkinTimeOptions: checkinTimeOptions,
+  disposition: disposicionOptions,
 }
 
 // Función helper para obtener localidades por departamento

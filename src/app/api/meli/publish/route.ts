@@ -304,6 +304,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const mlData = mapPropertyToMercadoLibre(propertyData, images || [])
+    console.log('📋 Datos mapeados para Mercado Libre:', mlData)
     const mlItemId = propertyData.mercadolibre.externalId
     // const description = mlData.description?.plain_text
     const { description, listing_type_id, ...mlDataFormatted } = mlData

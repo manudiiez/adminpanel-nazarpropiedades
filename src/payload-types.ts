@@ -680,7 +680,7 @@ export interface Propiedade {
   };
   extra?: {
     /**
-     * Este campo solo sera visible para mercado libre (importante)
+     * Este campo solo sera visible para mercado libre
      */
     bauleras?: number | null;
     /**
@@ -765,6 +765,22 @@ export interface Propiedade {
           | '23:00'
         )
       | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    pisosEdificio?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    departamentosPorPiso?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    superficieBalcon?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    disposicion?: ('contrafrente' | 'frente' | 'interno' | 'lateral') | null;
   };
   /**
    * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
@@ -1184,6 +1200,10 @@ export interface PropiedadesSelect<T extends boolean = true> {
         camas?: T;
         checkinTime?: T;
         checkoutTime?: T;
+        pisosEdificio?: T;
+        departamentosPorPiso?: T;
+        superficieBalcon?: T;
+        disposicion?: T;
       };
   aiContent?:
     | T
