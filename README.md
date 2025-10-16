@@ -50,3 +50,6 @@
 ### No se ve la foto de la propiedad en la cell
 
 ### La cuenta de facebook e instagram es la de facebook de lili
+
+
+### Recordar que cuando se duplica una propiedad los portales no se pueden duplicar, por lo que se debe actualizar la propiedad en los portales.

@@ -175,6 +175,7 @@ export async function POST(request: NextRequest) {
     }
 
     const mlResult = await mlResponse.json()
+    // const mlResult = { id: 'hola', permalink: 'https://www.mercadolibre.com.ar/' }
     const itemId = mlResult.id
 
     console.log('✅ Item creado exitosamente en Mercado Libre:', itemId)
