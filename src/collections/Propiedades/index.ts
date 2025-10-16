@@ -478,6 +478,35 @@ export const Propiedades: CollectionConfig = {
               validate: validateTotalArea,
             },
             {
+              name: 'landArea',
+              type: 'number',
+              label: 'Área de terreno en m²',
+              admin: {
+                placeholder: 'Selecciona el área de terreno',
+                width: '50%',
+                description: 'Este campo es importante para la calidad de Mercado Libre',
+                condition: (data, siblingData) => {
+                  return data?.classification.type !== 'negocio'
+                },
+              },
+            },
+            {
+              name: 'orientation',
+              type: 'select',
+              label: 'Orientación',
+              options: propertySelectOptions.orientation,
+              admin: {
+                placeholder: 'Selecciona la orientación',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type !== 'negocio' &&
+                    data?.classification.type !== 'playa_de_estacionamiento'
+                  )
+                },
+              },
+            },
+            {
               name: 'frontMeters',
               type: 'number',
               label: 'Metros de frente',
@@ -537,22 +566,6 @@ export const Propiedades: CollectionConfig = {
                 },
               },
               validate: validateConservationStatus,
-            },
-            {
-              name: 'orientation',
-              type: 'select',
-              label: 'Orientación',
-              options: propertySelectOptions.orientation,
-              admin: {
-                placeholder: 'Selecciona la orientación',
-                width: '50%',
-                condition: (data, siblingData) => {
-                  return (
-                    data?.classification.type !== 'negocio' &&
-                    data?.classification.type !== 'playa_de_estacionamiento'
-                  )
-                },
-              },
             },
           ],
         },
@@ -979,11 +992,69 @@ export const Propiedades: CollectionConfig = {
               admin: {
                 placeholder: 'Ingresa la cantidad máxima de huéspedes',
                 description: 'Este campo solo sera visible para mercado libre',
-                width: '50%',
+                width: '25%',
                 condition: (data, siblingData) => {
                   return data?.classification.condition === 'alquiler_temporario'
                 },
               },
+            },
+            {
+              name: 'minimumStay',
+              label: 'Estadia Mínima (en noches)',
+              type: 'number',
+              required: true,
+              admin: {
+                placeholder: 'Ingresa la estadia minima en noches',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
+              },
+            },
+            {
+              name: 'camas',
+              label: 'Cantidad de camas',
+              type: 'number',
+              required: true,
+              admin: {
+                placeholder: 'Ingresa la cantidad de camas',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
+              },
+            },
+            {
+              name: 'checkinTime',
+              label: 'Hora de check-in',
+              type: 'select',
+              required: true,
+              admin: {
+                placeholder: 'Seleccione la hora de check-in',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
+              },
+              options: propertySelectOptions.checkinTimeOptions,
+            },
+            {
+              name: 'checkoutTime',
+              label: 'Hora de check-out',
+              type: 'select',
+              required: true,
+              admin: {
+                placeholder: 'Seleccione la hora de check-out',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
+              },
+              options: propertySelectOptions.checkinTimeOptions,
             },
           ],
         },

@@ -79,7 +79,8 @@ async function getInmoupUserId(): Promise<string | null> {
 }
 
 // Función para limpiar valores null, undefined, strings vacíos y ceros del objeto
-function removeEmptyValues(obj: any): any {
+// NOTA: Preserva el valor 0 en campos como 'valor' dentro de 'antiguedad'
+function removeEmptyValues(obj: any, parentKey?: string): any {
   if (obj === null || obj === undefined) {
     return undefined
   }
@@ -88,7 +89,11 @@ function removeEmptyValues(obj: any): any {
     return undefined
   }
 
+  // No eliminar el 0 si estamos dentro de 'antiguedad' y la key es 'valor'
   if (typeof obj === 'number' && obj === 0) {
+    if (parentKey === 'valor') {
+      return obj // Preservar el 0 en 'valor'
+    }
     return undefined
   }
 
@@ -102,7 +107,7 @@ function removeEmptyValues(obj: any): any {
   if (typeof obj === 'object') {
     const cleanedObj: any = {}
     for (const [key, value] of Object.entries(obj)) {
-      const cleanedValue = removeEmptyValues(value)
+      const cleanedValue = removeEmptyValues(value, key)
       if (cleanedValue !== undefined) {
         cleanedObj[key] = cleanedValue
       }
@@ -210,7 +215,11 @@ function createInmoupData(
           estrellas: mappedPropertyData.estrellas || undefined,
           cochera: mappedPropertyData.garageType || undefined,
           antiguedad: {
-            valor: mappedPropertyData.antiquity.value || undefined,
+            valor:
+              mappedPropertyData.antiquity.value !== undefined &&
+              mappedPropertyData.antiquity.value !== null
+                ? mappedPropertyData.antiquity.value
+                : undefined,
             tiempo: mappedPropertyData.antiquity.tiempo || undefined,
           },
           estado_conservacion: mappedPropertyData.conservationStatus || undefined,

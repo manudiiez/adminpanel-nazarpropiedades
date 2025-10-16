@@ -16,40 +16,13 @@
 - Nube de CloudFlare: [text](https://dash.cloudflare.com/c14fa1adf8db74d2102398802057e4ca/r2/default/buckets/nazarpropiedades-media?prefix=media%2F)
 - Proyecto easypanel: [text](http://31.97.87.170:3000/projects/nazarpropiedades-admin/app/adminpanel-nazarpropiedades/deployments)
 
-# Datos flatantes de mercado libre
 
-### Casas en venta
-
-- Agua corrriente
-- Caldera
-- Cisterna
-- Energia Solar
-- Conexion para lavarropas
-- Grupo electrogeno
-- Cancha de paddle
-- Cancah de tenis
-- Cancha de basquet
-- Cancha de futbol
-- Cancha polideportiva
-- Heladera
-- Jacuzzi
-- Acceso Controlado
-- Altillo
-- lacards
-- Con lavadero
-- Vestidor
-- Toilette
-
-### Para mejorar la caldiad de la publicacion:
-
-- Bauleras
-- Numero de la casa
-
-### Tener en cuenta un peso maximo para las imagenes, ya que una imagen de un ihpone pesa como 3mb y es de 4000 px y eso no es necesario.
-
-### No se ve la foto de la propiedad en la cell
 
 ### La cuenta de facebook e instagram es la de facebook de lili
 
-
 ### Recordar que cuando se duplica una propiedad los portales no se pueden duplicar, por lo que se debe actualizar la propiedad en los portales.
+
+# Arreglos en ml
+- Jardin patio, es lo mismo
+- Alquiler temporario (estadia minima, camas, checkin, checkout)
+- ALquiler (superficie del terreno)

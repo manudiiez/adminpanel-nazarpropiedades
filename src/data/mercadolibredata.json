@@ -41,27 +41,8 @@
     "value_type": "list",
     "values": [
       {
-        "id": "242075",
-        "name": "Venta"
-      }
-    ],
-    "attribute_group_id": "MAIN",
-    "attribute_group_name": "Principales"
-  },
-  {
-    "id": "OPERATION_SUBTYPE",
-    "name": "Subtipo de operación",
-    "tags": {
-      "fixed": true,
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "list",
-    "values": [
-      {
-        "id": "244562",
-        "name": "Propiedad individual"
+        "id": "242074",
+        "name": "Alquiler temporal"
       }
     ],
     "attribute_group_id": "MAIN",
@@ -110,95 +91,6 @@
     "attribute_group_name": "Ficha técnica"
   },
   {
-    "id": "BEDROOMS",
-    "name": "Dormitorios",
-    "tags": {
-      "required": true,
-      "catalog_listing_required": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "FULL_BATHROOMS",
-    "name": "Baños",
-    "tags": {
-      "required": true,
-      "catalog_listing_required": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "PARKING_LOTS",
-    "name": "Cocheras",
-    "tags": {
-      "required": true,
-      "catalog_listing_required": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica",
-    "hint": "Si no tiene estacionamientos, indica 0."
-  },
-  {
-    "id": "IS_PROPERTY_IN_AUCTION",
-    "name": "Es propiedad en remate",
-    "tags": {
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "PROPERTY_AGE",
-    "name": "Antigüedad",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number_unit",
-    "value_max_length": 255,
-    "allowed_units": [
-      {
-        "id": "años",
-        "name": "años"
-      }
-    ],
-    "default_unit": "años",
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
     "id": "LAND_AREA",
     "name": "Superficie de terreno",
     "tags": {
@@ -239,53 +131,37 @@
     "attribute_group_name": "Otros"
   },
   {
-    "id": "ROOMS",
-    "name": "Ambientes",
-    "tags": {},
+    "id": "PROPERTY_OWNERSHIP",
+    "name": "Tipo de propiedad",
+    "tags": {
+      "hidden": true
+    },
     "hierarchy": "ITEM",
     "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "WAREHOUSES",
-    "name": "Bauleras",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "FLOORS",
-    "name": "Cantidad de pisos",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "HOUSE_NUMBER",
-    "name": "Número de la casa",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "string",
-    "value_max_length": 255,
-    "attribute_group_id": "OTHERS",
+    "value_type": "list",
+    "values": [
+      {
+        "id": "345142",
+        "name": "Casa sola"
+      },
+      {
+        "id": "345143",
+        "name": "Casa en condominio"
+      },
+      {
+        "id": "345144",
+        "name": "Casa en fraccionamiento"
+      }
+    ],
+    "attribute_group_id": "DFLT",
     "attribute_group_name": "Otros"
   },
   {
     "id": "HOUSE_PROPERTY_SUBTYPE",
     "name": "Tipo de casa",
-    "tags": {},
+    "tags": {
+      "hidden": true
+    },
     "hierarchy": "ITEM",
     "relevance": 1,
     "value_type": "list",
@@ -319,58 +195,347 @@
     "attribute_group_name": "Ficha técnica"
   },
   {
-    "id": "FACING",
-    "name": "Orientación",
+    "id": "GUESTS",
+    "name": "Huéspedes",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "ROOMS",
+    "name": "Ambientes",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "BEDROOMS",
+    "name": "Dormitorios",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "BEDS",
+    "name": "Camas",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "CHILDREN_WELCOME",
+    "name": "Apto para familias con niños",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "CARACTERISTICAS",
+    "attribute_group_name": "Características adicionales"
+  },
+  {
+    "id": "FULL_BATHROOMS",
+    "name": "Baños",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "PARKING_LOTS",
+    "name": "Cocheras",
+    "tags": {
+      "required": true,
+      "catalog_listing_required": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica",
+    "hint": "Si no tiene estacionamientos, indica 0."
+  },
+  {
+    "id": "FLOORS",
+    "name": "Cantidad de pisos",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "MINIMUM_STAY",
+    "name": "Estadía mínima (noches)",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
+  },
+  {
+    "id": "CHECK_IN",
+    "name": "Horario check in",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
     "value_type": "list",
     "values": [
       {
-        "id": "242328",
-        "name": "Sur"
+        "id": "242331",
+        "name": "00:00"
       },
       {
-        "id": "242330",
-        "name": "Oeste"
+        "id": "242342",
+        "name": "01:00"
       },
       {
-        "id": "242327",
-        "name": "Norte"
+        "id": "242347",
+        "name": "02:00"
       },
       {
-        "id": "242329",
-        "name": "Este"
+        "id": "242348",
+        "name": "03:00"
+      },
+      {
+        "id": "242349",
+        "name": "04:00"
+      },
+      {
+        "id": "242350",
+        "name": "05:00"
+      },
+      {
+        "id": "242351",
+        "name": "06:00"
+      },
+      {
+        "id": "242352",
+        "name": "07:00"
+      },
+      {
+        "id": "242353",
+        "name": "08:00"
+      },
+      {
+        "id": "242354",
+        "name": "09:00"
+      },
+      {
+        "id": "242332",
+        "name": "10:00"
+      },
+      {
+        "id": "242333",
+        "name": "11:00"
+      },
+      {
+        "id": "242334",
+        "name": "12:00"
+      },
+      {
+        "id": "242335",
+        "name": "13:00"
+      },
+      {
+        "id": "242336",
+        "name": "14:00"
+      },
+      {
+        "id": "242337",
+        "name": "15:00"
+      },
+      {
+        "id": "242338",
+        "name": "16:00"
+      },
+      {
+        "id": "242339",
+        "name": "17:00"
+      },
+      {
+        "id": "242340",
+        "name": "18:00"
+      },
+      {
+        "id": "242341",
+        "name": "19:00"
+      },
+      {
+        "id": "242343",
+        "name": "20:00"
+      },
+      {
+        "id": "242344",
+        "name": "21:00"
+      },
+      {
+        "id": "242345",
+        "name": "22:00"
+      },
+      {
+        "id": "242346",
+        "name": "23:00"
       }
     ],
     "attribute_group_id": "FIND",
     "attribute_group_name": "Ficha técnica"
   },
   {
-    "id": "PROPERTY_OWNERSHIP",
-    "name": "Tipo de propiedad",
-    "tags": {
-      "hidden": true
-    },
+    "id": "CHECK_OUT",
+    "name": "Horario check out",
+    "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
     "value_type": "list",
     "values": [
       {
-        "id": "345142",
-        "name": "Casa sola"
+        "id": "242355",
+        "name": "00:00"
       },
       {
-        "id": "345143",
-        "name": "Casa en condominio"
+        "id": "242366",
+        "name": "01:00"
       },
       {
-        "id": "345144",
-        "name": "Casa en fraccionamiento"
+        "id": "242371",
+        "name": "02:00"
+      },
+      {
+        "id": "242372",
+        "name": "03:00"
+      },
+      {
+        "id": "242373",
+        "name": "04:00"
+      },
+      {
+        "id": "242374",
+        "name": "05:00"
+      },
+      {
+        "id": "242375",
+        "name": "06:00"
+      },
+      {
+        "id": "242376",
+        "name": "07:00"
+      },
+      {
+        "id": "242377",
+        "name": "08:00"
+      },
+      {
+        "id": "242378",
+        "name": "09:00"
+      },
+      {
+        "id": "242356",
+        "name": "10:00"
+      },
+      {
+        "id": "242357",
+        "name": "11:00"
+      },
+      {
+        "id": "242358",
+        "name": "12:00"
+      },
+      {
+        "id": "242359",
+        "name": "13:00"
+      },
+      {
+        "id": "242360",
+        "name": "14:00"
+      },
+      {
+        "id": "242361",
+        "name": "15:00"
+      },
+      {
+        "id": "242362",
+        "name": "16:00"
+      },
+      {
+        "id": "242363",
+        "name": "17:00"
+      },
+      {
+        "id": "242364",
+        "name": "18:00"
+      },
+      {
+        "id": "242365",
+        "name": "19:00"
+      },
+      {
+        "id": "242367",
+        "name": "20:00"
+      },
+      {
+        "id": "242368",
+        "name": "21:00"
+      },
+      {
+        "id": "242369",
+        "name": "22:00"
+      },
+      {
+        "id": "242370",
+        "name": "23:00"
       }
     ],
-    "attribute_group_id": "DFLT",
-    "attribute_group_name": "Otros"
+    "attribute_group_id": "FIND",
+    "attribute_group_name": "Ficha técnica"
   },
   {
     "id": "IPTU_TAX",
@@ -386,8 +551,125 @@
     "attribute_group_name": "Otros"
   },
   {
-    "id": "HAS_INTERNET_ACCESS",
-    "name": "Acceso a internet",
+    "id": "CONDO_VALUE",
+    "name": "Valor del condominio",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "number",
+    "value_max_length": 18,
+    "attribute_group_id": "DFLT",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_BASKETBALL_COURT",
+    "name": "Cancha de básquetbol",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "COMOYAMEN",
+    "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "HAS_PADDLE_COURT",
+    "name": "Cancha de paddle",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "COMOYAMEN",
+    "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "HAS_TENNIS_COURT",
+    "name": "Cancha de tenis",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "COMOYAMEN",
+    "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "HAS_GRILL",
+    "name": "Parrilla",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "AMBIENTES",
+    "attribute_group_name": "Ambientes"
+  },
+  {
+    "id": "HAS_SWIMMING_POOL",
+    "name": "Pileta",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
@@ -438,112 +720,6 @@
     "attribute_group_name": "Comodidades y amenities"
   },
   {
-    "id": "HAS_ALARM",
-    "name": "Alarma",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "COMOYAMEN",
-    "attribute_group_name": "Comodidades y amenities"
-  },
-  {
-    "id": "HAS_ATTIC",
-    "name": "Altillo",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "PROFESSIONAL_USE_ALLOWED",
-    "name": "Apto profesional",
-    "tags": {
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "CARACTERISTICAS",
-    "attribute_group_name": "Características adicionales"
-  },
-  {
-    "id": "HAS_BALCONY",
-    "name": "Balcón",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
     "id": "HAS_HEATING",
     "name": "Calefacción",
     "tags": {},
@@ -568,110 +744,6 @@
     ],
     "attribute_group_id": "COMOYAMEN",
     "attribute_group_name": "Comodidades y amenities"
-  },
-  {
-    "id": "HAS_INDOOR_FIREPLACE",
-    "name": "Chimenea",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "COMOYAMEN",
-    "attribute_group_name": "Comodidades y amenities"
-  },
-  {
-    "id": "HAS_KITCHEN",
-    "name": "Cocina",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_DINNING_ROOM",
-    "name": "Comedor",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_MAID_ROOM",
-    "name": "Dependencia de servicio",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
   },
   {
     "id": "HAS_BEDROOM_SUITE",
@@ -700,60 +772,8 @@
     "attribute_group_name": "Ambientes"
   },
   {
-    "id": "HAS_STUDY",
-    "name": "Estudio",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_NATURAL_GAS",
-    "name": "Gas natural",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "COMOYAMEN",
-    "attribute_group_name": "Comodidades y amenities"
-  },
-  {
-    "id": "HAS_GYM",
-    "name": "Gimnasio",
+    "id": "HAS_REFRIGERATOR",
+    "name": "Heladera",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
@@ -830,8 +850,8 @@
     "attribute_group_name": "Ambientes"
   },
   {
-    "id": "HAS_TELEPHONE_LINE",
-    "name": "Línea telefónica",
+    "id": "HAS_WASHING_MACHINE",
+    "name": "Lavarropa",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
@@ -856,86 +876,8 @@
     "attribute_group_name": "Comodidades y amenities"
   },
   {
-    "id": "HAS_LIVING_ROOM",
-    "name": "Living",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_GRILL",
-    "name": "Parrilla",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_PATIO",
-    "name": "Patio",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_SWIMMING_POOL",
-    "name": "Pileta",
+    "id": "HAS_MICROWAVE",
+    "name": "Microondas",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
@@ -986,84 +928,6 @@
     "attribute_group_name": "Otros"
   },
   {
-    "id": "HAS_PLAYROOM",
-    "name": "Playroom",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_ELECTRIC_GATE_OPENER",
-    "name": "Portón automático",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "COMOYAMEN",
-    "attribute_group_name": "Comodidades y amenities"
-  },
-  {
-    "id": "HAS_TERRACE",
-    "name": "Terraza",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
     "id": "HAS_HALF_BATH",
     "name": "Toilette",
     "tags": {},
@@ -1090,34 +954,8 @@
     "attribute_group_name": "Ambientes"
   },
   {
-    "id": "HAS_DRESSING_ROOM",
-    "name": "Vestidor",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "AMBIENTES",
-    "attribute_group_name": "Ambientes"
-  },
-  {
-    "id": "HAS_SECURITY",
-    "name": "Seguridad",
+    "id": "HAS_TV",
+    "name": "TV",
     "tags": {},
     "hierarchy": "ITEM",
     "relevance": 1,
@@ -1140,6 +978,412 @@
     ],
     "attribute_group_id": "COMOYAMEN",
     "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "HAS_CABLE_TV",
+    "name": "TV por cable",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "COMOYAMEN",
+    "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "HAS_CUTLERY",
+    "name": "Vajilla",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "COMOYAMEN",
+    "attribute_group_name": "Comodidades y amenities"
+  },
+  {
+    "id": "PETS_ALLOWED",
+    "name": "Se admiten mascotas",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "CARACTERISTICAS",
+    "attribute_group_name": "Características adicionales"
+  },
+  {
+    "id": "BREAKFAST_SERVICE",
+    "name": "Servicio de desayuno",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "CARACTERISTICAS",
+    "attribute_group_name": "Características adicionales"
+  },
+  {
+    "id": "HOUSEKEEPING_SERVICE",
+    "name": "Servicio de limpieza",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "CARACTERISTICAS",
+    "attribute_group_name": "Características adicionales"
+  },
+  {
+    "id": "ONLY_FAMILIES",
+    "name": "Solo familias",
+    "tags": {},
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "CARACTERISTICAS",
+    "attribute_group_name": "Características adicionales"
+  },
+  {
+    "id": "CMG_SITE",
+    "name": "Sitio de origen",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "string",
+    "value_max_length": 255,
+    "attribute_group_id": "DFLT",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "CANONICAL_URL",
+    "name": "Url canónica",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "string",
+    "value_max_length": 255,
+    "attribute_group_id": "DFLT",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_KITCHEN",
+    "name": "Cocina",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_DINNING_ROOM",
+    "name": "Comedor",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_INTERNET_ACCESS",
+    "name": "Acceso a internet",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_MAID_ROOM",
+    "name": "Dependencia de servicio",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_LIVING_ROOM",
+    "name": "Living",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_LAUNDRY",
+    "name": "Con lavadero",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_PATIO",
+    "name": "Patio",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
+  },
+  {
+    "id": "HAS_PLAYROOM",
+    "name": "Playroom",
+    "tags": {
+      "hidden": true
+    },
+    "hierarchy": "ITEM",
+    "relevance": 1,
+    "value_type": "boolean",
+    "values": [
+      {
+        "id": "242084",
+        "name": "No",
+        "metadata": {
+          "value": false
+        }
+      },
+      {
+        "id": "242085",
+        "name": "Sí",
+        "metadata": {
+          "value": true
+        }
+      }
+    ],
+    "attribute_group_id": "OTHERS",
+    "attribute_group_name": "Otros"
   },
   {
     "id": "WITH_VIRTUAL_TOUR",
@@ -1170,138 +1414,16 @@
     "attribute_group_name": "Otros"
   },
   {
-    "id": "MAINTENANCE_FEE",
-    "name": "Expensas",
+    "id": "INSCRIPTION_NUMBER",
+    "name": "Nro. registro de establecimiento en alquiler",
     "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number_unit",
-    "value_max_length": 255,
-    "allowed_units": [
-      {
-        "id": "ARS",
-        "name": "ARS"
-      },
-      {
-        "id": "USD",
-        "name": "USD"
-      },
-      {
-        "id": "UVA",
-        "name": "UVA"
-      }
-    ],
-    "default_unit": "ARS",
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
-  },
-  {
-    "id": "CMG_SITE",
-    "name": "Sitio de origen",
-    "tags": {
-      "hidden": true
-    },
     "hierarchy": "ITEM",
     "relevance": 1,
     "value_type": "string",
     "value_max_length": 255,
-    "attribute_group_id": "DFLT",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "CANONICAL_URL",
-    "name": "Url canónica",
-    "tags": {
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "string",
-    "value_max_length": 255,
-    "attribute_group_id": "DFLT",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "SUITABLE_FOR_MORTGAGE_LOAN",
-    "name": "Apto crédito",
-    "tags": {
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "CARACTERISTICAS",
-    "attribute_group_name": "Características adicionales"
-  },
-  {
-    "id": "HAS_LAUNDRY",
-    "name": "Con lavadero",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
     "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_CABLE_TV",
-    "name": "TV por cable",
-    "tags": {
-      "hidden": true
-    },
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
+    "attribute_group_name": "Otros",
+    "hint": "Agregalo solo si el alquiler temporario está en la Ciudad Autónoma de Buenos Aires."
   },
   {
     "id": "PROPERTY_CODE",
@@ -1328,658 +1450,16 @@
     "attribute_group_name": "Otros"
   },
   {
-    "id": "HAS_GUEST_PARKING",
-    "name": "Estacionamiento para visitantes",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "SECURITY_TYPE",
-    "name": "Tipo de seguridad",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "string",
-    "value_max_length": 255,
-    "values": [
-      {
-        "id": "14263186",
-        "name": "24 hs"
-      },
-      {
-        "id": "13836688",
-        "name": "Diurno"
-      },
-      {
-        "id": "13836689",
-        "name": "Nocturno"
-      },
-      {
-        "id": "13836690",
-        "name": "Virtual"
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_GATED_COMMUNITY",
-    "name": "Con barrio cerrado",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_CONTROLLED_ACCESS",
-    "name": "Acceso controlado",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_CINEMA_HALL",
-    "name": "Área de cine",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_PLAYGROUND",
-    "name": "Área de juegos infantiles",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_GREEN_AREA",
-    "name": "Con área verde",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_LIFT",
-    "name": "Ascensor",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_BASKETBALL_COURT",
-    "name": "Cancha de básquetbol",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_SOCCER_FIELD",
-    "name": "Con cancha de fútbol",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_PADDLE_COURT",
-    "name": "Cancha de paddle",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_TENNIS_COURT",
-    "name": "Cancha de tenis",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_MULTIPURPOSE_SPORT_COURT",
-    "name": "Con cancha polideportiva",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_BREAKFAST_BAR",
-    "name": "Desayunador",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_ELECTRIC_GENERATOR",
-    "name": "Grupo electrógeno",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_PARTY_ROOM",
-    "name": "Salón de fiestas",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_SAUNA",
-    "name": "Sauna",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_FRIDGE",
-    "name": "Heladera",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_SOLAR_ENERGY",
-    "name": "Con energia solar",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "WITH_LAUNDRY_CONNECTION",
-    "name": "Con conexión para lavarropas",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "FURNISHED",
-    "name": "Amoblado",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_TAP_WATER",
-    "name": "Agua corriente",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_CISTERN",
-    "name": "Cisterna",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_BOILER",
-    "name": "Caldera",
-    "tags": {},
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
-    "attribute_group_id": "OTHERS",
-    "attribute_group_name": "Otros"
-  },
-  {
-    "id": "HAS_LEADS_PENALIZATION",
-    "name": "Tiene penalización por Leads",
+    "id": "NATIONAL_TOURISM_REGISTRATION_NUMBER_NTR",
+    "name": "Número de registro nacional de turismo (RNT)",
     "tags": {
-      "hidden": true,
-      "read_only": true
+      "hidden": true
     },
     "hierarchy": "ITEM",
     "relevance": 1,
-    "value_type": "boolean",
-    "values": [
-      {
-        "id": "242084",
-        "name": "No",
-        "metadata": {
-          "value": false
-        }
-      },
-      {
-        "id": "242085",
-        "name": "Sí",
-        "metadata": {
-          "value": true
-        }
-      }
-    ],
+    "value_type": "number",
+    "value_max_length": 18,
+    "tooltip": "Es el número de registro obligatorio de proveedores de servicios turísticos en el Registro Nacional de Turismo, según la Ley 300 de 1996 y concordantes.",
     "attribute_group_id": "OTHERS",
     "attribute_group_name": "Otros"
   },

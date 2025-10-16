@@ -33,6 +33,7 @@ interface PropertyData {
     expensesCurrency?: string
     coveredArea?: number
     totalArea?: number
+    landArea?: number
     frontMeters?: number
     deepMeters?: number
     antiquity?: string
@@ -57,6 +58,7 @@ interface PropertyData {
     servicios?: string[]
     ambientes?: string[]
     zonasCercanas?: string[]
+    mascotas?: string
   }
 
   // AI Content
@@ -75,6 +77,11 @@ interface PropertyData {
   extra?: {
     bauleras?: number
     numeroCasa?: string
+    guests?: number
+    checkinTime?: string
+    checkoutTime?: string
+    camas?: number
+    minimumStay?: number
   }
 }
 
@@ -224,6 +231,18 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  // Superficie cubierta (REQUERIDO)
+  if (caracteristics.landArea && caracteristics.landArea > 0) {
+    attributes.push({
+      id: 'LAND_AREA',
+      value_name: `${caracteristics.landArea} m²`,
+      value_struct: {
+        number: caracteristics.landArea,
+        unit: 'm²',
+      },
+    })
+  }
+
   // Dormitorios (REQUERIDO)
   if (environments.bedrooms !== undefined) {
     attributes.push({
@@ -296,6 +315,26 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  if (extra.guests) {
+    attributes.push({
+      id: 'GUESTS',
+      value_name: extra.guests,
+    })
+  }
+
+  if (extra.checkinTime) {
+    attributes.push({
+      id: 'CHECK_IN',
+      value_name: extra.checkinTime,
+    })
+  }
+  if (extra.checkoutTime) {
+    attributes.push({
+      id: 'CHECK_OUT',
+      value_name: extra.checkoutTime,
+    })
+  }
+
   // Tipo de casa
   const houseSubtype = mapHouseSubtype(classification.type)
   if (houseSubtype) {
@@ -351,6 +390,36 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       id: 'HAS_BOILER',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  }
+
+  // Servicio de Desayuno
+  if (servicios.includes('servicio_de_desayuno')) {
+    attributes.push({
+      id: 'BREAKFAST_SERVICE',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'BREAKFAST_SERVICE',
+      value_id: '242084',
+      value_name: 'No',
+    })
+  }
+
+  // Servicio de Limpieza
+  if (servicios.includes('servicio_de_limpieza')) {
+    attributes.push({
+      id: 'HOUSEKEEPING_SERVICE',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'HOUSEKEEPING_SERVICE',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 
@@ -498,11 +567,17 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   }
 
   // Jardín
-  if (ambientesArray.includes('jardin')) {
+  if (ambientesArray.includes('patio')) {
     attributes.push({
       id: 'HAS_GARDEN',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'HAS_GARDEN',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 
@@ -531,6 +606,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       value_id: '242085',
       value_name: 'Sí',
     })
+  } else {
+    attributes.push({
+      id: 'HAS_GRILL',
+      value_id: '242084',
+      value_name: 'No',
+    })
   }
 
   // Patio
@@ -548,6 +629,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       id: 'HAS_SWIMMING_POOL',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'HAS_SWIMMING_POOL',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 
@@ -603,6 +690,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       value_id: '242085',
       value_name: 'Sí',
     })
+  } else {
+    attributes.push({
+      id: 'HAS_HALF_BATH',
+      value_id: '242084',
+      value_name: 'No',
+    })
   }
   // Placards
   if (ambientesArray.includes('placards')) {
@@ -631,12 +724,32 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  // Mascotas
+  if (amenities.mascotas === 'Si') {
+    attributes.push({
+      id: 'IS_SUITABLE_FOR_PETS',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'IS_SUITABLE_FOR_PETS',
+      value_id: '242084',
+      value_name: 'No',
+    })
+  }
   // Barrio cerrado
   if (amenities.barrioPrivado === 'Si') {
     attributes.push({
       id: 'WITH_GATED_COMMUNITY',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'WITH_GATED_COMMUNITY',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 
@@ -754,6 +867,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       id: 'FURNISHED',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'FURNISHED',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 

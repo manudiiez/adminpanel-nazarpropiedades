@@ -185,7 +185,7 @@ export const furnishedMappings: MercadoLibreMappins = {
 
 // Antigüedad (mapeo con valor numérico y tiempo)
 export const antiquityMappings: { [key: string]: { value: number; tiempo: string } } = {
-  a_estrenar: { value: 0, tiempo: 'años' },
+  a_estrenar: { value: 0, tiempo: 'a estrenar' },
   '6_meses': { value: 6, tiempo: 'meses' },
   '1_ano': { value: 1, tiempo: 'años' },
   '1_ano_y_medio': { value: 1.5, tiempo: 'años' },

@@ -503,6 +503,11 @@ export interface Propiedade {
     appraisalCurrency?: ('usd' | 'ars') | null;
     coveredArea?: number | null;
     totalArea?: number | null;
+    /**
+     * Este campo es importante para la calidad de Mercado Libre
+     */
+    landArea?: number | null;
+    orientation?: ('norte' | 'sur' | 'este' | 'oeste') | null;
     frontMeters?: number | null;
     deepMeters?: number | null;
     antiquity?:
@@ -564,7 +569,6 @@ export interface Propiedade {
         )
       | null;
     conservationStatus?: ('excelente' | 'muy_bueno' | 'bueno' | 'regular') | null;
-    orientation?: ('norte' | 'sur' | 'este' | 'oeste') | null;
   };
   environments?: {
     bedrooms?: number | null;
@@ -592,6 +596,8 @@ export interface Propiedade {
     servicios?:
       | (
           | 'aire_acondicionado'
+          | 'servicio_de_desayuno'
+          | 'servicio_de_limpieza'
           | 'financiacion'
           | 'internet'
           | 'piscina'
@@ -689,6 +695,76 @@ export interface Propiedade {
      * Este campo solo sera visible para mercado libre
      */
     guests?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    minimumStay?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    camas?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    checkinTime?:
+      | (
+          | '00:00'
+          | '01:00'
+          | '02:00'
+          | '03:00'
+          | '04:00'
+          | '05:00'
+          | '06:00'
+          | '07:00'
+          | '08:00'
+          | '09:00'
+          | '10:00'
+          | '11:00'
+          | '12:00'
+          | '13:00'
+          | '14:00'
+          | '15:00'
+          | '16:00'
+          | '17:00'
+          | '18:00'
+          | '19:00'
+          | '20:00'
+          | '21:00'
+          | '22:00'
+          | '23:00'
+        )
+      | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    checkoutTime?:
+      | (
+          | '00:00'
+          | '01:00'
+          | '02:00'
+          | '03:00'
+          | '04:00'
+          | '05:00'
+          | '06:00'
+          | '07:00'
+          | '08:00'
+          | '09:00'
+          | '10:00'
+          | '11:00'
+          | '12:00'
+          | '13:00'
+          | '14:00'
+          | '15:00'
+          | '16:00'
+          | '17:00'
+          | '18:00'
+          | '19:00'
+          | '20:00'
+          | '21:00'
+          | '22:00'
+          | '23:00'
+        )
+      | null;
   };
   /**
    * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
@@ -1065,11 +1141,12 @@ export interface PropiedadesSelect<T extends boolean = true> {
         appraisalCurrency?: T;
         coveredArea?: T;
         totalArea?: T;
+        landArea?: T;
+        orientation?: T;
         frontMeters?: T;
         deepMeters?: T;
         antiquity?: T;
         conservationStatus?: T;
-        orientation?: T;
       };
   environments?:
     | T
@@ -1103,6 +1180,10 @@ export interface PropiedadesSelect<T extends boolean = true> {
         numeroCasa?: T;
         acceso?: T;
         guests?: T;
+        minimumStay?: T;
+        camas?: T;
+        checkinTime?: T;
+        checkoutTime?: T;
       };
   aiContent?:
     | T
