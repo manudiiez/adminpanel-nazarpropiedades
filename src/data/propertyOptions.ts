@@ -65,10 +65,10 @@ export const orientationOptions: SelectOption[] = [
   { label: 'Sur', value: 'sur' },
   { label: 'Este', value: 'este' },
   { label: 'Oeste', value: 'oeste' },
-  { label: 'Noreste', value: 'noreste' },
-  { label: 'Noroeste', value: 'noroeste' },
-  { label: 'Sureste', value: 'sureste' },
-  { label: 'Suroeste', value: 'suroeste' },
+  // { label: 'Noreste', value: 'noreste' },
+  // { label: 'Noroeste', value: 'noroeste' },
+  // { label: 'Sureste', value: 'sureste' },
+  // { label: 'Suroeste', value: 'suroeste' },
 ]
 
 // Tipos de cochera
@@ -649,6 +649,34 @@ export const amenityServicesOptions: SelectOption[] = [
     ],
     condition: ['venta', 'permuta', 'alquiler', 'alquiler_temporario'],
   },
+  {
+    label: 'Seguridad',
+    value: 'seguridad',
+    type: [
+      'casa',
+      'departamento',
+      'bodega',
+      'cabaña',
+      'quinta',
+      'condominio',
+      'duplex',
+      'edificio',
+      'estacion_de_servicio',
+      'finca',
+      'fondo_de_comercio',
+      'hotel',
+      'local_comercial',
+      'loft',
+      'oficina',
+      'ph',
+      'piso',
+      'playa_de_estacionamiento',
+      'semipiso',
+      'triplex',
+      'chalet',
+    ],
+    condition: ['venta', 'permuta', 'alquiler', 'alquiler_temporario'],
+  },
 ]
 
 // Ambientes y espacios
@@ -664,7 +692,6 @@ export const amenityEnvironmentsOptions: SelectOption[] = [
   { label: 'Comedor', value: 'comedor' },
   { label: 'Living', value: 'living' },
   { label: 'Living comedor', value: 'living_comedor' },
-  { label: 'Seguridad', value: 'seguridad' },
   { label: 'Cowork', value: 'cowork' },
   { label: 'Gimnasio', value: 'gimnasio' },
   { label: 'Ascensor', value: 'ascensor' },
@@ -684,6 +711,12 @@ export const amenityEnvironmentsOptions: SelectOption[] = [
   { label: 'Jacuzzi', value: 'jacuzzi' },
   { label: 'Vestidor', value: 'vestidor' },
   { label: 'Toilette', value: 'toilette' },
+  { label: 'Placards', value: 'placards' },
+  { label: 'Cancha de padel', value: 'cancha_de_padel' },
+  { label: 'Cancha de tenis', value: 'cancha_de_tenis' },
+  { label: 'Cancha de basquet', value: 'cancha_de_basquet' },
+  { label: 'Cancha de futbol', value: 'cancha_de_futbol' },
+  { label: 'Cancha polideportiva', value: 'cancha_polideportiva' },
 ]
 
 // Zonas cercanas
@@ -698,10 +731,6 @@ export const amenityNearbyZonesOptions: SelectOption[] = [
   { label: 'Supermercados', value: 'supermercados' },
   { label: 'Club deportivo', value: 'club_deportivo' },
   { label: 'Zona deportiva', value: 'zona_deportiva' },
-  { label: 'Cancha de padel', value: 'cancha_de_padel' },
-  { label: 'Cancha de tenis', value: 'cancha_de_tenis' },
-  { label: 'Cancha de basquet', value: 'cancha_de_basquet' },
-  { label: 'Cancha de futbol', value: 'cancha_de_futbol' },
   { label: 'Ciclovía', value: 'ciclovia' },
   { label: 'Paradas de colectivo', value: 'paradas_de_colectivo' },
   { label: 'Estación de tren', value: 'estacion_de_tren' },

@@ -47,7 +47,7 @@ interface PropertyData {
     garageType?: string
     garages?: number
     plantas?: number
-    ambientes?: string
+    ambientes?: number
     furnished?: string
   }
 
@@ -71,6 +71,10 @@ interface PropertyData {
     gallery?: any[]
     videoUrl?: string
     virtualTourUrl?: string
+  }
+  extra?: {
+    bauleras?: number
+    numeroCasa?: string
   }
 }
 
@@ -120,9 +124,8 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   const environments = propertyData.environments || {}
   const amenities = propertyData.amenities || {}
   const aiContent = propertyData.aiContent || {}
+  const extra = propertyData.extra || {}
   const propertyImages = propertyData.images || {}
-  console.log('images en el mapper:', images)
-
   // Normalizar texto plano: mantener solo saltos de línea `\n`, recortar espacios
   const normalizePlainText = (input: any): string => {
     if (input === undefined || input === null) return 'Propiedad disponible'
@@ -262,7 +265,7 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
 
   // Ambientes
   if (environments.ambientes) {
-    const ambientesNum = parseAmbientes(environments.ambientes)
+    const ambientesNum = environments.ambientes
     if (ambientesNum > 0) {
       attributes.push({
         id: 'ROOMS',
@@ -276,6 +279,20 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     attributes.push({
       id: 'FLOORS',
       value_name: environments.plantas.toString(),
+    })
+  }
+
+  if (extra.bauleras) {
+    attributes.push({
+      id: 'WAREHOUSES',
+      value_name: extra.bauleras,
+    })
+  }
+
+  if (extra.numeroCasa) {
+    attributes.push({
+      id: 'HOUSE_NUMBER',
+      value_name: extra.numeroCasa,
     })
   }
 
@@ -328,6 +345,42 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  // Caldera
+  if (servicios.includes('caldera')) {
+    attributes.push({
+      id: 'HAS_BOILER',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Energía solar
+  if (servicios.includes('energia_solar')) {
+    attributes.push({
+      id: 'WITH_SOLAR_ENERGY',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cisterna
+  if (servicios.includes('cisterna')) {
+    attributes.push({
+      id: 'HAS_CISTERN',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cisterna
+  if (servicios.includes('conexion_para_lavarropas')) {
+    attributes.push({
+      id: 'WITH_LAUNDRY_CONNECTION',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
   // Aire acondicionado
   if (servicios.includes('aire_acondicionado')) {
     attributes.push({
@@ -336,9 +389,17 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       value_name: 'Sí',
     })
   }
+  // Seguridad
+  if (servicios.includes('seguridad')) {
+    attributes.push({
+      id: 'HAS_SECURITY',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
 
   // Alarma
-  if (ambientesArray.includes('seguridad')) {
+  if (servicios.includes('alarma')) {
     attributes.push({
       id: 'HAS_ALARM',
       value_id: '242085',
@@ -517,6 +578,15 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  // Jacuzzi
+  if (ambientesArray.includes('jacuzzi')) {
+    attributes.push({
+      id: 'HAS_JACUZZI',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
   // Vestidor
   if (ambientesArray.includes('vestidor')) {
     attributes.push({
@@ -526,10 +596,18 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
-  // Seguridad
-  if (ambientesArray.includes('seguridad')) {
+  // Toilette
+  if (ambientesArray.includes('toilette')) {
     attributes.push({
-      id: 'HAS_SECURITY',
+      id: 'HAS_HALF_BATH',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+  // Placards
+  if (ambientesArray.includes('placards')) {
+    attributes.push({
+      id: 'HAS_CLOSETS',
       value_id: '242085',
       value_name: 'Sí',
     })
@@ -593,6 +671,51 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   if (ambientesArray.includes('ascensor')) {
     attributes.push({
       id: 'HAS_LIFT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cancha de paddle
+  if (ambientesArray.includes('cancha_de_padel')) {
+    attributes.push({
+      id: 'HAS_PADDLE_COURT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cancha de tenis
+  if (ambientesArray.includes('cancha_de_tenis')) {
+    attributes.push({
+      id: 'HAS_TENNIS_COURT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cancha de basquet
+  if (ambientesArray.includes('cancha_de_basquet')) {
+    attributes.push({
+      id: 'HAS_BASKETBALL_COURT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cancha de futbol
+  if (ambientesArray.includes('cancha_de_futbol')) {
+    attributes.push({
+      id: 'WITH_SOCCER_FIELD',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  // Cancha polideportiva
+  if (ambientesArray.includes('cancha_polideportiva')) {
+    attributes.push({
+      id: 'WITH_MULTIPURPOSE_SPORT_COURT',
       value_id: '242085',
       value_name: 'Sí',
     })
@@ -737,18 +860,6 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   }
 }
 
-// Funciones auxiliares
-function mapValue(
-  value: string,
-  mappingType: Exclude<keyof typeof mercadolibreMappings, 'antiquity'>,
-): any {
-  if (!value) return value
-
-  const mapping = mercadolibreMappings[mappingType] as any
-  const mappedValue = mapping[value] as any
-  return mappedValue !== undefined && mappedValue !== null ? mappedValue : value
-}
-
 function mapPropertyTypeToLabel(type?: string): string {
   const typeMap: Record<string, string> = {
     casa: 'Casa',
@@ -796,21 +907,14 @@ function parseAntiquity(antiquity?: string): number {
   return match ? parseInt(match[1]) : 0
 }
 
-function parseAmbientes(ambientes?: string): number {
-  if (!ambientes) return 0
-
-  // Si es "6 o mas", devolver 6
-  if (ambientes.toLowerCase().includes('mas')) return 6
-
-  // Extraer número
-  const match = ambientes.match(/(\d+)/)
-  return match ? parseInt(match[1]) : 0
-}
-
 function extractYoutubeId(url?: string): string | undefined {
-  if (!url) return undefined
+  if (typeof url !== 'string' || url.trim() === '') {
+    return undefined
+  }
+  const regex =
+    /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/
 
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
+  const match = url.match(regex)
   return match ? match[1] : undefined
 }
 

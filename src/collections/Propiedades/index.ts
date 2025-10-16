@@ -554,20 +554,6 @@ export const Propiedades: CollectionConfig = {
                 },
               },
             },
-            {
-              name: 'guests',
-              label: 'Cantidad de Huéspedes',
-              type: 'number',
-              required: true,
-              admin: {
-                placeholder: 'Ingresa la cantidad máxima de huéspedes',
-                description: 'Este campo solo sera visible para mercado libre',
-                width: '50%',
-                condition: (data, siblingData) => {
-                  return data?.classification.condition === 'alquiler_temporario'
-                },
-              },
-            },
           ],
         },
       ],
@@ -786,27 +772,6 @@ export const Propiedades: CollectionConfig = {
                 },
               },
             },
-            {
-              name: 'acceso',
-              type: 'select',
-              label: 'Acceso',
-              options: propertySelectOptions.access,
-              required: true,
-              admin: {
-                width: '50%',
-                placeholder: 'Selecciona el tipo de acceso',
-                description: 'Este campo solo sera visible para mercado libre',
-                condition: (data, siblingData) => {
-                  return (
-                    data?.classification.type === 'campo' ||
-                    data?.classification.type === 'quinta' ||
-                    data?.classification.type === 'lote' ||
-                    data?.classification.type === 'loteo' ||
-                    data?.classification.type === 'terreno'
-                  )
-                },
-              },
-            },
           ],
         },
         {
@@ -983,6 +948,41 @@ export const Propiedades: CollectionConfig = {
                 width: '25%',
                 description:
                   'Este campo no sera visible pero es importante para la calidad de mercado libre',
+              },
+            },
+            {
+              name: 'acceso',
+              type: 'select',
+              label: 'Acceso',
+              options: propertySelectOptions.access,
+              required: true,
+              admin: {
+                width: '50%',
+                placeholder: 'Selecciona el tipo de acceso',
+                description: 'Este campo solo sera visible para mercado libre',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'campo' ||
+                    data?.classification.type === 'quinta' ||
+                    data?.classification.type === 'lote' ||
+                    data?.classification.type === 'loteo' ||
+                    data?.classification.type === 'terreno'
+                  )
+                },
+              },
+            },
+            {
+              name: 'guests',
+              label: 'Cantidad de Huéspedes',
+              type: 'number',
+              required: true,
+              admin: {
+                placeholder: 'Ingresa la cantidad máxima de huéspedes',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return data?.classification.condition === 'alquiler_temporario'
+                },
               },
             },
           ],

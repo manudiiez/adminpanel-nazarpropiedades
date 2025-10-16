@@ -564,11 +564,7 @@ export interface Propiedade {
         )
       | null;
     conservationStatus?: ('excelente' | 'muy_bueno' | 'bueno' | 'regular') | null;
-    orientation?: ('norte' | 'sur' | 'este' | 'oeste' | 'noreste' | 'noroeste' | 'sureste' | 'suroeste') | null;
-    /**
-     * Este campo solo sera visible para mercado libre
-     */
-    guests?: number | null;
+    orientation?: ('norte' | 'sur' | 'este' | 'oeste') | null;
   };
   environments?: {
     bedrooms?: number | null;
@@ -585,10 +581,6 @@ export interface Propiedade {
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
     barrioPrivado?: ('Si' | 'No' | 'Semi Privado') | null;
-    /**
-     * Este campo solo sera visible para mercado libre
-     */
-    acceso?: ('Tierra' | 'Arena' | 'Asfalto' | 'Otro' | 'Ripio') | null;
     agua?: ('Si' | 'No') | null;
     cloacas?: ('Si' | 'No') | null;
     gas?: ('Si' | 'No') | null;
@@ -616,6 +608,7 @@ export interface Propiedade {
           | 'energia_solar'
           | 'conexion_para_lavarropas'
           | 'alarma'
+          | 'seguridad'
         )[]
       | null;
     ambientes?:
@@ -631,7 +624,6 @@ export interface Propiedade {
           | 'comedor'
           | 'living'
           | 'living_comedor'
-          | 'seguridad'
           | 'cowork'
           | 'gimnasio'
           | 'ascensor'
@@ -651,6 +643,12 @@ export interface Propiedade {
           | 'jacuzzi'
           | 'vestidor'
           | 'toilette'
+          | 'placards'
+          | 'cancha_de_padel'
+          | 'cancha_de_tenis'
+          | 'cancha_de_basquet'
+          | 'cancha_de_futbol'
+          | 'cancha_polideportiva'
         )[]
       | null;
     zonasCercanas?:
@@ -665,10 +663,6 @@ export interface Propiedade {
           | 'supermercados'
           | 'club_deportivo'
           | 'zona_deportiva'
-          | 'cancha_de_padel'
-          | 'cancha_de_tenis'
-          | 'cancha_de_basquet'
-          | 'cancha_de_futbol'
           | 'ciclovia'
           | 'paradas_de_colectivo'
           | 'estacion_de_tren'
@@ -687,6 +681,14 @@ export interface Propiedade {
      * Este campo no sera visible pero es importante para la calidad de mercado libre
      */
     numeroCasa?: string | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    acceso?: ('Tierra' | 'Arena' | 'Asfalto' | 'Otro' | 'Ripio') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    guests?: number | null;
   };
   /**
    * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
@@ -1068,7 +1070,6 @@ export interface PropiedadesSelect<T extends boolean = true> {
         antiquity?: T;
         conservationStatus?: T;
         orientation?: T;
-        guests?: T;
       };
   environments?:
     | T
@@ -1086,7 +1087,6 @@ export interface PropiedadesSelect<T extends boolean = true> {
     | {
         mascotas?: T;
         barrioPrivado?: T;
-        acceso?: T;
         agua?: T;
         cloacas?: T;
         gas?: T;
@@ -1101,6 +1101,8 @@ export interface PropiedadesSelect<T extends boolean = true> {
     | {
         bauleras?: T;
         numeroCasa?: T;
+        acceso?: T;
+        guests?: T;
       };
   aiContent?:
     | T

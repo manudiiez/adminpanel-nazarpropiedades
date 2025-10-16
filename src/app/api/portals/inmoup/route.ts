@@ -310,8 +310,7 @@ function createInmoupData(
           solarium: undefined, // Se puede agregar si está en amenities
           ascensor:
             (mappedPropertyData.amenityEnvironments || []).includes('ascensor') || undefined,
-          vigilancia:
-            (mappedPropertyData.amenityEnvironments || []).includes('seguridad') || undefined,
+          vigilancia: (mappedPropertyData.amenityServices || []).includes('seguridad') || undefined,
         },
       },
     ],
