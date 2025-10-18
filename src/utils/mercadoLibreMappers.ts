@@ -193,28 +193,28 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   // Procesar imágenes - combinar gallery y coverImage
   const allImages: any[] = []
 
-  // Agregar cover image si existe
-  if (propertyImages.coverImage?.url) {
-    allImages.push({
-      source: `${process.env.NEXT_PUBLIC_SERVER_URL}${propertyImages.coverImage.url}`,
-    })
-  }
+  // // Agregar cover image si existe
+  // if (propertyImages.coverImage?.url) {
+  //   allImages.push({
+  //     source: `${process.env.NEXT_PUBLIC_SERVER_URL}${propertyImages.coverImage.url}`,
+  //   })
+  // }
 
-  // Agregar imágenes de la galería
-  if (propertyImages.gallery && Array.isArray(propertyImages.gallery)) {
-    propertyImages.gallery.forEach((img: any) => {
-      if (img.url) {
-        allImages.push({
-          source: `${process.env.NEXT_PUBLIC_SERVER_URL}${img.url}`,
-        })
-      }
-    })
-  }
+  // // Agregar imágenes de la galería
+  // if (propertyImages.gallery && Array.isArray(propertyImages.gallery)) {
+  //   propertyImages.gallery.forEach((img: any) => {
+  //     if (img.url) {
+  //       allImages.push({
+  //         source: `${process.env.NEXT_PUBLIC_SERVER_URL}${img.url}`,
+  //       })
+  //     }
+  //   })
+  // }
 
   // Agregar imágenes adicionales del parámetro
   if (images && Array.isArray(images)) {
     images.forEach((img: any) => {
-      const imgUrl = typeof img === 'string' ? img : img.url
+      const imgUrl = img.url
       if (imgUrl && !allImages.some((i) => i.source === imgUrl)) {
         allImages.push({ source: imgUrl })
       }

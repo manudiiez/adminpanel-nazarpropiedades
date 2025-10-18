@@ -1486,7 +1486,7 @@ export const Propiedades: CollectionConfig = {
           admin: {
             description: 'Arrastrá varias imágenes a la vez; podés reordenarlas con drag & drop.',
           },
-          validate: (val) => (Array.isArray(val) && val.length <= 50 ? true : 'Máximo 50 imágenes'),
+          validate: (val) => (Array.isArray(val) && val.length <= 29 ? true : 'Máximo 30 imágenes'),
         },
         {
           type: 'row',

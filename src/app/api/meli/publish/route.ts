@@ -38,20 +38,60 @@ async function updatePortalStatus(
 
 // POST - Publicar nueva propiedad
 export async function POST(request: NextRequest) {
-  const { propertyData, images, propertyId } = await request.json()
+  const { propertyId } = await request.json()
   try {
     console.log('📤 Iniciando publicación en Mercado Libre para propiedad:', propertyId)
 
+    // Validar que existe propertyId
+    if (!propertyId) {
+      return NextResponse.json({ error: 'propertyId es requerido' }, { status: 400 })
+    }
+
+    // Marcar como en cola
+    await updatePortalStatus(propertyId, 'queued')
+
+    // Buscar la propiedad completa en la base de datos
+    const payload = await getPayload({ config })
+    const property = await payload.findByID({
+      collection: 'propiedades',
+      id: propertyId,
+      depth: 2, // Para obtener relaciones como owner e images
+    })
+    console.log('🔍 Propiedad encontrada:', property)
+    if (!property) {
+      await updatePortalStatus(propertyId, 'error', undefined, undefined, 'Propiedad no encontrada')
+      return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 })
+    }
+
+    // Extraer propertyData e images de la propiedad
+    const propertyData = property as any
+
+    // Construir array de images desde coverImage y gallery
+    const images: Array<{ url: string; orden: number }> = []
+
+    if (property.images?.coverImage) {
+      const coverUrl =
+        (property.images.coverImage as any)?.sizes?.og?.url ||
+        (property.images.coverImage as any)?.url
+      if (coverUrl) {
+        images.push({ url: coverUrl, orden: 0 })
+      }
+    }
+
+    if (property.images?.gallery && Array.isArray(property.images.gallery)) {
+      property.images.gallery.forEach((img, index) => {
+        const imgUrl = (img as any).sizes?.og?.url || (img as any).url
+        if (imgUrl) {
+          images.push({ url: imgUrl, orden: index + 1 })
+        }
+      })
+    }
+    console.log('🔍 Imágenes recopiladas para publicación:', images)
     if (!propertyData) {
       return NextResponse.json(
         { error: 'No se encontraron datos válidos de propertyData' },
         { status: 400 },
       )
-    }
-
-    // Marcar como en cola
-    if (propertyId) {
-      await updatePortalStatus(propertyId, 'queued')
     }
 
     // Obtener access token válido
@@ -231,15 +271,32 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   let initialState: any = null
 
-  const { propertyData, images, propertyId, action } = await request.json()
+  const { propertyId, action, externalId } = await request.json()
   try {
     console.log('🔄 Iniciando sincronización en Mercado Libre para propiedad:', propertyId)
+
+    // Validar que existe propertyId
+    if (!propertyId) {
+      return NextResponse.json({ error: 'propertyId es requerido' }, { status: 400 })
+    }
 
     if (action !== 'sync') {
       return NextResponse.json({ error: 'Acción no válida para sincronización' }, { status: 400 })
     }
 
-    if (!propertyData?.mercadolibre?.externalId) {
+    // Buscar la propiedad completa en la base de datos
+    const payload = await getPayload({ config })
+    const property = await payload.findByID({
+      collection: 'propiedades',
+      id: propertyId,
+      depth: 2, // Para obtener relaciones como owner e images
+    })
+
+    if (!property) {
+      return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 })
+    }
+
+    if (!property.mercadolibre?.externalId && !externalId) {
       return NextResponse.json(
         { error: 'No se encontró ID de Mercado Libre para sincronizar' },
         { status: 400 },
@@ -247,17 +304,35 @@ export async function PUT(request: NextRequest) {
     }
 
     // Guardar estado inicial
-    const payload = await getPayload({ config })
-    const currentProperty = await payload.findByID({
-      collection: 'propiedades',
-      id: propertyId!,
-    })
-
-    if (currentProperty?.mercadolibre) {
-      initialState = { ...currentProperty.mercadolibre }
+    if (property.mercadolibre) {
+      initialState = { ...property.mercadolibre }
     }
 
-    await updatePortalStatus(propertyId!, 'queued')
+    await updatePortalStatus(propertyId, 'queued')
+
+    // Extraer propertyData e images de la propiedad
+    const propertyData = property as any
+
+    // Construir array de images desde coverImage y gallery
+    const images: Array<{ url: string; orden: number }> = []
+
+    if (property.images?.coverImage) {
+      const coverUrl =
+        (property.images.coverImage as any)?.sizes?.og?.url ||
+        (property.images.coverImage as any)?.url
+      if (coverUrl) {
+        images.push({ url: coverUrl, orden: 0 })
+      }
+    }
+
+    if (property.images?.gallery && Array.isArray(property.images.gallery)) {
+      property.images.gallery.forEach((img, index) => {
+        const imgUrl = (img as any).sizes?.og?.url || (img as any).url
+        if (imgUrl) {
+          images.push({ url: imgUrl, orden: index + 1 })
+        }
+      })
+    }
 
     const tokenInfo = await getValidAccessToken()
     if (!tokenInfo) {

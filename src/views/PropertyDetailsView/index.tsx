@@ -663,14 +663,7 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                   </div>
 
                   {/* Tab de Portales */}
-                  <PortalsList
-                    propertyData={formData}
-                    ownerData={ownerData}
-                    images={portalImages}
-                    propertyId={propertyId}
-                    inmoupData={inmoupData}
-                    mercadoLibreData={mercadolibreData}
-                  />
+                  <PortalsList propertyId={propertyId} />
                 </PropertyTabs>
               </div>
 

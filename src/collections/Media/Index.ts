@@ -42,7 +42,7 @@ export const Media: CollectionConfig = {
       },
       {
         name: 'og',
-        width: 900,
+        width: 1200,
         height: undefined, // Mantiene proporción
         withoutEnlargement: false, // Permitir agrandar
       },

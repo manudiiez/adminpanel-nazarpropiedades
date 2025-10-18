@@ -13,18 +13,12 @@ interface MercadoLibreData {
 }
 
 interface MercadoLibrePortalProps {
-  propertyData: any
-  ownerData?: any
-  images?: Array<{ url: string; orden: number }>
-  propertyId?: string
+  propertyId: string
   mercadoLibreData?: MercadoLibreData
   onDataUpdate?: (newData: MercadoLibreData) => void
 }
 
 export default function MercadoLibrePortal({
-  propertyData,
-  ownerData,
-  images,
   propertyId,
   mercadoLibreData,
   onDataUpdate,
@@ -37,13 +31,12 @@ export default function MercadoLibrePortal({
 
   useEffect(() => {
     console.log('mercadoLibreData cambió: ', localMercadoLibreData)
-    console.log('Imágenes en MercadoLibrePortal:', images)
 
     // Notificar al componente padre cuando cambie el estado local
     if (onDataUpdate) {
       onDataUpdate(localMercadoLibreData)
     }
-  }, [localMercadoLibreData, images, onDataUpdate])
+  }, [localMercadoLibreData, onDataUpdate])
 
   // Función para obtener el badge de estado
   const getStatusBadge = (status: string) => {
@@ -70,28 +63,13 @@ export default function MercadoLibrePortal({
 
       setLoading(true)
 
-      // Limpiar datos del propietario para evitar referencias circulares (igual que Inmoup)
-      const cleanOwnerData = ownerData
-        ? {
-            fullname: ownerData.fullname || '',
-            email: ownerData.email || '',
-            phone: ownerData.phone || '',
-            address: ownerData.address || '',
-            province: ownerData.province || '',
-            locality: ownerData.locality || '',
-            notes: ownerData.notes || '',
-          }
-        : null
-
+      // Enviar solo el propertyId al endpoint, el backend se encarga de buscar todos los datos
       const response = await fetch('/api/meli/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'publishToMercadoLibre',
           propertyId: propertyId,
-          propertyData: propertyData,
-          ownerData: cleanOwnerData,
-          images: images,
         }),
       })
 
@@ -196,28 +174,13 @@ export default function MercadoLibrePortal({
 
       setLoading(true)
 
-      // Limpiar datos del propietario para evitar referencias circulares (igual que Inmoup)
-      const cleanOwnerData = ownerData
-        ? {
-            fullname: ownerData.fullname || '',
-            email: ownerData.email || '',
-            phone: ownerData.phone || '',
-            address: ownerData.address || '',
-            province: ownerData.province || '',
-            locality: ownerData.locality || '',
-            notes: ownerData.notes || '',
-          }
-        : null
-
+      // Enviar solo el propertyId al endpoint, el backend se encarga de buscar todos los datos
       const response = await fetch('/api/meli/publish', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'sync',
           propertyId: propertyId,
-          propertyData: propertyData,
-          ownerData: cleanOwnerData,
-          images: images,
           externalId: localMercadoLibreData?.externalId,
         }),
       })

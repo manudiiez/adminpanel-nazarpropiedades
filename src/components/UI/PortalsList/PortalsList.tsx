@@ -1,25 +1,8 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { InmoupPortal, MercadoLibrePortal } from '../../portals'
 import './styles.scss'
-
-interface PortalConfig {
-  name: string
-  logo: string
-  status: string
-  publishedDate: string | null
-  notes: string
-  requiredFields: string[]
-  button?: {
-    text: string
-    url: string | null
-    variant: string
-    icon: string
-  }
-  externalId?: string | null
-  externalUrl?: string | null
-}
 
 interface PortalData {
   name?: string
@@ -32,62 +15,70 @@ interface PortalData {
 }
 
 interface PortalsListProps {
-  propertyData: any
-  ownerData: any
-  images: any[]
   propertyId: string
-  inmoupData?: PortalData
-  mercadoLibreData?: PortalData
 }
 
-// Estado global para persistir datos entre renders
-const globalPortalState = new Map<string, { inmoup: PortalData; mercadolibre: PortalData }>()
+export default function PortalsList({ propertyId }: PortalsListProps) {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [propertyData, setPropertyData] = useState<any>(null)
+  const [ownerData, setOwnerData] = useState<any>(null)
+  const [images, setImages] = useState<any[]>([])
+  const [localInmoupData, setLocalInmoupData] = useState<PortalData>({})
+  const [localMercadoLibreData, setLocalMercadoLibreData] = useState<PortalData>({})
 
-export default function PortalsList({
-  propertyData,
-  ownerData,
-  images,
-  propertyId,
-  inmoupData,
-  mercadoLibreData,
-}: PortalsListProps) {
-  // Usar una clave única para esta propiedad
-  const stateKey = `property-${propertyId}`
-
-  // Inicializar estado con datos del servidor o estado persistido
-  const [localInmoupData, setLocalInmoupData] = useState<PortalData>(() => {
-    const persistedState = globalPortalState.get(stateKey)
-    return persistedState?.inmoup || inmoupData || {}
-  })
-
-  const [localMercadoLibreData, setLocalMercadoLibreData] = useState<PortalData>(() => {
-    const persistedState = globalPortalState.get(stateKey)
-    return persistedState?.mercadolibre || mercadoLibreData || {}
-  })
-
-  // Persistir estado en el mapa global cuando cambie
+  // Fetch de datos de la propiedad al montar el componente
   useEffect(() => {
-    globalPortalState.set(stateKey, {
-      inmoup: localInmoupData,
-      mercadolibre: localMercadoLibreData,
-    })
-  }, [localInmoupData, localMercadoLibreData, stateKey])
+    const fetchPropertyData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
 
-  // Actualizar estado local cuando lleguen nuevos datos del servidor
-  useEffect(() => {
-    if (inmoupData && JSON.stringify(inmoupData) !== JSON.stringify(localInmoupData)) {
-      setLocalInmoupData(inmoupData)
+        const response = await fetch(`/api/propiedades/${propertyId}`)
+
+        if (!response.ok) {
+          throw new Error('Error al cargar los datos de la propiedad')
+        }
+
+        const result = await response.json()
+
+        console.log('Datos de propiedad cargados:', result)
+
+        // Actualizar estados con los datos obtenidos
+        setPropertyData(result)
+        setOwnerData(result.ownerData)
+        setImages(result.images)
+        setLocalInmoupData(result.inmoup || {})
+        setLocalMercadoLibreData(result.mercadolibre || {})
+      } catch (err) {
+        console.error('Error fetching property data:', err)
+        setError(err instanceof Error ? err.message : 'Error desconocido')
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [inmoupData])
 
-  useEffect(() => {
-    if (
-      mercadoLibreData &&
-      JSON.stringify(mercadoLibreData) !== JSON.stringify(localMercadoLibreData)
-    ) {
-      setLocalMercadoLibreData(mercadoLibreData)
+    if (propertyId) {
+      fetchPropertyData()
     }
-  }, [mercadoLibreData])
+  }, [propertyId])
+
+  // Función para refrescar los datos del portal
+  const refreshPortalData = async () => {
+    try {
+      const response = await fetch(`/api/properties/${propertyId}`)
+
+      if (response.ok) {
+        const result = await response.json()
+        setPropertyData(result.property)
+        setLocalInmoupData(result.property?.inmoup || {})
+        setLocalMercadoLibreData(result.property?.mercadolibre || {})
+        console.log('Datos de portales actualizados')
+      }
+    } catch (err) {
+      console.error('Error refrescando datos de portales:', err)
+    }
+  }
 
   // Función para actualizar datos de Inmoup desde el componente hijo
   const handleInmoupDataUpdate = (newData: PortalData) => {
@@ -99,13 +90,61 @@ export default function PortalsList({
     setLocalMercadoLibreData(newData)
   }
 
+  if (loading) {
+    return (
+      <div className="property-details__portals-content">
+        <div className="property-details__portals-header">
+          <h3 className="property-details__portals-title">Gestión de Portales</h3>
+        </div>
+        <div className="property-details__portals-loading">
+          <p>Cargando datos de portales...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="property-details__portals-content">
+        <div className="property-details__portals-header">
+          <h3 className="property-details__portals-title">Gestión de Portales</h3>
+        </div>
+        <div className="property-details__portals-error">
+          <p>⚠️ Error: {error}</p>
+          <button
+            className="property-details__btn property-details__btn--primary"
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!propertyData) {
+    return (
+      <div className="property-details__portals-content">
+        <div className="property-details__portals-header">
+          <h3 className="property-details__portals-title">Gestión de Portales</h3>
+        </div>
+        <div className="property-details__portals-error">
+          <p>No se encontraron datos de la propiedad</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="property-details__portals-content">
       <div className="property-details__portals-header">
         <h3 className="property-details__portals-title">Gestión de Portales</h3>
         <div className="property-details__portals-actions">
-          <button className="property-details__btn property-details__btn--primary">
-            Publicar en todos
+          <button
+            className="property-details__btn property-details__btn--secondary property-details__btn--small"
+            onClick={refreshPortalData}
+          >
+            🔄 Actualizar
           </button>
         </div>
       </div>
@@ -113,9 +152,6 @@ export default function PortalsList({
         {/* Portal Inmoup */}
         <InmoupPortal
           inmoupData={localInmoupData}
-          propertyData={propertyData}
-          ownerData={ownerData}
-          images={images}
           propertyId={propertyId}
           onDataUpdate={handleInmoupDataUpdate}
         />
@@ -123,9 +159,6 @@ export default function PortalsList({
         {/* Portal Mercado Libre */}
         <MercadoLibrePortal
           mercadoLibreData={localMercadoLibreData}
-          propertyData={propertyData}
-          ownerData={ownerData}
-          images={images}
           propertyId={propertyId}
           onDataUpdate={handleMercadoLibreDataUpdate}
         />

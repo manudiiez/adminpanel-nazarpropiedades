@@ -13,22 +13,12 @@ interface InmoupData {
 }
 
 interface InmoupPortalProps {
-  propertyData: any
-  ownerData?: any
-  images?: Array<{ url: string; orden: number }>
-  propertyId?: string
+  propertyId: string
   inmoupData?: InmoupData
   onDataUpdate?: (newData: InmoupData) => void
 }
 
-export default function InmoupPortal({
-  propertyData,
-  ownerData,
-  images,
-  propertyId,
-  inmoupData,
-  onDataUpdate,
-}: InmoupPortalProps) {
+export default function InmoupPortal({ propertyId, inmoupData, onDataUpdate }: InmoupPortalProps) {
   const [loading, setLoading] = useState(false)
   const [localInmoupData, setLocalInmoupData] = useState<InmoupData>(inmoupData || {})
   const [previousState, setPreviousState] = useState<string>('')
@@ -67,29 +57,13 @@ export default function InmoupPortal({
 
       setLoading(true)
 
-      // Limpiar datos del propietario para evitar referencias circulares
-      const cleanOwnerData = ownerData
-        ? {
-            fullname: ownerData.fullname || '',
-            email: ownerData.email || '',
-            phone: ownerData.phone || '',
-            address: ownerData.address || '',
-            province: ownerData.province || '',
-            locality: ownerData.locality || '',
-            notes: ownerData.notes || '',
-          }
-        : null
-
-      // Enviar datos ya mapeados al endpoint
+      // Enviar solo el propertyId al endpoint, el backend se encarga de buscar todos los datos
       const response = await fetch('/api/portals/inmoup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          propertyData: propertyData,
-          ownerData: cleanOwnerData,
-          images: images || [],
           propertyId: propertyId,
         }),
       })
@@ -184,29 +158,13 @@ export default function InmoupPortal({
 
       setLoading(true)
 
-      // Limpiar datos del propietario para evitar referencias circulares
-      const cleanOwnerData = ownerData
-        ? {
-            fullname: ownerData.fullname || '',
-            email: ownerData.email || '',
-            phone: ownerData.phone || '',
-            address: ownerData.address || '',
-            province: ownerData.province || '',
-            locality: ownerData.locality || '',
-            notes: ownerData.notes || '',
-          }
-        : null
-
-      // Enviar datos para sincronización al endpoint
+      // Enviar solo el propertyId al endpoint, el backend se encarga de buscar todos los datos
       const response = await fetch('/api/portals/inmoup', {
         method: 'PUT', // Usar PUT para sincronización/actualización
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          propertyData: propertyData,
-          ownerData: cleanOwnerData,
-          images: images || [],
           propertyId: propertyId,
           action: 'sync', // Indicar que es una sincronización
         }),

@@ -489,30 +489,71 @@ export async function POST(request: NextRequest) {
   let propertyId: string | undefined
 
   try {
-    const { propertyData, ownerData, images, propertyId: requestPropertyId } = await request.json()
+    const { propertyId: requestPropertyId } = await request.json()
     propertyId = requestPropertyId
 
+    // Validar que existe propertyId
+    if (!propertyId) {
+      return NextResponse.json({ error: 'propertyId es requerido' }, { status: 400 })
+    }
+
+    // Marcar como en cola al inicio del proceso
+    await updatePortalStatus(propertyId, 'queued')
+
+    // Buscar la propiedad completa en la base de datos
+    const payload = await getPayload({ config })
+    const property = await payload.findByID({
+      collection: 'propiedades',
+      id: propertyId,
+      depth: 2, // Para obtener relaciones como owner e images
+    })
+
+    if (!property) {
+      await updatePortalStatus(propertyId, 'error', undefined, undefined, 'Propiedad no encontrada')
+      return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 })
+    }
+
+    // Extraer propertyData, ownerData e images de la propiedad
+    const propertyData = property as any
+    const ownerData = typeof property.owner === 'object' ? property.owner : null
+
+    // Construir array de images desde coverImage y gallery
+    const images: Array<{ url: string; orden: number }> = []
+
+    console.log('🔍 Propiedad encontrada:', property)
+
+    if (property.images?.coverImage) {
+      const coverUrl =
+        (property.images.coverImage as any)?.sizes?.watermark?.url ||
+        (property.images.coverImage as any)?.url
+      if (coverUrl) {
+        images.push({ url: coverUrl, orden: 1 })
+      }
+    }
+
+    if (property.images?.gallery && Array.isArray(property.images.gallery)) {
+      property.images.gallery.forEach((img, index) => {
+        const imgUrl = (img as any).sizes.watermark.url
+        if (imgUrl) {
+          images.push({ url: imgUrl, orden: index + 2 })
+        }
+      })
+    }
+
+    console.log(`📸 Imágenes recopiladas (${images.length}):`, images)
     // Validar que existan datos de propertyData
     if (!propertyData) {
-      // Actualizar estado a error si no hay propertyData
-      if (propertyId) {
-        await updatePortalStatus(
-          propertyId,
-          'error',
-          undefined,
-          undefined,
-          'No se encontraron datos válidos de propertyData',
-        )
-      }
+      await updatePortalStatus(
+        propertyId,
+        'error',
+        undefined,
+        undefined,
+        'No se encontraron datos válidos de propertyData',
+      )
       return NextResponse.json(
         { error: 'No se encontraron datos válidos de propertyData' },
         { status: 400 },
       )
-    }
-
-    // Marcar como en cola al inicio del proceso
-    if (propertyId) {
-      await updatePortalStatus(propertyId, 'queued')
     }
 
     // Mapear propertyData al formato de Inmoup
@@ -542,8 +583,9 @@ export async function POST(request: NextRequest) {
 
     // Crear objeto inmoupData usando la función reutilizable
     const inmoupData = createInmoupData(mappedPropertyData, ownerData, images, propertyId || '0')
-    // console.log('✅ Objeto inmoupData creado exitosamente:', inmoupData)
-    // console.log('Datos mapeados para Inmoup video:', inmoupData.propiedades[0].video)
+    console.log('✅ Objeto inmoupData creado exitosamente:', inmoupData)
+    console.log('Datos mapeados para Inmoup video:', inmoupData.propiedades[0].video)
+    console.log('Datos mapeados para Inmoup Fotos:', inmoupData.propiedades[0].fotos)
     // console.log('Datos finales enviados a Inmoup:', inmoupData)
     // console.log('Datos mapeados para Inmoup ubicacion:', inmoupData.propiedades[0].ubicacion)
     // console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
@@ -767,16 +809,15 @@ export async function PUT(request: NextRequest) {
   let initialInmoupState: any = null
 
   try {
-    const {
-      propertyData,
-      ownerData,
-      images,
-      propertyId: requestPropertyId,
-      action,
-    } = await request.json()
+    const { propertyId: requestPropertyId, action } = await request.json()
     propertyId = requestPropertyId
 
     console.log('🔄 Solicitud de sincronización recibida para propiedad:', propertyId)
+
+    // Validar que existe propertyId
+    if (!propertyId) {
+      return NextResponse.json({ error: 'propertyId es requerido' }, { status: 400 })
+    }
 
     // Validar que sea una acción de sincronización
     if (action !== 'sync') {
@@ -800,18 +841,15 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Validar que existan datos de propertyData
-    if (!propertyData) {
-      if (propertyId) {
-        await updatePortalStatus(
-          propertyId,
-          'error',
-          undefined,
-          undefined,
-          'No se encontraron datos válidos de propertyData para sincronización',
-        )
-      }
+    // Buscar la propiedad completa en la base de datos
+    const payload = await getPayload({ config })
+    const property = await payload.findByID({
+      collection: 'propiedades',
+      id: propertyId,
+      depth: 2, // Para obtener relaciones como owner e images
+    })
 
+    if (!property) {
       const updatedInmoupData = {
         name: 'Inmoup',
         uploaded: false,
@@ -819,42 +857,52 @@ export async function PUT(request: NextRequest) {
         externalUrl: null,
         status: 'error' as const,
         lastSyncAt: new Date().toISOString(),
-        lastError: 'No se encontraron datos válidos de propertyData',
+        lastError: 'Propiedad no encontrada',
       }
 
       return NextResponse.json(
-        {
-          error: 'No se encontraron datos válidos de propertyData',
-          updatedInmoupData,
-        },
-        { status: 400 },
+        { error: 'Propiedad no encontrada', updatedInmoupData },
+        { status: 404 },
       )
     }
-
-    // Obtener los datos actuales de la propiedad ANTES de hacer cambios para preservar estado
-    if (propertyId) {
-      const payload = await getPayload({ config })
-      const currentProperty = await payload.findByID({
-        collection: 'propiedades',
-        id: propertyId,
-      })
-
-      // Capturar el estado inicial para restaurar en caso de error
-      if (currentProperty?.inmoup) {
-        initialInmoupState = {
-          uploaded: currentProperty.inmoup.uploaded,
-          externalId: currentProperty.inmoup.externalId,
-          externalUrl: currentProperty.inmoup.externalUrl,
-          status: currentProperty.inmoup.status,
-          lastSyncAt: currentProperty.inmoup.lastSyncAt,
-          lastError: currentProperty.inmoup.lastError,
-        }
+    // Capturar el estado inicial para restaurar en caso de error
+    if (property.inmoup) {
+      initialInmoupState = {
+        uploaded: property.inmoup.uploaded,
+        externalId: property.inmoup.externalId,
+        externalUrl: property.inmoup.externalUrl,
+        status: property.inmoup.status,
+        lastSyncAt: property.inmoup.lastSyncAt,
+        lastError: property.inmoup.lastError,
       }
     }
 
     // Marcar como en cola al inicio del proceso
-    if (propertyId) {
-      await updatePortalStatus(propertyId, 'queued')
+    await updatePortalStatus(propertyId, 'queued')
+
+    // Extraer propertyData, ownerData e images de la propiedad
+    const propertyData = property as any
+    const ownerData = typeof property.owner === 'object' ? property.owner : null
+
+    // Construir array de images desde coverImage y gallery
+    const images: Array<{ url: string; orden: number }> = []
+
+    if (property.images?.coverImage) {
+      const coverUrl =
+        (property.images.coverImage as any)?.sizes?.watermark?.url ||
+        (property.images.coverImage as any)?.url
+      if (coverUrl) {
+        images.push({ url: coverUrl, orden: 0 })
+      }
+    }
+
+    if (property.images?.gallery && Array.isArray(property.images.gallery)) {
+      property.images.gallery.forEach((img, index) => {
+        const imgUrl = (img as any).sizes.watermark.url
+        if (imgUrl) {
+          images.push({ url: imgUrl, orden: index + 1 })
+        }
+      })
     }
 
     // Mapear propertyData al formato de Inmoup
@@ -944,7 +992,7 @@ export async function PUT(request: NextRequest) {
       // Limpiar campos vacíos para la edición
       const propiedadLimpia = cleanEmptyFields(propiedadOriginal)
       const propiedadParaEdicion = { propiedad: propiedadLimpia }
-
+      console.log('🔄 Propiedad limpia para edición en Inmoup:', propiedadParaEdicion)
       const inmoupResponse: Response = await fetch(
         `${process.env.INMOUP_API_URL}/propiedades/${inmoupData.propiedades[0].id}/usuario/${userId}/editar`,
         {
@@ -956,6 +1004,8 @@ export async function PUT(request: NextRequest) {
           body: JSON.stringify(propiedadParaEdicion), // Enviar solo el objeto propiedad
         },
       )
+
+      console.log('repsuesta de fetch:', inmoupResponse)
 
       if (!inmoupResponse.ok) {
         const errorData = await inmoupResponse.json().catch(() => ({}))
