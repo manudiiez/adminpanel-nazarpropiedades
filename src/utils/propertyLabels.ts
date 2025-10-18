@@ -1,6 +1,10 @@
 // Funciones utilitarias para obtener labels de las opciones de propiedades
 
-import { propertySelectOptions, type SelectOption } from '@/data/propertyOptions'
+import {
+  accesoCocheraOptions,
+  propertySelectOptions,
+  type SelectOption,
+} from '@/data/propertyOptions'
 
 /**
  * Función genérica para obtener el label de un value en cualquier conjunto de opciones
@@ -172,6 +176,22 @@ export function getCurrencySymbol(currencyValue: string): string {
   return symbols[currencyValue] || currencyValue
 }
 
+export function getDispositionLabel(value: string): string {
+  return getLabelByValue(propertySelectOptions.disposition, value)
+}
+export function getDispositionLoteLabel(value: string): string {
+  return getLabelByValue(propertySelectOptions.dispositionLote, value)
+}
+export function getAccessLabel(value: string): string {
+  return getLabelByValue(propertySelectOptions.access, value)
+}
+export function getTipoCampoLabel(value: string): string {
+  return getLabelByValue(propertySelectOptions.tipoCampo, value)
+}
+export function getAccessoCocheraLabel(value: string): string {
+  return getLabelByValue(propertySelectOptions.accesoCochera, value)
+}
+
 // Objeto con todas las funciones para fácil importación
 export const propertyLabels = {
   type: getPropertyTypeLabel,
@@ -194,4 +214,9 @@ export const propertyLabels = {
   formatCurrency: formatCurrencyWithLabel,
   getCurrencySymbol,
   getFieldLabel: getPropertyFieldLabel,
+  disposition: getDispositionLabel,
+  dispositionLote: getDispositionLoteLabel,
+  access: getAccessLabel,
+  tipoCampo: getTipoCampoLabel,
+  accesoCochera: getAccessoCocheraLabel,
 }

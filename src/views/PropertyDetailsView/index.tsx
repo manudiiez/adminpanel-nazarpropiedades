@@ -296,34 +296,66 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                             </span>
                           </div>
 
-                          {/* Información adicional de precios */}
-                          {formData.caracteristics?.expenses && (
-                            <div className="property-details__info-item">
-                              <span className="property-details__info-label">Expensas</span>
-                              <span className="property-details__info-value">
-                                {formData.caracteristics?.expensesCurrency
-                                  ? propertyLabels.formatCurrency(
-                                      formData.caracteristics.expenses,
-                                      formData.caracteristics.expensesCurrency,
-                                    )
-                                  : `$${formData.caracteristics.expenses}`}
-                              </span>
-                            </div>
-                          )}
-
-                          {formData.caracteristics?.appraisal && (
-                            <div className="property-details__info-item">
-                              <span className="property-details__info-label">Tasación</span>
-                              <span className="property-details__info-value">
-                                {formData.caracteristics?.appraisalCurrency
-                                  ? propertyLabels.formatCurrency(
-                                      formData.caracteristics.appraisal,
-                                      formData.caracteristics.appraisalCurrency,
-                                    )
-                                  : `$${formData.caracteristics.appraisal}`}
-                              </span>
-                            </div>
-                          )}
+                          <div className="property-details__info-row">
+                            {formData.caracteristics?.pricePerSquareMeterUsd && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">
+                                  Precio por m2 (USD)
+                                </span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics?.pricePerSquareMeterUsdCurrency
+                                    ? propertyLabels.formatCurrency(
+                                        formData.caracteristics.pricePerSquareMeterUsd,
+                                        'usd',
+                                      )
+                                    : `$${formData.caracteristics.pricePerSquareMeterUsd}`}
+                                </span>
+                              </div>
+                            )}
+                            {formData.caracteristics?.pricePerSquareMeterArs && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">
+                                  Precio por m2 (ARS)
+                                </span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics?.pricePerSquareMeterArsCurrency
+                                    ? propertyLabels.formatCurrency(
+                                        formData.caracteristics.pricePerSquareMeterArs,
+                                        'ars',
+                                      )
+                                    : `$${formData.caracteristics.pricePerSquareMeterArs}`}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="property-details__info-row">
+                            {formData.caracteristics?.expenses && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Expensas</span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics?.expensesCurrency
+                                    ? propertyLabels.formatCurrency(
+                                        formData.caracteristics.expenses,
+                                        formData.caracteristics.expensesCurrency,
+                                      )
+                                    : `$${formData.caracteristics.expenses}`}
+                                </span>
+                              </div>
+                            )}
+                            {formData.caracteristics?.appraisal && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Tasación</span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics?.appraisalCurrency
+                                    ? propertyLabels.formatCurrency(
+                                        formData.caracteristics.appraisal,
+                                        formData.caracteristics.appraisalCurrency,
+                                      )
+                                    : `$${formData.caracteristics.appraisal}`}
+                                </span>
+                              </div>
+                            )}
+                          </div>
 
                           <div className="property-details__info-item property-details__info-item--full">
                             <span className="property-details__info-label">Ubicación</span>
@@ -346,6 +378,14 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                                 <span className="property-details__info-label">Baños</span>
                                 <span className="property-details__info-value">
                                   {formData.environments.bathrooms}
+                                </span>
+                              </div>
+                            )}
+                            {formData.environments?.ambientes && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Ambientes</span>
+                                <span className="property-details__info-value">
+                                  {formData.environments.ambientes}
                                 </span>
                               </div>
                             )}
@@ -533,6 +573,283 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                               </div>
                             )}
                           </div>
+                          {/* Extra */}
+                          {/* Información general del inmueble */}
+                          {(formData.extra?.bauleras ||
+                            formData.extra?.numeroCasa ||
+                            formData.extra?.pisoDepartamento) && (
+                            <div className="property-details__info-row property-details__info-row--three">
+                              {formData.extra?.bauleras && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Bauleras</span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.bauleras}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.pisoDepartamento && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Piso</span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.pisoDepartamento}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Información del edificio */}
+                          {(formData.extra?.pisosEdificio ||
+                            formData.extra?.departamentosPorPiso ||
+                            formData.extra?.superficieBalcon) && (
+                            <div className="property-details__info-row property-details__info-row--three">
+                              {formData.extra?.pisosEdificio && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Pisos del Edificio
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.pisosEdificio}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.departamentosPorPiso && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Unidades por Piso
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.departamentosPorPiso}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.superficieBalcon && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Superficie Balcón
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.superficieBalcon} m²
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Disposición y forma */}
+                          {(formData.extra?.disposicion ||
+                            formData.extra?.disposicionTerreno ||
+                            formData.extra?.formaTerreno) && (
+                            <div className="property-details__info-row property-details__info-row--three">
+                              {formData.extra?.disposicion && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Disposición</span>
+                                  <span className="property-details__info-value">
+                                    {propertyLabels.disposition(formData.extra.disposicion)}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.disposicionTerreno && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Disposición del Lote
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {propertyLabels.dispositionLote(
+                                      formData.extra.disposicionTerreno,
+                                    )}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.formaTerreno && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Forma del Terreno
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.formaTerreno === 'regular'
+                                      ? 'Regular'
+                                      : formData.extra.formaTerreno === 'irregular'
+                                        ? 'Irregular'
+                                        : 'Plano'}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Información específica por tipo */}
+                          {(formData.extra?.acceso || formData.extra?.tipoCampo) && (
+                            <div className="property-details__info-row">
+                              {formData.extra?.acceso && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Acceso</span>
+                                  <span className="property-details__info-value">
+                                    {propertyLabels.access(formData.extra.acceso)}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.tipoCampo && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Tipo de Campo
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {propertyLabels.tipoCampo(formData.extra.tipoCampo)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Información de cochera */}
+                          {(formData.extra?.accesoCochera ||
+                            formData.extra?.tipoCochera ||
+                            formData.extra?.tipoCoverturaCochera) && (
+                            <div className="property-details__info-row property-details__info-row--three">
+                              {formData.extra?.accesoCochera && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Acceso Cochera
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {propertyLabels.accesoCochera(formData.extra.accesoCochera)}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.tipoCochera && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Tipo de Cochera
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.tipoCochera === 'fija' ? 'Fija' : 'Móvil'}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.tipoCoverturaCochera && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Cobertura Cochera
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.tipoCoverturaCochera === 'semi_cubierta'
+                                      ? 'Semi Cubierta'
+                                      : formData.extra.tipoCoverturaCochera === 'cubierta'
+                                        ? 'Cubierta'
+                                        : 'Descubierta'}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          {/* Información de depósito/galpón */}
+                          {formData.extra?.alturaDeposito && (
+                            <div className="property-details__info-row">
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">
+                                  Altura del Depósito/Galpón
+                                </span>
+                                <span className="property-details__info-value">
+                                  {formData.extra.alturaDeposito} m
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Información de oficinas */}
+                          {(formData.extra?.banosPiso || formData.extra?.cantidadOficinas) && (
+                            <div className="property-details__info-row">
+                              {formData.extra?.banosPiso && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Baños por Piso
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.banosPiso}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.cantidadOficinas && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">
+                                    Cantidad de Oficinas
+                                  </span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.cantidadOficinas}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Información para alquiler temporario */}
+                          {(formData.extra?.guests ||
+                            formData.extra?.minimumStay ||
+                            formData.extra?.camas) && (
+                            <>
+                              <h4
+                                className="property-details__amenities-subtitle"
+                                style={{ marginTop: '1rem' }}
+                              >
+                                Alquiler Temporario
+                              </h4>
+                              <div className="property-details__info-row property-details__info-row--three">
+                                {formData.extra?.guests && (
+                                  <div className="property-details__info-item">
+                                    <span className="property-details__info-label">
+                                      Máximo de Huéspedes
+                                    </span>
+                                    <span className="property-details__info-value">
+                                      {formData.extra.guests}
+                                    </span>
+                                  </div>
+                                )}
+                                {formData.extra?.minimumStay && (
+                                  <div className="property-details__info-item">
+                                    <span className="property-details__info-label">
+                                      Estadía Mínima
+                                    </span>
+                                    <span className="property-details__info-value">
+                                      {formData.extra.minimumStay} noches
+                                    </span>
+                                  </div>
+                                )}
+                                {formData.extra?.camas && (
+                                  <div className="property-details__info-item">
+                                    <span className="property-details__info-label">
+                                      Cantidad de Camas
+                                    </span>
+                                    <span className="property-details__info-value">
+                                      {formData.extra.camas}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          )}
+
+                          {/* Horarios de check-in/out */}
+                          {(formData.extra?.checkinTime || formData.extra?.checkoutTime) && (
+                            <div className="property-details__info-row">
+                              {formData.extra?.checkinTime && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Check-in</span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.checkinTime}
+                                  </span>
+                                </div>
+                              )}
+                              {formData.extra?.checkoutTime && (
+                                <div className="property-details__info-item">
+                                  <span className="property-details__info-label">Check-out</span>
+                                  <span className="property-details__info-value">
+                                    {formData.extra.checkoutTime}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
 

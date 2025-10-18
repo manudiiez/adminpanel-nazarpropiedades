@@ -140,12 +140,12 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
       <div className="property-details__portals-header">
         <h3 className="property-details__portals-title">Gestión de Portales</h3>
         <div className="property-details__portals-actions">
-          <button
+          {/* <button
             className="property-details__btn property-details__btn--secondary property-details__btn--small"
             onClick={refreshPortalData}
           >
             🔄 Actualizar
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="property-details__portals-list">
