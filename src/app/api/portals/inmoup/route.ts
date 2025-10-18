@@ -709,6 +709,59 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      // 🎥 PASO ADICIONAL: Hacer UPDATE automático para subir el video
+      console.log('🎥 Iniciando UPDATE automático para subir el video...')
+
+      const createdPropertyId = responseData.propiedades[0]?.prp_id
+
+      if (createdPropertyId && mappedPropertyData.videoUrl) {
+        try {
+          // Obtener el ID del usuario de Inmoup
+          const userId = await getInmoupUserId()
+
+          if (userId) {
+            // Preparar datos para el UPDATE
+            const propiedadOriginal = inmoupData.propiedades[0]
+            propiedadOriginal.id = createdPropertyId // Asignar el ID que acabamos de crear
+
+            // Limpiar campos vacíos
+            const propiedadLimpia = cleanEmptyFields(propiedadOriginal)
+            const propiedadParaEdicion = { propiedad: propiedadLimpia }
+
+            console.log('🔄 Enviando UPDATE con video a Inmoup...')
+
+            // Hacer el UPDATE
+            const updateResponse = await fetch(
+              `${process.env.INMOUP_API_URL}/propiedades/${createdPropertyId}/usuario/${userId}/editar`,
+              {
+                method: 'POST',
+                headers: {
+                  apiKey: process.env.INMOUP_API_KEY || '',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(propiedadParaEdicion),
+              },
+            )
+
+            if (updateResponse.ok) {
+              const updateResult = await updateResponse.json()
+              console.log('✅ Video actualizado exitosamente en Inmoup:', updateResult)
+            } else {
+              const errorData = await updateResponse.json().catch(() => ({}))
+              console.warn('⚠️ No se pudo actualizar el video en Inmoup:', errorData)
+              // No lanzamos error aquí porque la propiedad ya se creó exitosamente
+            }
+          } else {
+            console.warn('⚠️ No se pudo obtener userId para actualizar el video')
+          }
+        } catch (updateError) {
+          console.warn('⚠️ Error al intentar actualizar el video:', updateError)
+          // No lanzamos error porque la propiedad ya se creó exitosamente
+        }
+      } else {
+        console.log('ℹ️ No hay video para actualizar o no se obtuvo el ID de la propiedad creada')
+      }
+
       // Crear el objeto de datos actualizados de Inmoup para devolver al frontend
       const updatedInmoupData = {
         name: 'Inmoup',
@@ -728,6 +781,7 @@ export async function POST(request: NextRequest) {
         propiedadesPublicadas: propiedades.length,
         ownerIncluded: !!ownerData?.fullname,
         mappedData: mappedPropertyData, // Para debugging
+        videoUpdated: !!mappedPropertyData.videoUrl, // Indicar si se intentó actualizar el video
       })
     } catch (inmoupError: unknown) {
       console.error('Error llamando a Inmoup API:', inmoupError)
