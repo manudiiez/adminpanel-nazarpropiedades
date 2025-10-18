@@ -1,9 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { getValidMercadoLibreToken as getValidAccessToken } from '@/utils/mercadoLibreTokens'
-import {
-  mapFormDataToMercadoLibre as mapPropertyToMercadoLibre,
-  validateMercadoLibreData,
-} from '@/utils/mercadoLibreMappers'
+import { mapFormDataToMercadoLibre as mapPropertyToMercadoLibre } from '@/utils/mercadoLibreMappers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
