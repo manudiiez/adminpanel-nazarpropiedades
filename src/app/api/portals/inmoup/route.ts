@@ -892,7 +892,7 @@ export async function PUT(request: NextRequest) {
         (property.images.coverImage as any)?.sizes?.watermark?.url ||
         (property.images.coverImage as any)?.url
       if (coverUrl) {
-        images.push({ url: coverUrl, orden: 0 })
+        images.push({ url: coverUrl, orden: 1 })
       }
     }
 
@@ -900,7 +900,7 @@ export async function PUT(request: NextRequest) {
       property.images.gallery.forEach((img, index) => {
         const imgUrl = (img as any).sizes.watermark.url
         if (imgUrl) {
-          images.push({ url: imgUrl, orden: index + 1 })
+          images.push({ url: imgUrl, orden: index + 2 })
         }
       })
     }
@@ -992,7 +992,6 @@ export async function PUT(request: NextRequest) {
       // Limpiar campos vacíos para la edición
       const propiedadLimpia = cleanEmptyFields(propiedadOriginal)
       const propiedadParaEdicion = { propiedad: propiedadLimpia }
-      console.log('🔄 Propiedad limpia para edición en Inmoup:', propiedadParaEdicion)
       const inmoupResponse: Response = await fetch(
         `${process.env.INMOUP_API_URL}/propiedades/${inmoupData.propiedades[0].id}/usuario/${userId}/editar`,
         {
@@ -1004,8 +1003,6 @@ export async function PUT(request: NextRequest) {
           body: JSON.stringify(propiedadParaEdicion), // Enviar solo el objeto propiedad
         },
       )
-
-      console.log('repsuesta de fetch:', inmoupResponse)
 
       if (!inmoupResponse.ok) {
         const errorData = await inmoupResponse.json().catch(() => ({}))

@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     const { description, ...mlDataWithoutDescription } = mlData
     // PASO 1: Publicar item en Mercado Libre (sin descripción)
     console.log('📤 Creando item en Mercado Libre...')
-    const mlResponse = await fetch('https://api.mercadolibre.com/items', {
+    const mlResponse = await fetch('https://api.mercadolibre.com/items?scope=stage', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${tokenInfo.accessToken}`,
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
       try {
         console.log('📝 Agregando descripción al item...')
         const descriptionResponse = await fetch(
-          `https://api.mercadolibre.com/items/${itemId}/description`,
+          `https://api.mercadolibre.com/items/${itemId}/description?scope=stage`,
           {
             method: 'PUT',
             headers: {
@@ -348,7 +348,7 @@ export async function PUT(request: NextRequest) {
     // const description = mlData.description?.plain_text
     const { description, listing_type_id, ...mlDataFormatted } = mlData
     // PASO 1: Actualizar item principal
-    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${mlItemId}`, {
+    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${mlItemId}?scope=stage`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${tokenInfo.accessToken}`,
@@ -475,7 +475,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Pausar publicación
-    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${externalId}`, {
+    const mlResponse = await fetch(`https://api.mercadolibre.com/items/${externalId}?scope=stage`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${tokenInfo.accessToken}`,

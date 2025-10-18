@@ -1182,7 +1182,13 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     buying_mode: 'classified',
     listing_type_id: 'silver', // Puedes cambiar a 'free', 'gold_premium', etc.
     condition: 'not_specified',
-
+    seller_contact: {
+      contact: 'Nazar Propiedades',
+      email: 'nazarpropiedades217@gmail.com',
+      phone: '2614197323',
+      phone2: '2614197323',
+      webpage: 'https://nazarpropiedades.com',
+    },
     description: {
       plain_text: normalizePlainText(aiContent.description),
     },
