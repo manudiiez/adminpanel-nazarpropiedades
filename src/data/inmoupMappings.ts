@@ -53,10 +53,10 @@ export const propertyTypeMappings: InmoupMapping = {
 // Estados de conservación
 export const conservationStatusMappings: InmoupMapping = {
   excelente: 'excelente',
-  muy_bueno: 'muy-bueno',
+  muy_bueno: 'muy bueno',
   bueno: 'bueno',
   regular: 'regular',
-  a_refaccionar: 'a-refaccionar',
+  a_refaccionar: 'a refaccionar',
 }
 
 // Orientaciones

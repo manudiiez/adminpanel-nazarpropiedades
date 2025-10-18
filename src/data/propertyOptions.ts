@@ -45,7 +45,7 @@ export const accessOptions: SelectOption[] = [
   },
 ]
 
-// accesso
+// disposicion
 export const disposicionOptions: SelectOption[] = [
   {
     label: 'Contrafrente',
@@ -62,6 +62,76 @@ export const disposicionOptions: SelectOption[] = [
   {
     label: 'Lateral',
     value: 'lateral',
+  },
+]
+// disposicion lote
+export const disposicionLoteOptions: SelectOption[] = [
+  { value: 'otro', label: 'Otro' },
+  { value: 'perimetral', label: 'Perimetral' },
+  { value: 'a_rio', label: 'A río' },
+  { value: 'a_laguna', label: 'A laguna' },
+  { value: 'interno', label: 'Interno' },
+]
+// disposicion
+export const accesoCocheraOptions: SelectOption[] = [
+  {
+    value: 'rampa_fija',
+    label: 'Rampa fija',
+  },
+  {
+    value: 'rampa_movil',
+    label: 'Rampa móvil',
+  },
+  {
+    value: 'ascensor',
+    label: 'Ascensor',
+  },
+  {
+    value: 'horizontal',
+    label: 'Horizontal',
+  },
+]
+// tipo de campo
+export const tipoCampoOptions: SelectOption[] = [
+  {
+    value: 'otro',
+    label: 'Otro',
+  },
+  {
+    value: 'fruticola',
+    label: 'Frutícola',
+  },
+  {
+    value: 'agricola',
+    label: 'Agrícola',
+  },
+  {
+    value: 'chacra',
+    label: 'Chacra',
+  },
+  {
+    value: 'criadero',
+    label: 'Criadero',
+  },
+  {
+    value: 'tambero',
+    label: 'Tambero',
+  },
+  {
+    value: 'floricultura',
+    label: 'Floricultura',
+  },
+  {
+    value: 'forestal',
+    label: 'Forestal',
+  },
+  {
+    value: 'ganadero',
+    label: 'Ganadero',
+  },
+  {
+    value: 'haras',
+    label: 'Haras',
   },
 ]
 
@@ -385,6 +455,7 @@ export const amenityServicesOptions: SelectOption[] = [
       'triplex',
       'vinedo',
       'chalet',
+      'deposito',
     ],
     condition: ['venta', 'permuta'],
   },
@@ -1240,6 +1311,9 @@ export const propertySelectOptions = {
   amenityNearbyZones: amenityNearbyZonesOptions,
   checkinTimeOptions: checkinTimeOptions,
   disposition: disposicionOptions,
+  dispositionLote: disposicionLoteOptions,
+  tipoCampo: tipoCampoOptions,
+  accesoCochera: accesoCocheraOptions,
 }
 
 // Función helper para obtener localidades por departamento

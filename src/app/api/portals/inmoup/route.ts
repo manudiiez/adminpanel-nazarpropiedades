@@ -187,7 +187,7 @@ function createInmoupData(
         // Video (opcional)
         video: {
           descripcion: undefined,
-          url: undefined,
+          url: mappedPropertyData.videoUrl || mappedPropertyData.virtualTourUrl || undefined,
         },
 
         // Vendedor
@@ -199,8 +199,8 @@ function createInmoupData(
         servicios: {
           superficie_cubierta: mappedPropertyData.coveredArea || undefined,
           superficie_total: mappedPropertyData.totalArea || undefined,
-          precio_peso_m2: undefined, // Se puede calcular
-          precio_dolar_m2: undefined, // Se puede calcular
+          precio_peso_m2: mappedPropertyData.pricePerSquareMeterArs || undefined, // Se puede calcular
+          precio_dolar_m2: mappedPropertyData.pricePerSquareMeterUsd || undefined, // Se puede calcular
           expensas: mappedPropertyData.expenses || undefined,
           tiene_expensas:
             mappedPropertyData.hasExpenses === 'Si'
@@ -216,13 +216,13 @@ function createInmoupData(
           cochera: mappedPropertyData.garageType || undefined,
           antiguedad: {
             valor:
-              mappedPropertyData.antiquity.value !== undefined &&
-              mappedPropertyData.antiquity.value !== null
-                ? mappedPropertyData.antiquity.value
+              mappedPropertyData?.antiquity?.value !== undefined &&
+              mappedPropertyData?.antiquity?.value !== null
+                ? mappedPropertyData?.antiquity?.value
                 : undefined,
-            tiempo: mappedPropertyData.antiquity.tiempo || undefined,
+            tiempo: mappedPropertyData?.antiquity?.tiempo || undefined,
           },
-          estado_conservacion: mappedPropertyData.conservationStatus || undefined,
+          estado_conservacion: mappedPropertyData?.conservationStatus || undefined,
 
           // Servicios básicos - priorizar campos directos sobre amenityServices
           agua:
@@ -542,11 +542,12 @@ export async function POST(request: NextRequest) {
 
     // Crear objeto inmoupData usando la función reutilizable
     const inmoupData = createInmoupData(mappedPropertyData, ownerData, images, propertyId || '0')
-
+    // console.log('✅ Objeto inmoupData creado exitosamente:', inmoupData)
+    // console.log('Datos mapeados para Inmoup video:', inmoupData.propiedades[0].video)
     // console.log('Datos finales enviados a Inmoup:', inmoupData)
     // console.log('Datos mapeados para Inmoup ubicacion:', inmoupData.propiedades[0].ubicacion)
-    console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
-    console.log('Datos mapeados para Inmoup servicios:', inmoupData.propiedades[0].servicios)
+    // console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
+    // console.log('Datos mapeados para Inmoup servicios:', inmoupData.propiedades[0].servicios)
     // console.log('Datos mapeados para Inmoup vendedor:', inmoupData.propiedades[0].vendedor)
     // Llamada real a API de Inmoup
     try {

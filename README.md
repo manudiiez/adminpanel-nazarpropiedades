@@ -16,9 +16,29 @@
 - Nube de CloudFlare: [text](https://dash.cloudflare.com/c14fa1adf8db74d2102398802057e4ca/r2/default/buckets/nazarpropiedades-media?prefix=media%2F)
 - Proyecto easypanel: [text](http://31.97.87.170:3000/projects/nazarpropiedades-admin/app/adminpanel-nazarpropiedades/deployments)
 
-
-
 ### La cuenta de facebook e instagram es la de facebook de lili
 
-# Campos departmentos
-- Disposición
+### Campso agregado
+
+- camas
+- Superficie terreno
+- Cuantos autos entran
+- Bauleras
+- Numerod e casa o departamento
+- acceso
+- guests
+- minimumStay
+- checkinTime
+- checkoutTime
+- pisosEdificio
+- departamentosPorPiso
+- superficieBalcon
+- disposicion
+- pisoDepartamento
+- Tipo de campo
+- Acceso de cochera
+- Tipo de cobetura
+- Tipo de cochera
+- altura deposito
+
+### Revisar nuevo campo forma del terreno en otros tipos de propiedades

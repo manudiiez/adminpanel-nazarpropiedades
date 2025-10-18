@@ -29,6 +29,8 @@ interface PropertyData {
     expensesCurrency?: string
     appraisal?: number
     appraisalCurrency?: string
+    pricePerSquareMeterArs?: number
+    pricePerSquareMeterUsd?: number
   }
   environments?: {
     bedrooms?: number
@@ -55,6 +57,12 @@ interface PropertyData {
       lng?: number
     }
   }
+  images?: {
+    coverImage?: any
+    gallery?: any[]
+    videoUrl?: string
+    virtualTourUrl?: string
+  }
   amenities?: {
     servicios?: string[]
     ambientes?: string[]
@@ -66,8 +74,21 @@ interface PropertyData {
     estrellas?: number
     mascotas?: string
     barrioPrivado?: string
+
+    extra?: {
+      bauleras?: number
+      numeroCasa?: string
+      guests?: number
+      checkinTime?: string
+      checkoutTime?: string
+      camas?: number
+      minimumStay?: number
+      disposicion?: string
+      superficieBalcon?: number
+      departamentosPorPiso?: number
+    }
+    [key: string]: any
   }
-  [key: string]: any
 }
 
 interface InmoupData {
@@ -162,7 +183,7 @@ function mapArrayValues(
  */
 export function mapFormDataToInmoup(propertyData: PropertyData): InmoupData {
   // Mapeo básico de la propiedad
-  // console.log('data recibed propertyData:', propertyData)
+  console.log('data recibed propertyData:', propertyData)
   const mappedData: InmoupData = {
     // Información básica
     title: propertyData.aiContent?.title || propertyData.title || '',
@@ -179,7 +200,8 @@ export function mapFormDataToInmoup(propertyData: PropertyData): InmoupData {
     // Superficies
     totalArea: propertyData.caracteristics?.totalArea,
     coveredArea: propertyData.caracteristics?.coveredArea,
-
+    pricePerSquareMeterArs: propertyData.caracteristics?.pricePerSquareMeterArs,
+    pricePerSquareMeterUsd: propertyData.caracteristics?.pricePerSquareMeterUsd,
     // Ambientes
     bedrooms: propertyData.environments?.bedrooms,
     bathrooms: propertyData.environments?.bathrooms,
@@ -193,7 +215,8 @@ export function mapFormDataToInmoup(propertyData: PropertyData): InmoupData {
     ambientes: propertyData.environments?.ambientes,
     garageType: mapValue(propertyData.environments?.garageType || '', 'garageType'),
     furnished: mapValue(propertyData.environments?.furnished || '', 'furnished'),
-
+    videoUrl: propertyData.images?.videoUrl,
+    virtualTourUrl: propertyData.images?.virtualTourUrl,
     // Nuevos campos específicos - priorizar campos directos sobre servicios
     agua:
       propertyData.amenities?.agua ||

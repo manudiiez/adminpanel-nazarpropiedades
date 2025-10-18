@@ -507,6 +507,8 @@ export interface Propiedade {
      * Este campo es importante para la calidad de Mercado Libre
      */
     landArea?: number | null;
+    pricePerSquareMeterArs?: number | null;
+    pricePerSquareMeterUsd?: number | null;
     orientation?: ('norte' | 'sur' | 'este' | 'oeste') | null;
     frontMeters?: number | null;
     deepMeters?: number | null;
@@ -690,6 +692,10 @@ export interface Propiedade {
     /**
      * Este campo solo sera visible para mercado libre
      */
+    pisoDepartamento?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
     acceso?: ('Tierra' | 'Arena' | 'Asfalto' | 'Otro' | 'Ripio') | null;
     /**
      * Este campo solo sera visible para mercado libre
@@ -781,6 +787,55 @@ export interface Propiedade {
      * Este campo solo sera visible para mercado libre
      */
     disposicion?: ('contrafrente' | 'frente' | 'interno' | 'lateral') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    disposicionTerreno?: ('otro' | 'perimetral' | 'a_rio' | 'a_laguna' | 'interno') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    formaTerreno?: ('regular' | 'irregular' | 'plano') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    tipoCampo?:
+      | (
+          | 'otro'
+          | 'fruticola'
+          | 'agricola'
+          | 'chacra'
+          | 'criadero'
+          | 'tambero'
+          | 'floricultura'
+          | 'forestal'
+          | 'ganadero'
+          | 'haras'
+        )
+      | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    accesoCochera?: ('rampa_fija' | 'rampa_movil' | 'ascensor' | 'horizontal') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    tipoCochera?: ('fija' | 'movil') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    tipoCoverturaCochera?: ('semi_cubierta' | 'cubierta' | 'descubierta') | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    alturaDeposito?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    banosPiso?: number | null;
+    /**
+     * Este campo solo sera visible para mercado libre
+     */
+    cantidadOficinas?: number | null;
   };
   /**
    * Genera automáticamente el título y descripción usando IA, o edítalos manualmente.
@@ -1158,6 +1213,8 @@ export interface PropiedadesSelect<T extends boolean = true> {
         coveredArea?: T;
         totalArea?: T;
         landArea?: T;
+        pricePerSquareMeterArs?: T;
+        pricePerSquareMeterUsd?: T;
         orientation?: T;
         frontMeters?: T;
         deepMeters?: T;
@@ -1194,6 +1251,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
     | {
         bauleras?: T;
         numeroCasa?: T;
+        pisoDepartamento?: T;
         acceso?: T;
         guests?: T;
         minimumStay?: T;
@@ -1204,6 +1262,15 @@ export interface PropiedadesSelect<T extends boolean = true> {
         departamentosPorPiso?: T;
         superficieBalcon?: T;
         disposicion?: T;
+        disposicionTerreno?: T;
+        formaTerreno?: T;
+        tipoCampo?: T;
+        accesoCochera?: T;
+        tipoCochera?: T;
+        tipoCoverturaCochera?: T;
+        alturaDeposito?: T;
+        banosPiso?: T;
+        cantidadOficinas?: T;
       };
   aiContent?:
     | T

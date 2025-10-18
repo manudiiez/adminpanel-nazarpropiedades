@@ -95,39 +95,6 @@ export async function POST(request: NextRequest) {
 
     console.log('📋 Datos mapeados para Mercado Libre:', mlData)
 
-    // Validar
-    const validation = validateMercadoLibreData(mlData)
-    if (!validation.isValid) {
-      if (propertyId) {
-        await updatePortalStatus(
-          propertyId,
-          'error',
-          undefined,
-          undefined,
-          `Datos inválidos: ${validation.errors.join(', ')}`,
-        )
-      }
-
-      const updatedMercadolibreData = {
-        name: 'MercadoLibre',
-        uploaded: false,
-        externalId: null,
-        externalUrl: null,
-        status: 'error' as const,
-        lastSyncAt: new Date().toISOString(),
-        lastError: `Datos inválidos: ${validation.errors.join(', ')}`,
-      }
-
-      return NextResponse.json(
-        {
-          error: 'Datos inválidos para Mercado Libre',
-          validationErrors: validation.errors,
-          updatedMercadolibreData,
-        },
-        { status: 400 },
-      )
-    }
-
     // Remover descripción del objeto inicial
     const { description, ...mlDataWithoutDescription } = mlData
     // PASO 1: Publicar item en Mercado Libre (sin descripción)

@@ -1,6 +1,7 @@
 // src/utils/mercadoLibreMapper.ts
 
 import { mercadolibreMappings, propertyType } from '@/data/mercadolibreMappings'
+import { fr } from 'payload/i18n/fr'
 
 interface PropertyData {
   // Classification
@@ -59,6 +60,9 @@ interface PropertyData {
     ambientes?: string[]
     zonasCercanas?: string[]
     mascotas?: string
+    agua?: string
+    gas?: string
+    luz?: string
   }
 
   // AI Content
@@ -86,6 +90,17 @@ interface PropertyData {
     superficieBalcon?: number
     departamentosPorPiso?: number
     pisosEdificio?: number
+    pisoDepartamento?: number
+    acceso?: string
+    tipoCampo?: string
+    accesoCochera?: string
+    tipoCochera?: string
+    tipoCoverturaCochera?: string
+    alturaDeposito?: string
+    banosPiso?: number
+    cantidadOficinas?: number
+    disposicionTerreno?: string
+    formaTerreno?: string
   }
 }
 
@@ -247,8 +262,33 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     })
   }
 
+  // Metros de frente
+  if (caracteristics.frontMeters && caracteristics.frontMeters > 0) {
+    attributes.push({
+      id: 'LOT_WIDTH',
+      value_name: `${caracteristics.frontMeters} m`,
+      value_struct: {
+        number: caracteristics.frontMeters,
+        unit: 'm',
+      },
+    })
+  }
+
+  // Metros de fondo
+  if (caracteristics.deepMeters && caracteristics.deepMeters > 0) {
+    attributes.push({
+      id: 'LOT_DEPTH',
+      value_name: `${caracteristics.deepMeters} m`,
+      value_struct: {
+        number: caracteristics.deepMeters,
+        unit: 'm',
+      },
+    })
+  }
+
   // Dormitorios (REQUERIDO)
-  if (environments.bedrooms !== undefined) {
+  if (environments.bedrooms) {
+    console.log('Mapping dormitorios:', environments.bedrooms) // --- IGNORE ---
     attributes.push({
       id: 'BEDROOMS',
       value_name: environments.bedrooms.toString(),
@@ -256,7 +296,7 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   }
 
   // Baños (REQUERIDO)
-  if (environments.bathrooms !== undefined) {
+  if (environments.bathrooms) {
     attributes.push({
       id: 'FULL_BATHROOMS',
       value_name: environments.bathrooms.toString(),
@@ -289,12 +329,10 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
   // Ambientes
   if (environments.ambientes) {
     const ambientesNum = environments.ambientes
-    if (ambientesNum > 0) {
-      attributes.push({
-        id: 'ROOMS',
-        value_name: ambientesNum.toString(),
-      })
-    }
+    attributes.push({
+      id: 'ROOMS',
+      value_name: ambientesNum.toString(),
+    })
   }
 
   // Cantidad de pisos
@@ -379,6 +417,30 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
     }
   }
 
+  // Disposición
+  if (extra.disposicionTerreno) {
+    const dispositionMapped = mapDispositioLote(extra.disposicionTerreno)
+    if (dispositionMapped) {
+      attributes.push({
+        id: 'LOT_DISPOSITION',
+        value_id: dispositionMapped.id,
+        value_name: dispositionMapped.name,
+      })
+    }
+  }
+
+  // Forma del terreno
+  if (extra.formaTerreno) {
+    const formaTerrenoMapped = mapFormaTerreno(extra.formaTerreno)
+    if (formaTerrenoMapped) {
+      attributes.push({
+        id: 'LOT_SHAPE',
+        value_id: formaTerrenoMapped.id,
+        value_name: formaTerrenoMapped.name,
+      })
+    }
+  }
+
   // Superficie balcón
   if (extra.superficieBalcon) {
     attributes.push({
@@ -398,11 +460,108 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       value_name: extra.pisosEdificio,
     })
   }
-  // Cantidad de pisos en el edificio
+  // Cantidad de departamentos por piso
   if (extra.departamentosPorPiso) {
     attributes.push({
       id: 'APARTMENTS_PER_FLOOR',
       value_name: extra.departamentosPorPiso,
+    })
+    attributes.push({
+      id: 'OFFICES_PER_FLOOR',
+      value_name: extra.departamentosPorPiso,
+    })
+  }
+
+  // Numero de piso del departamento
+  if (extra.pisoDepartamento) {
+    attributes.push({
+      id: 'UNIT_FLOOR',
+      value_name: extra.pisoDepartamento,
+    })
+  }
+
+  // Acceso
+  if (extra.acceso) {
+    const accesoMapped = mapAccess(extra.acceso)
+    if (accesoMapped) {
+      attributes.push({
+        id: 'LAND_ACCESS',
+        value_id: accesoMapped.id,
+        value_name: accesoMapped.name,
+      })
+    }
+  }
+
+  // Acceso
+  if (extra.tipoCampo) {
+    const tipoCampoMapped = mapTipoCampo(extra.tipoCampo)
+    if (tipoCampoMapped) {
+      attributes.push({
+        id: 'FARM_TYPE',
+        value_id: tipoCampoMapped.id,
+        value_name: tipoCampoMapped.name,
+      })
+    }
+  }
+
+  // Acceso Cochera`
+  if (extra.accesoCochera) {
+    const accesoCocheraMapped = mapAccesoCochera(extra.accesoCochera)
+    if (accesoCocheraMapped) {
+      attributes.push({
+        id: 'GARAGE_ACCESS',
+        value_id: accesoCocheraMapped.id,
+        value_name: accesoCocheraMapped.name,
+      })
+    }
+  }
+
+  // Tipo de Cochera
+  if (extra.tipoCochera) {
+    const tipoCocheraMapped = mapTipoCochera(extra.tipoCochera)
+    if (tipoCocheraMapped) {
+      attributes.push({
+        id: 'GARAGE_TYPE',
+        value_id: tipoCocheraMapped.id,
+        value_name: tipoCocheraMapped.name,
+      })
+    }
+  }
+  // Tipo de Covertura Cochera
+  if (extra.tipoCoverturaCochera) {
+    const tipoCoverturaCocheraMapped = mapTipoCoverturaCochera(extra.tipoCoverturaCochera)
+    if (tipoCoverturaCocheraMapped) {
+      attributes.push({
+        id: 'COVERAGE_TYPE',
+        value_id: tipoCoverturaCocheraMapped.id,
+        value_name: tipoCoverturaCocheraMapped.name,
+      })
+    }
+  }
+
+  // Altura Deposito
+  if (extra.alturaDeposito) {
+    attributes.push({
+      id: 'HEIGHT',
+      value_name: `${extra.alturaDeposito} m`,
+      value_struct: {
+        number: extra.alturaDeposito,
+        unit: 'm',
+      },
+    })
+  }
+  // Altura Deposito
+  if (extra.banosPiso) {
+    attributes.push({
+      id: 'BATHS_PER_FLOOR',
+      value_name: `${extra.banosPiso}`,
+    })
+  }
+  // Altura Deposito
+  if (extra.cantidadOficinas) {
+    attributes.push({
+      id: 'OFFICES',
+      value_name: `${extra.cantidadOficinas}`,
     })
   }
 
@@ -455,6 +614,30 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
 
   const servicios = amenities.servicios || []
   const ambientesArray = amenities.ambientes || []
+
+  if (amenities.agua === 'Si') {
+    attributes.push({
+      id: 'HAS_TAP_WATER',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  if (amenities.gas === 'Si') {
+    attributes.push({
+      id: 'HAS_NATURAL_GAS',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
+
+  if (amenities.luz === 'Si') {
+    attributes.push({
+      id: 'HAS_ELECTRIC_LIGHT',
+      value_id: '242085',
+      value_name: 'Sí',
+    })
+  }
 
   // Acceso a internet
   if (servicios.includes('internet')) {
@@ -609,6 +792,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       value_id: '242085',
       value_name: 'Sí',
     })
+  } else {
+    attributes.push({
+      id: 'HAS_MAID_ROOM',
+      value_id: '242084',
+      value_name: 'No',
+    })
   }
 
   // Dormitorio en suite
@@ -743,6 +932,12 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
       id: 'HAS_TERRACE',
       value_id: '242085',
       value_name: 'Sí',
+    })
+  } else {
+    attributes.push({
+      id: 'HAS_TERRACE',
+      value_id: '242084',
+      value_name: 'No',
     })
   }
 
@@ -998,7 +1193,7 @@ export function mapFormDataToMercadoLibre(propertyData: PropertyData, images: an
 
     // Mapear la ciudad usando departmentMappings y el barrio usando localityMappings
     location: {
-      address_line: ubication.address || ubication.neighborhood || '',
+      address_line: ubication.neighborhood || ubication.address || '',
       zip_code: '5001',
       city: (() => {
         // Buscar el department en departmentMappings
@@ -1096,6 +1291,132 @@ function mapHouseSubtype(type?: string): { id: string; name: string } | null {
   }
 
   return subtypeMap[type?.toLowerCase() || ''] || null
+}
+function mapAccess(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    Tierra: {
+      id: '245049',
+      name: 'Tierra',
+    },
+    Arena: {
+      id: '245045',
+      name: 'Arena',
+    },
+    Asfalto: {
+      id: '245046',
+      name: 'Asfalto',
+    },
+    Otro: {
+      id: '245047',
+      name: 'Otro',
+    },
+    Ripio: {
+      id: '245048',
+      name: 'Ripio',
+    },
+  }
+
+  return subtypeMap[type || ''] || null
+}
+function mapTipoCampo(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    otro: {
+      id: '245107',
+      name: 'Otro',
+    },
+    fruticola: {
+      id: '267215',
+      name: 'Frutícola',
+    },
+    agrícola: {
+      id: '245098',
+      name: 'Agrícola',
+    },
+    chacra: {
+      id: '245099',
+      name: 'Chacra',
+    },
+    criadero: {
+      id: '245100',
+      name: 'Criadero',
+    },
+    tambero: {
+      id: '245101',
+      name: 'Tambero',
+    },
+    floricultura: {
+      id: '245102',
+      name: 'Floricultura',
+    },
+    forestal: {
+      id: '245103',
+      name: 'Forestal',
+    },
+    ganadero: {
+      id: '245105',
+      name: 'Ganadero',
+    },
+    haras: {
+      id: '245106',
+      name: 'Haras',
+    },
+  }
+
+  return subtypeMap[type || ''] || null
+}
+function mapAccesoCochera(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    rampa_fija: {
+      id: '245384',
+      name: 'Rampa fija',
+    },
+    rampa_movil: {
+      id: '245385',
+      name: 'Rampa móvil',
+    },
+    ascensor: {
+      id: '267217',
+      name: 'Ascensor',
+    },
+    horizontal: {
+      id: '245383',
+      name: 'Horizontal',
+    },
+  }
+
+  return subtypeMap[type || ''] || null
+}
+function mapTipoCochera(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    fija: {
+      id: '245380',
+      name: 'Fija',
+    },
+    movil: {
+      id: '245381',
+      name: 'Móvil',
+    },
+  }
+
+  return subtypeMap[type || ''] || null
+}
+function mapTipoCoverturaCochera(type?: string): { id: string; name: string } | null {
+  const subtypeMap: Record<string, { id: string; name: string }> = {
+    semi_cubierta: {
+      id: '245388',
+      name: 'Semi cubierta',
+    },
+    cubierta: {
+      id: '245386',
+      name: 'Cubierta',
+    },
+    descubierta: {
+      id: '245387',
+      name: 'Descubierta',
+    },
+  }
+
+  return subtypeMap[type || ''] || null
 }
 function mapDepartmentSubtype(type?: string): { id: string; name: string } | null {
   const subtypeMap: Record<string, { id: string; name: string }> = {
@@ -1203,6 +1524,28 @@ function mapDisposition(object?: string): { id: string; name: string } | null {
   return dispositionMap[object || ''] || null
 }
 
+function mapDispositioLote(object?: string): { id: string; name: string } | null {
+  const dispositionMap: Record<string, { id: string; name: string }> = {
+    otro: { id: '245242', name: 'Otro' },
+    perimetral: { id: '245243', name: 'Perimetral' },
+    aRio: { id: '245239', name: 'A río' },
+    aLaguna: { id: '245240', name: 'A laguna' },
+    interno: { id: '245241', name: 'Interno' },
+  }
+
+  return dispositionMap[object || ''] || null
+}
+
+function mapFormaTerreno(object?: string): { id: string; name: string } | null {
+  const formaMap: Record<string, { id: string; name: string }> = {
+    regular: { id: '245110', name: 'Regular' },
+    irregular: { id: '245108', name: 'Irregular' },
+    plano: { id: '245109', name: 'Plano' },
+  }
+
+  return formaMap[object || ''] || null
+}
+
 function parseAntiquity(antiquity?: string): number {
   if (!antiquity) return 0
   if (antiquity === '6_meses') {
@@ -1221,49 +1564,4 @@ function extractYoutubeId(url?: string): string | undefined {
 
   const match = url.match(regex)
   return match ? match[1] : undefined
-}
-
-export function validateMercadoLibreData(data: any) {
-  const errors: string[] = []
-
-  if (!data.title || data.title.length === 0) {
-    errors.push('El título es obligatorio')
-  }
-
-  if (data.title && data.title.length > 60) {
-    errors.push('El título no puede superar los 60 caracteres')
-  }
-
-  if (!data.price || data.price <= 0) {
-    errors.push('El precio debe ser mayor a 0')
-  }
-
-  if (!data.pictures || data.pictures.length === 0) {
-    errors.push('Se requiere al menos una imagen')
-  }
-
-  if (!data.description?.plain_text) {
-    errors.push('La descripción es obligatoria')
-  }
-
-  // Validar atributos obligatorios
-  const requiredAttributes = [
-    'TOTAL_AREA',
-    'COVERED_AREA',
-    'BEDROOMS',
-    'FULL_BATHROOMS',
-    'PARKING_LOTS',
-  ]
-  const presentAttributes = data.attributes?.map((attr: any) => attr.id) || []
-
-  requiredAttributes.forEach((reqAttr) => {
-    if (!presentAttributes.includes(reqAttr)) {
-      errors.push(`Falta el atributo obligatorio: ${reqAttr}`)
-    }
-  })
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  }
 }

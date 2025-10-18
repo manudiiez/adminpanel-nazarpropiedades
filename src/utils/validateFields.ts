@@ -94,6 +94,11 @@ export const validateCoveredArea = (value: any, { data }: ValidationArgs) => {
     'playa_de_estacionamiento',
     'triplex',
     'vinedo',
+    'local_comercial',
+    'bodega_con_vinedo',
+    'hotel',
+    'industria',
+    'negocio',
   ]
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
@@ -138,6 +143,9 @@ export const validateTotalArea = (value: any, { data }: ValidationArgs) => {
     'playa_de_estacionamiento',
     'triplex',
     'vinedo',
+    'local_comercial',
+    'bodega_con_vinedo',
+    'negocio',
   ]
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
@@ -248,6 +256,7 @@ export const validateBedrooms = (value: any, { data }: ValidationArgs) => {
     'semipiso',
     'chalet',
     'triplex',
+    'campo',
   ]
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
@@ -281,6 +290,9 @@ export const validateBathrooms = (value: any, { data }: ValidationArgs) => {
     'industria',
     'playa_de_estacionamiento',
     'triplex',
+    'campo',
+    'local_comercial',
+    'oficina',
   ]
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
@@ -304,6 +316,7 @@ export const validateGarageType = (value: any, { data }: ValidationArgs) => {
     'piso',
     'chalet',
     'triplex',
+    'ph',
   ]
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
@@ -347,7 +360,7 @@ export const validateMascotas = (value: any, { data }: ValidationArgs) => {
 }
 export const validateAmbientes = (value: any, { data }: ValidationArgs) => {
   // Requerido para ciertos tipos básicos
-  const requiredTypes = ['departamento']
+  const requiredTypes = ['departamento', 'ph']
 
   if (requiredTypes.includes(data?.classification?.type || '')) {
     if (!value) {

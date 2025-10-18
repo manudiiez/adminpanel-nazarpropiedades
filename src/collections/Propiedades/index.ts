@@ -491,7 +491,6 @@ export const Propiedades: CollectionConfig = {
                 condition: (data, siblingData) => {
                   return (
                     data?.classification.type !== 'lote' &&
-                    data?.classification.type !== 'cochera' &&
                     data?.classification.type !== 'negocio' &&
                     data?.classification.type !== 'terreno'
                   )
@@ -521,7 +520,48 @@ export const Propiedades: CollectionConfig = {
                 width: '50%',
                 description: 'Este campo es importante para la calidad de Mercado Libre',
                 condition: (data, siblingData) => {
-                  return data?.classification.type !== 'negocio'
+                  return (
+                    data?.classification.type !== 'negocio' &&
+                    data?.classification.type !== 'cochera' &&
+                    data?.classification.type !== 'deposito' &&
+                    data?.classification.type !== 'galpon' &&
+                    data?.classification.type !== 'departamento' &&
+                    data?.classification.type !== 'fondo_de_comercio' &&
+                    data?.classification.type !== 'local_comercial' &&
+                    data?.classification.type !== 'oficina' &&
+                    data?.classification.type !== 'ph' &&
+                    data?.classification.type !== 'piso' &&
+                    data?.classification.type !== 'semipiso' &&
+                    data?.classification.type !== 'lote'
+                  )
+                },
+              },
+            },
+            {
+              name: 'pricePerSquareMeterArs',
+              type: 'number',
+              label: 'Precio por m² (ARS)',
+              admin: {
+                placeholder: 'Selecciona el precio por m²',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'campo' || data?.classification.type === 'lote'
+                  )
+                },
+              },
+            },
+            {
+              name: 'pricePerSquareMeterUsd',
+              type: 'number',
+              label: 'Precio por m² (USD)',
+              admin: {
+                placeholder: 'Selecciona el precio por m²',
+                width: '50%',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'campo' || data?.classification.type === 'lote'
+                  )
                 },
               },
             },
@@ -536,7 +576,10 @@ export const Propiedades: CollectionConfig = {
                 condition: (data, siblingData) => {
                   return (
                     data?.classification.type !== 'negocio' &&
-                    data?.classification.type !== 'playa_de_estacionamiento'
+                    data?.classification.type !== 'playa_de_estacionamiento' &&
+                    data?.classification.type !== 'deposito' &&
+                    data?.classification.type !== 'galpon' &&
+                    data?.classification.type !== 'cochera'
                   )
                 },
               },
@@ -574,7 +617,6 @@ export const Propiedades: CollectionConfig = {
                 placeholder: 'Selecciona la antigüedad',
                 condition: (data, siblingData) => {
                   return (
-                    data?.classification.type !== 'cochera' &&
                     data?.classification.type !== 'negocio' &&
                     data?.classification.type !== 'terreno' &&
                     data?.classification.type !== 'lote'
@@ -678,7 +720,6 @@ export const Propiedades: CollectionConfig = {
                     data?.classification.type !== 'hotel' &&
                     data?.classification.type !== 'industria' &&
                     data?.classification.type !== 'negocio' &&
-                    data?.classification.type !== 'ph' &&
                     data?.classification.type !== 'playa_de_estacionamiento' &&
                     data?.classification.type !== 'semipiso' &&
                     data?.classification.type !== 'vinedo'
@@ -987,6 +1028,15 @@ export const Propiedades: CollectionConfig = {
               admin: {
                 width: '25%',
                 description: 'Este campo solo sera visible para mercado libre',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type !== 'campo' &&
+                    data?.classification.type !== 'cochera' &&
+                    data?.classification.type !== 'deposito' &&
+                    data?.classification.type !== 'galpon' &&
+                    data?.classification.type !== 'lote'
+                  )
+                },
               },
             },
             {
@@ -1010,13 +1060,31 @@ export const Propiedades: CollectionConfig = {
               },
             },
             {
+              type: 'number',
+              name: 'pisoDepartamento',
+              label: 'Número de piso de la unidad',
+              admin: {
+                width: '25%',
+                placeholder: 'Ingresa el número de piso',
+                description: 'Este campo solo sera visible para mercado libre',
+                condition: (data, siblingData) => {
+                  return (
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'alquiler_temporario') ||
+                    data?.classification.type === 'oficina' ||
+                    data?.classification.type === 'ph'
+                  )
+                },
+              },
+            },
+            {
               name: 'acceso',
               type: 'select',
               label: 'Acceso',
               options: propertySelectOptions.access,
               required: true,
               admin: {
-                width: '50%',
+                width: '25%',
                 placeholder: 'Selecciona el tipo de acceso',
                 description: 'Este campo solo sera visible para mercado libre',
                 condition: (data, siblingData) => {
@@ -1111,20 +1179,31 @@ export const Propiedades: CollectionConfig = {
                 description: 'Este campo solo sera visible para mercado libre',
                 width: '25%',
                 condition: (data, siblingData) => {
-                  return data?.classification.type === 'departamento'
+                  return (
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'venta') ||
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'alquiler')
+                  )
                 },
               },
             },
             {
               name: 'departamentosPorPiso',
-              label: 'Cantidad de departamentos por piso',
+              label: 'Cantidad de unidades por piso',
               type: 'number',
               admin: {
-                placeholder: 'Ingresa la cantidad de departamentos por piso',
+                placeholder: 'Ingresa la cantidad de unidades por piso',
                 description: 'Este campo solo sera visible para mercado libre',
                 width: '25%',
                 condition: (data, siblingData) => {
-                  return data?.classification.type === 'departamento'
+                  return (
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'venta') ||
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'alquiler') ||
+                    data?.classification.type === 'oficina'
+                  )
                 },
               },
             },
@@ -1137,7 +1216,12 @@ export const Propiedades: CollectionConfig = {
                 description: 'Este campo solo sera visible para mercado libre',
                 width: '25%',
                 condition: (data, siblingData) => {
-                  return data?.classification.type === 'departamento'
+                  return (
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'venta') ||
+                    (data?.classification.type === 'departamento' &&
+                      data?.classification.condition === 'alquiler')
+                  )
                 },
               },
             },
@@ -1151,7 +1235,163 @@ export const Propiedades: CollectionConfig = {
                 description: 'Este campo solo sera visible para mercado libre',
                 width: '25%',
                 condition: (data, siblingData) => {
-                  return data?.classification.type === 'departamento'
+                  return (
+                    data?.classification.type === 'departamento' ||
+                    data?.classification.type === 'oficina' ||
+                    data?.classification.type === 'ph'
+                  )
+                },
+              },
+            },
+            {
+              name: 'disposicionTerreno',
+              label: 'Disposición del lote',
+              type: 'select',
+              options: propertySelectOptions.dispositionLote,
+              admin: {
+                placeholder: 'Selecciona la disposición del lote',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'lote'
+                },
+              },
+            },
+            {
+              name: 'formaTerreno',
+              label: 'Forma del terreno',
+              type: 'select',
+              options: [
+                { value: 'regular', label: 'Regular' },
+                { value: 'irregular', label: 'Irregular' },
+                { value: 'plano', label: 'Plano' },
+              ],
+              admin: {
+                placeholder: 'Selecciona la forma del terreno',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'lote'
+                },
+              },
+            },
+            {
+              name: 'tipoCampo',
+              label: 'Tipo de campo',
+              type: 'select',
+              options: propertySelectOptions.tipoCampo,
+              admin: {
+                placeholder: 'Selecciona el tipo de campo',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'campo'
+                },
+              },
+            },
+            {
+              name: 'accesoCochera',
+              label: 'Acceso a cochera',
+              type: 'select',
+              options: propertySelectOptions.accesoCochera,
+              admin: {
+                placeholder: 'Selecciona el acceso a cochera',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'cochera'
+                },
+              },
+            },
+            {
+              name: 'tipoCochera',
+              label: 'Tipo de cochera',
+              type: 'select',
+              options: [
+                {
+                  value: 'fija',
+                  label: 'Fija',
+                },
+                {
+                  value: 'movil',
+                  label: 'Móvil',
+                },
+              ],
+              admin: {
+                placeholder: 'Selecciona el tipo de cochera',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'cochera'
+                },
+              },
+            },
+            {
+              name: 'tipoCoverturaCochera',
+              label: 'Tipo de covertura de cochera',
+              type: 'select',
+              options: [
+                {
+                  value: 'semi_cubierta',
+                  label: 'Semi cubierta',
+                },
+                {
+                  value: 'cubierta',
+                  label: 'Cubierta',
+                },
+                {
+                  value: 'descubierta',
+                  label: 'Descubierta',
+                },
+              ],
+              admin: {
+                placeholder: 'Selecciona el tipo de covertura de cochera',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'cochera'
+                },
+              },
+            },
+            {
+              name: 'alturaDeposito',
+              label: 'Altura del deposito/galpon en m',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la altura del deposito/galpon',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return (
+                    data?.classification.type === 'deposito' ||
+                    data?.classification.type === 'galpon'
+                  )
+                },
+              },
+            },
+            {
+              name: 'banosPiso',
+              label: 'Cantidad de baños por piso',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la cantidad de baños por piso',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'oficina'
+                },
+              },
+            },
+            {
+              name: 'cantidadOficinas',
+              label: 'Cantidad de oficinas',
+              type: 'number',
+              admin: {
+                placeholder: 'Ingresa la cantidad de oficinas',
+                description: 'Este campo solo sera visible para mercado libre',
+                width: '25%',
+                condition: (data, siblingData) => {
+                  return data?.classification.type === 'oficina'
                 },
               },
             },
