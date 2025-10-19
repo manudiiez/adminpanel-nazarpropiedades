@@ -361,8 +361,11 @@ export async function PUT(request: NextRequest) {
       const errorData = await mlResponse.json().catch(() => ({}))
       console.error('❌ Error actualizando en ML:', errorData)
 
-      const errorMessage = errorData.message || 'Error actualizando en Mercado Libre'
-
+      let errorMessage = errorData.message || 'Error actualizando en Mercado Libre'
+      if (errorData.cause?.[0]?.message === 'category_id is not modifiable.') {
+        errorMessage =
+          'La categoría no se puede modificar. Espere a que la publicación se suba y luego intente de nuevo.'
+      }
       if (propertyId && initialState) {
         await updatePortalStatus(
           propertyId,
@@ -434,7 +437,7 @@ export async function PUT(request: NextRequest) {
     console.error('❌ Error actualizando en MercadoLibre:', error)
 
     const errorMessage = error instanceof Error ? error.message : 'Error en sincronización'
-
+    console.log('Error message:', errorMessage)
     if (propertyId && initialState) {
       await updatePortalStatus(
         propertyId,
@@ -445,10 +448,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    return NextResponse.json(
-      { error: 'Error en sincronización', details: errorMessage },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: errorMessage, details: errorMessage }, { status: 500 })
   }
 }
 
