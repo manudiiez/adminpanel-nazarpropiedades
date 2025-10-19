@@ -73,7 +73,18 @@ export const Contratos: CollectionConfig = {
             },
 
             // relaciones (ajusta slugs)
-            { name: 'property', type: 'relationship', relationTo: 'propiedades', required: true },
+            {
+              name: 'property',
+              label: 'Propiedad',
+              type: 'relationship',
+              relationTo: 'propiedades',
+              required: true,
+              filterOptions: {
+                status: {
+                  equals: 'activa',
+                },
+              },
+            },
             {
               type: 'row',
               fields: [
@@ -363,13 +374,15 @@ export const Contratos: CollectionConfig = {
                 status: 'terminada',
               },
             })
-
             console.log(
               '✅ Estado de propiedad actualizado a "terminada" por contrato:',
               doc.displayTitle,
             )
           } catch (error) {
-            console.error('❌ Error actualizando estado de propiedad:', error)
+            console.log('❌ Error actualizando estado de propiedad tras crear contrato')
+            // alert(
+            //   `Error: ${error instanceof Error ? error.message : 'Error al cambiar el estado de la propiedad'}`,
+            // )
           }
         }
       },
