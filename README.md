@@ -44,5 +44,3 @@
 ## Me falta
 - Ver manejo de errore sy mensajes faciles de leer de la api
 - Exceder el numero
-
-- Ver bien los numeros en alquileres, en contratos (revisar)
