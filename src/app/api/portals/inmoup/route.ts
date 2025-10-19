@@ -440,7 +440,7 @@ async function updatePortalError(propertyId: string, lastError: string) {
 // Función para actualizar el portalStatuses en la base de datos
 async function updatePortalStatus(
   propertyId: string,
-  status: 'queued' | 'ok' | 'error',
+  status: 'queued' | 'ok' | 'error' | 'desactualizado',
   externalId?: string,
   externalUrl?: string,
   lastError?: string,
@@ -450,7 +450,7 @@ async function updatePortalStatus(
     const payload = await getPayload({ config })
 
     // Si preserveUploaded es true, obtener el estado actual
-    let uploaded = status === 'ok'
+    let uploaded = status === 'ok' || status === 'desactualizado'
     if (preserveUploaded && status === 'error') {
       const currentProperty = await payload.findByID({
         collection: 'propiedades',

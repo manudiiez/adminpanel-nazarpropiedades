@@ -45,8 +45,4 @@
 - Ver manejo de errore sy mensajes faciles de leer de la api
 - Exceder el numero
 
-- A veces se sale el upload de la propiedad cunaod no se sincroniza, o sale el erro de sincronizacion porque todavia no se sube
-
-- Cuando se venta en vista debe aparecer con una estiqueta vendida o alquilada. 
-- En contratos solo deben figurar las casas activas, no alquiladas o vendidas
 - Ver bien los numeros en alquileres, en contratos (revisar)

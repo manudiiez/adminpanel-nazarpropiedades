@@ -238,6 +238,25 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
     })
   }
 
+  const mapStatusLabel = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      borrador: 'Esta propiedad es un Borrador',
+      activa: 'Esta propiedad esta Publicada',
+      reservada: 'Esta propiedad esta reservada',
+      terminada: 'Esta propiedad esta Vendida / Alquilada',
+    }
+    return statusMap[status] || 'Estado desconocido'
+  }
+  const mapStatusLabelClass = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      borrador: 'property-details__status--draft',
+      activa: 'property-details__status--active',
+      reservada: 'property-details__status--reserved',
+      terminada: 'property-details__status--sold',
+    }
+    return statusMap[status] || 'Estado desconocido'
+  }
+
   const publishedPortals = Object.values(portalsConfig).filter(
     (portal: any) => portal.status === 'published',
   ).length
@@ -247,6 +266,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
     <Gutter>
       <div className="property-details">
         <NavigationHeader title="Detalles de la Propiedad" />
+        <div className={`property-details__status ${mapStatusLabelClass(formData.status)}`}>
+          {mapStatusLabel(formData.status)}
+        </div>
         <div className="property-details__main">
           <div className="property-details__container">
             <div className="property-details__layout">

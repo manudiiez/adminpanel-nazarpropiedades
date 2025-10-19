@@ -6,7 +6,7 @@ import config from '@payload-config'
 
 async function updatePortalStatus(
   propertyId: string,
-  status: 'queued' | 'ok' | 'error',
+  status: 'queued' | 'ok' | 'error' | 'desactualizado',
   externalId?: string,
   externalUrl?: string,
   lastError?: string,
@@ -19,7 +19,7 @@ async function updatePortalStatus(
       id: propertyId,
       data: {
         mercadolibre: {
-          uploaded: status === 'ok',
+          uploaded: status === 'ok' || status === 'desactualizado',
           externalId: externalId || null,
           externalUrl: externalUrl || null,
           status: status,

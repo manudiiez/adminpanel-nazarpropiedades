@@ -4,6 +4,35 @@
 /* ============================================ */
 
 .property-details {
+  &__status {
+    font-size: 1.1rem;
+    color: var(--theme-success-600);
+    padding: .7rem 1.2rem;
+    border: 1px solid var(--theme-success-500);
+    border-radius: var(--style-radius-m);
+    background-color: var(--theme-success-150);
+    &--draft {
+      color: var(--theme-warning-600);
+      border-color: var(--theme-warning-500);
+      background-color: var(--theme-warning-150);
+    }
+    &--active {
+      color: var(--theme-success-600);
+      border-color: var(--theme-success-500);
+      background-color: var(--theme-success-150);
+    }
+    &--reserved {
+      color: var(--theme-info-600);
+      border-color: var(--theme-info-500);
+      background-color: var(--theme-info-150);
+    }
+    &--sold {
+      color: var(--theme-error-600);
+      border-color: var(--theme-error-500);
+      background-color: var(--theme-error-150);
+    }
+  }
+
   &__main {
     padding: 2rem 0;
   }
