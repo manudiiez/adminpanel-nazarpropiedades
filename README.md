@@ -41,4 +41,12 @@
 - Tipo de cochera
 - altura deposito
 
-### Revisar nuevo campo forma del terreno en otros tipos de propiedades
+## Me falta
+- Ver manejo de errore sy mensajes faciles de leer de la api
+- Exceder el numero
+
+- Falta verificar el funcionamiento contratos y todo. Cuando se venda automaticamente se baje de todos los portales 
+
+- Cuando se venta en vista debe aparecer con una estiqueta vendida o alquilada. 
+- En contratos solo deben figurar las casas activas, no alquiladas o vendidas
+- Ver bien los numeros en alquileres, en contratos (revisar)

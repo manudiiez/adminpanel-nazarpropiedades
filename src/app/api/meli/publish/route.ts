@@ -486,7 +486,15 @@ export async function DELETE(request: NextRequest) {
 
     if (!mlResponse.ok) {
       const errorData = await mlResponse.json().catch(() => ({}))
-      throw new Error(errorData.message || 'Error pausando publicación')
+      let errorMessage = errorData.message || 'Error actualizando en Mercado Libre'
+      if (
+        errorData.cause?.[0]?.message ===
+        'Item in status not_yet_active is not possible to change to status closed. Valid transitions are [active, not_yet_active]'
+      ) {
+        errorMessage =
+          'El inmueble no se puede eliminar. Espere a que la publicación se suba completamente y luego intente de nuevo.'
+      }
+      throw new Error(errorMessage || 'Error pausando publicación')
     }
 
     console.log('✅ Publicación pausada en Mercado Libre')
@@ -524,7 +532,10 @@ export async function DELETE(request: NextRequest) {
     })
   } catch (error) {
     console.error('❌ Error eliminando de MercadoLibre:', error)
-    return NextResponse.json({ error: 'Error en eliminación' }, { status: 500 })
+    return NextResponse.json(
+      { error: (error as any).message || 'Error en eliminación' },
+      { status: 500 },
+    )
   }
 }
 
