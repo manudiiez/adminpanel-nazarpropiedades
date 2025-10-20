@@ -558,7 +558,7 @@ export async function POST(request: NextRequest) {
 
     // Mapear propertyData al formato de Inmoup
     const mappedPropertyData = mapFormDataToInmoup(propertyData)
-    console.log('Datos mapeados para Inmoup:', mappedPropertyData)
+    // console.log('Datos mapeados para Inmoup:', mappedPropertyData)
     // Validar los datos mapeados
     const validation = validateInmoupData(mappedPropertyData)
     if (!validation.isValid) {
@@ -583,9 +583,9 @@ export async function POST(request: NextRequest) {
 
     // Crear objeto inmoupData usando la función reutilizable
     const inmoupData = createInmoupData(mappedPropertyData, ownerData, images, propertyId || '0')
-    console.log('✅ Objeto inmoupData creado exitosamente:', inmoupData)
-    console.log('Datos mapeados para Inmoup video:', inmoupData.propiedades[0].video)
-    console.log('Datos mapeados para Inmoup Fotos:', inmoupData.propiedades[0].fotos)
+    // console.log('✅ Objeto inmoupData creado exitosamente:', inmoupData)
+    // console.log('Datos mapeados para Inmoup video:', inmoupData.propiedades[0].video)
+    // console.log('Datos mapeados para Inmoup Fotos:', inmoupData.propiedades[0].fotos)
     // console.log('Datos finales enviados a Inmoup:', inmoupData)
     // console.log('Datos mapeados para Inmoup ubicacion:', inmoupData.propiedades[0].ubicacion)
     // console.log('Datos mapeados para Inmoup propietario:', inmoupData.propiedades[0].propietario)
@@ -602,6 +602,8 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify(inmoupData), // Array completo: { propiedades: [...] }
       })
+      // console.log('respuestas inmoup fetch:', inmoupResponse)
+      console.log(JSON.stringify(inmoupData, null, 2)) // pretty JSON
 
       if (!inmoupResponse.ok) {
         const errorData = await inmoupResponse.json().catch(() => ({}))
