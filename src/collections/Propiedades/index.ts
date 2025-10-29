@@ -1462,25 +1462,19 @@ export const Propiedades: CollectionConfig = {
       name: 'images',
       label: 'Imágenes',
       fields: [
-        // {
-        //   name: 'imagenesExtra',
-        //   label: 'Imágenes Extra',
-        //   type: 'array',
-        //   fields: [
-        //     {
-        //       name: 'image',
-        //       label: 'Imagen',
-        //       type: 'upload',
-        //       relationTo: 'media',
-        //       required: true,
-        //       admin: {
-        //         components: {
-        //           Cell: '@/components/cells/ImageCell/ImageCell',
-        //         },
-        //       },
-        //     },
-        //   ],
-        // },
+        {
+          name: 'imagenesExtra',
+          label: 'Imágenes extra (URLs)',
+          type: 'array',
+          labels: { singular: 'Imagen', plural: 'Imágenes' },
+          fields: [
+            {
+              name: 'url',
+              type: 'text',
+              admin: { placeholder: 'https://...' },
+            },
+          ],
+        },
         {
           name: 'coverImage',
           label: 'Imagen de Portada',

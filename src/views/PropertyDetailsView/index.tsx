@@ -108,6 +108,8 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   const ownerData = formData?.owner ? await getOwnerData(formData.owner) : null
   // Construir todas las imágenes para el carrusel
   const allImages = [...(coverImage ? [coverImage] : []), ...galleryImages]
+  console.log('allImages:', allImages)
+  console.log(formData)
   // Construir array de imágenes para portales con coverImage primero
   const portalImages = []
   // Agregar coverImage como primera imagen (orden 1)

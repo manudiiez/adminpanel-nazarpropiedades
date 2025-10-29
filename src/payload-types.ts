@@ -851,6 +851,12 @@ export interface Propiedade {
     description?: string | null;
   };
   images: {
+    imagenesExtra?:
+      | {
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
     /**
      * Imagen principal que aparecerá como portada. No repetir esta imagen en la galería.
      */
@@ -1281,6 +1287,12 @@ export interface PropiedadesSelect<T extends boolean = true> {
   images?:
     | T
     | {
+        imagenesExtra?:
+          | T
+          | {
+              url?: T;
+              id?: T;
+            };
         coverImage?: T;
         gallery?: T;
         videoUrl?: T;
