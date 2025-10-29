@@ -49,7 +49,6 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
         setLoading(false)
       }
     }
-
     fetchImage()
   }, [cellData])
 

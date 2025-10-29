@@ -854,6 +854,7 @@ export interface Propiedade {
     imagenesExtra?:
       | {
           url?: string | null;
+          orden?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -1291,6 +1292,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
           | T
           | {
               url?: T;
+              orden?: T;
               id?: T;
             };
         coverImage?: T;

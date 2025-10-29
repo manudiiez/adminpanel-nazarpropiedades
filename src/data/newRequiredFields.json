@@ -1,53 +1,644 @@
 [
   {
-    "id": "LAND_ACCESS",
-    "name": "Acceso",
-    "tags": {
-      "required": true,
-      "catalog_listing_required": true
-    },
-    "used_in": ["MLA6413", "MLA6414", "MLA458174", "MLA50549", "MLA401687", "MLA1494"],
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "list",
-    "values": [
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Tiene Expensas",
+    "ser_id": 24,
+    "nuevo": 0,
+    "options": [
       {
-        "id": "245049",
-        "name": "Tierra"
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 174
       },
       {
-        "id": "245045",
-        "name": "Arena"
+        "index": 1,
+        "desc": "Si",
+        "selector_id": 175
       },
       {
-        "id": "245046",
-        "name": "Asfalto"
-      },
-      {
-        "id": "245047",
-        "name": "Otro"
-      },
-      {
-        "id": "245048",
-        "name": "Ripio"
+        "index": 2,
+        "desc": "No",
+        "selector_id": 176
       }
-    ],
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
+    ]
   },
   {
-    "id": "GUESTS",
-    "name": "Huéspedes",
-    "tags": {
-      "required": true,
-      "catalog_listing_required": true
-    },
-    "used_in": ["MLA50278", "MLA50279", "MLA105180", "MLA52745"],
-    "hierarchy": "ITEM",
-    "relevance": 1,
-    "value_type": "number",
-    "value_max_length": 18,
-    "attribute_group_id": "FIND",
-    "attribute_group_name": "Ficha técnica"
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "t",
+    "descripcion": "Superficie Total m2",
+    "ser_id": 2,
+    "nuevo": 0
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "t",
+    "descripcion": "Superficie Cubierta m2",
+    "ser_id": 7,
+    "nuevo": 0
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Antigüedad",
+    "ser_id": 17,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 101
+      },
+      {
+        "index": 1,
+        "desc": "A Estrenar",
+        "selector_id": 102
+      },
+      {
+        "index": 2,
+        "desc": "6 Meses",
+        "selector_id": 103
+      },
+      {
+        "index": 3,
+        "desc": "1 Año",
+        "selector_id": 104
+      },
+      {
+        "index": 4,
+        "desc": "1 Año y medio",
+        "selector_id": 105
+      },
+      {
+        "index": 5,
+        "desc": "2 Años",
+        "selector_id": 106
+      },
+      {
+        "index": 6,
+        "desc": "3 Años",
+        "selector_id": 107
+      },
+      {
+        "index": 7,
+        "desc": "4 Años",
+        "selector_id": 108
+      },
+      {
+        "index": 8,
+        "desc": "5 Años",
+        "selector_id": 109
+      },
+      {
+        "index": 9,
+        "desc": "6 Años",
+        "selector_id": 110
+      },
+      {
+        "index": 10,
+        "desc": "7 Años",
+        "selector_id": 111
+      },
+      {
+        "index": 11,
+        "desc": "8 Años",
+        "selector_id": 112
+      },
+      {
+        "index": 12,
+        "desc": "9 Años",
+        "selector_id": 113
+      },
+      {
+        "index": 13,
+        "desc": "10 Años",
+        "selector_id": 114
+      },
+      {
+        "index": 14,
+        "desc": "11 Años",
+        "selector_id": 115
+      },
+      {
+        "index": 15,
+        "desc": "12 Años",
+        "selector_id": 116
+      },
+      {
+        "index": 16,
+        "desc": "13 Años",
+        "selector_id": 117
+      },
+      {
+        "index": 17,
+        "desc": "14 Años",
+        "selector_id": 118
+      },
+      {
+        "index": 18,
+        "desc": "15 Años",
+        "selector_id": 119
+      },
+      {
+        "index": 19,
+        "desc": "16 Años",
+        "selector_id": 120
+      },
+      {
+        "index": 20,
+        "desc": "17 Años",
+        "selector_id": 121
+      },
+      {
+        "index": 21,
+        "desc": "18 Años",
+        "selector_id": 122
+      },
+      {
+        "index": 22,
+        "desc": "19 Años",
+        "selector_id": 123
+      },
+      {
+        "index": 23,
+        "desc": "20 Años",
+        "selector_id": 124
+      },
+      {
+        "index": 24,
+        "desc": "21 Años",
+        "selector_id": 125
+      },
+      {
+        "index": 25,
+        "desc": "22 Años",
+        "selector_id": 126
+      },
+      {
+        "index": 26,
+        "desc": "23 Años",
+        "selector_id": 127
+      },
+      {
+        "index": 27,
+        "desc": "24 Años",
+        "selector_id": 128
+      },
+      {
+        "index": 28,
+        "desc": "25 Años",
+        "selector_id": 129
+      },
+      {
+        "index": 29,
+        "desc": "26 Años",
+        "selector_id": 130
+      },
+      {
+        "index": 30,
+        "desc": "27 Años",
+        "selector_id": 131
+      },
+      {
+        "index": 31,
+        "desc": "28 Años",
+        "selector_id": 132
+      },
+      {
+        "index": 32,
+        "desc": "29 Años",
+        "selector_id": 133
+      },
+      {
+        "index": 33,
+        "desc": "30 Años",
+        "selector_id": 134
+      },
+      {
+        "index": 34,
+        "desc": "31 Años",
+        "selector_id": 135
+      },
+      {
+        "index": 35,
+        "desc": "32 Años",
+        "selector_id": 136
+      },
+      {
+        "index": 36,
+        "desc": "33 Años",
+        "selector_id": 137
+      },
+      {
+        "index": 37,
+        "desc": "34 Años",
+        "selector_id": 138
+      },
+      {
+        "index": 38,
+        "desc": "35 Años",
+        "selector_id": 139
+      },
+      {
+        "index": 39,
+        "desc": "36 Años",
+        "selector_id": 140
+      },
+      {
+        "index": 40,
+        "desc": "37 Años",
+        "selector_id": 141
+      },
+      {
+        "index": 41,
+        "desc": "38 Años",
+        "selector_id": 142
+      },
+      {
+        "index": 42,
+        "desc": "39 Años",
+        "selector_id": 143
+      },
+      {
+        "index": 43,
+        "desc": "40 Años",
+        "selector_id": 144
+      },
+      {
+        "index": 44,
+        "desc": "41 Años",
+        "selector_id": 145
+      },
+      {
+        "index": 45,
+        "desc": "42 Años",
+        "selector_id": 146
+      },
+      {
+        "index": 46,
+        "desc": "43 Años",
+        "selector_id": 147
+      },
+      {
+        "index": 47,
+        "desc": "44 Años",
+        "selector_id": 148
+      },
+      {
+        "index": 48,
+        "desc": "45 Años",
+        "selector_id": 149
+      },
+      {
+        "index": 49,
+        "desc": "46 Años",
+        "selector_id": 150
+      },
+      {
+        "index": 50,
+        "desc": "47 Años",
+        "selector_id": 151
+      },
+      {
+        "index": 51,
+        "desc": "48 Años",
+        "selector_id": 152
+      },
+      {
+        "index": 52,
+        "desc": "49 Años",
+        "selector_id": 153
+      },
+      {
+        "index": 53,
+        "desc": "50 Años",
+        "selector_id": 154
+      },
+      {
+        "index": 54,
+        "desc": "Mas de 50 Años",
+        "selector_id": 155
+      }
+    ]
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Estado de Conservación",
+    "ser_id": 115,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 219
+      },
+      {
+        "index": 1,
+        "desc": "Excelente",
+        "selector_id": 220
+      },
+      {
+        "index": 2,
+        "desc": "Muy Bueno",
+        "selector_id": 221
+      },
+      {
+        "index": 3,
+        "desc": "Bueno",
+        "selector_id": 222
+      },
+      {
+        "index": 4,
+        "desc": "Regular",
+        "selector_id": 223
+      }
+    ]
+  },
+  {
+    "requerido": 0,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Cantidad de Ambientes",
+    "ser_id": 32,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 211
+      },
+      {
+        "index": 1,
+        "desc": "Monoambiente",
+        "selector_id": 212
+      },
+      {
+        "index": 2,
+        "desc": "2",
+        "selector_id": 213
+      },
+      {
+        "index": 3,
+        "desc": "3",
+        "selector_id": 214
+      },
+      {
+        "index": 4,
+        "desc": "4",
+        "selector_id": 215
+      },
+      {
+        "index": 5,
+        "desc": "5",
+        "selector_id": 216
+      },
+      {
+        "index": 6,
+        "desc": "6 o mas",
+        "selector_id": 218
+      }
+    ]
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Baños",
+    "ser_id": 8,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 64
+      },
+      {
+        "index": 1,
+        "desc": "1",
+        "selector_id": 66
+      },
+      {
+        "index": 2,
+        "desc": "2",
+        "selector_id": 68
+      },
+      {
+        "index": 3,
+        "desc": "3",
+        "selector_id": 70
+      },
+      {
+        "index": 4,
+        "desc": "4",
+        "selector_id": 72
+      },
+      {
+        "index": 5,
+        "desc": "5",
+        "selector_id": 73
+      },
+      {
+        "index": 6,
+        "desc": "6",
+        "selector_id": 198
+      },
+      {
+        "index": 7,
+        "desc": "7",
+        "selector_id": 199
+      },
+      {
+        "index": 8,
+        "desc": "8",
+        "selector_id": 200
+      },
+      {
+        "index": 9,
+        "desc": "9",
+        "selector_id": 201
+      },
+      {
+        "index": 10,
+        "desc": "10 o Mas",
+        "selector_id": 202
+      }
+    ]
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Dormitorios",
+    "ser_id": 3,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 23
+      },
+      {
+        "index": 1,
+        "desc": "1",
+        "selector_id": 25
+      },
+      {
+        "index": 2,
+        "desc": "2",
+        "selector_id": 27
+      },
+      {
+        "index": 3,
+        "desc": "3",
+        "selector_id": 29
+      },
+      {
+        "index": 4,
+        "desc": "4",
+        "selector_id": 31
+      },
+      {
+        "index": 5,
+        "desc": "5",
+        "selector_id": 33
+      },
+      {
+        "index": 6,
+        "desc": "6",
+        "selector_id": 197
+      },
+      {
+        "index": 7,
+        "desc": "7",
+        "selector_id": 189
+      },
+      {
+        "index": 8,
+        "desc": "8",
+        "selector_id": 191
+      },
+      {
+        "index": 9,
+        "desc": "9",
+        "selector_id": 193
+      },
+      {
+        "index": 10,
+        "desc": "10 o Mas",
+        "selector_id": 195
+      }
+    ]
+  },
+  {
+    "requerido": 1,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Cochera",
+    "ser_id": 4,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 36
+      },
+      {
+        "index": 1,
+        "desc": "Garage",
+        "selector_id": 37
+      },
+      {
+        "index": 2,
+        "desc": "Garage/Cochera",
+        "selector_id": 38
+      },
+      {
+        "index": 3,
+        "desc": "Garage Doble",
+        "selector_id": 39
+      },
+      {
+        "index": 4,
+        "desc": "Cochera Pasante",
+        "selector_id": 40
+      },
+      {
+        "index": 5,
+        "desc": "Sin Cochera",
+        "selector_id": 41
+      }
+    ]
+  },
+  {
+    "requerido": 0,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Amoblado/a",
+    "ser_id": 23,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": 0,
+        "desc": "Indistinto",
+        "selector_id": 171
+      },
+      {
+        "index": 1,
+        "desc": "Si",
+        "selector_id": 172
+      },
+      {
+        "index": 2,
+        "desc": "No",
+        "selector_id": 173
+      }
+    ]
+  },
+  {
+    "requerido": 0,
+    "condicion": 1,
+    "tipo": 1,
+    "tipo_control": "s",
+    "descripcion": "Barrio Privado",
+    "ser_id": 20,
+    "nuevo": 0,
+    "options": [
+      {
+        "index": "0",
+        "selector_id": "",
+        "desc": "Indistinto"
+      },
+      {
+        "index": 0,
+        "desc": "No",
+        "selector_id": 162
+      },
+      {
+        "index": 1,
+        "desc": "Si",
+        "selector_id": 163
+      },
+      {
+        "index": 2,
+        "desc": "Semi Privado",
+        "selector_id": 164
+      }
+    ]
   }
 ]

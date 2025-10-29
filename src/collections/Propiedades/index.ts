@@ -1473,6 +1473,10 @@ export const Propiedades: CollectionConfig = {
               type: 'text',
               admin: { placeholder: 'https://...' },
             },
+            {
+              name: 'orden',
+              type: 'number',
+            },
           ],
         },
         {
