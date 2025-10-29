@@ -64,7 +64,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
   // Si no hay cellData, mostrar mensaje
   if (!cellData) {
     return (
-      <div className="cell-portada">
+      <div className="cell-portada" onClick={handleImageClick}>
         <span className="cell-portada__text">Sin imagen</span>
       </div>
     )

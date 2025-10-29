@@ -527,7 +527,7 @@ export async function POST(request: NextRequest) {
         (property.images.coverImage as any)?.sizes?.watermark?.url ||
         (property.images.coverImage as any)?.url
       if (coverUrl) {
-        images.push({ url: coverUrl, orden: 1 })
+        images.push({ url: encodeURI(coverUrl), orden: 1 })
       }
     }
 
@@ -535,7 +535,7 @@ export async function POST(request: NextRequest) {
       property.images.gallery.forEach((img, index) => {
         const imgUrl = (img as any).sizes.watermark.url
         if (imgUrl) {
-          images.push({ url: imgUrl, orden: index + 2 })
+          images.push({ url: encodeURI(imgUrl), orden: index + 2 })
         }
       })
     }
