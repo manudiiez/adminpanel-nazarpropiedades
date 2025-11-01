@@ -16,41 +16,103 @@ interface ImageData {
   thumbnailURL?: string
 }
 
+// Función helper para obtener datos de imagen dinámicamente
+async function fetchImageData(imageId: string): Promise<ImageData | null> {
+  try {
+    const response = await fetch(`/api/media/${imageId}`)
+
+    if (!response.ok) {
+      throw new Error(`Error al cargar imagen: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (err) {
+    console.error('Error fetching image:', err)
+    throw err
+  }
+}
+
+// Función para obtener la primera imagen extra de una propiedad
+async function fetchPropertyExtraImage(propertyId: string): Promise<string | null> {
+  try {
+    const response = await fetch(`/api/propiedades/${propertyId}`)
+
+    if (!response.ok) {
+      throw new Error(`Error al cargar propiedad: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    // Intentar obtener la primera imagen del campo imagenes.imagenesExtra
+    const imagenesExtra = data?.images?.imagenesExtra || data?.imagenes?.imagenesExtra
+
+    if (imagenesExtra && Array.isArray(imagenesExtra) && imagenesExtra.length > 0) {
+      const firstImage = imagenesExtra[0]
+      return firstImage?.url || null
+    }
+
+    return null
+  } catch (err) {
+    console.error('Error fetching property extra image:', err)
+    return null
+  }
+}
+
+// Función para obtener la URL optimizada de la imagen
+function getOptimizedImageUrl(imageData: ImageData): string {
+  // Prioridad: thumbnail > url original
+  return imageData?.sizes?.thumbnail?.url || imageData?.url || '/noimage.jpg'
+}
+
 export default function ImageCell({ cellData, rowData }: { cellData?: any; rowData?: any }) {
   const [imageData, setImageData] = useState<ImageData | null>(null)
+  const [fallbackImageUrl, setFallbackImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  useEffect(() => {
-    const fetchImage = async () => {
-      // Si no hay cellData o no es un string (ID), no hacer nada
-      if (!cellData || typeof cellData !== 'string') {
-        return
-      }
 
+  useEffect(() => {
+    const loadImage = async () => {
       setLoading(true)
       setError(null)
 
-      try {
-        // Hacer petición a la API para obtener los datos de la imagen
-        const response = await fetch(`/api/media/${cellData}`)
-
-        if (!response.ok) {
-          throw new Error(`Error al cargar imagen: ${response.status}`)
+      // Si hay cellData (ID de imagen), intentar cargarla
+      if (cellData && typeof cellData === 'string') {
+        try {
+          const data = await fetchImageData(cellData)
+          console.log('Fetched image data:', data)
+          setImageData(data)
+          setLoading(false)
+          return
+        } catch (err) {
+          console.error('Error loading image:', err)
+          setError(err instanceof Error ? err.message : 'Error desconocido')
         }
-
-        const data = await response.json()
-        console.log('Fetched image data:', data) // --- IGNORE ---
-        setImageData(data)
-      } catch (err) {
-        console.error('Error fetching image:', err)
-        setError(err instanceof Error ? err.message : 'Error desconocido')
-      } finally {
-        setLoading(false)
       }
+
+      // Si no hay cellData o falló, intentar obtener imagen extra de la propiedad
+      if (rowData?.id) {
+        try {
+          const extraImageUrl = await fetchPropertyExtraImage(rowData.id)
+          if (extraImageUrl) {
+            console.log('Using extra image from property:', extraImageUrl)
+            setFallbackImageUrl(extraImageUrl)
+            setLoading(false)
+            return
+          }
+        } catch (err) {
+          console.error('Error loading property extra image:', err)
+        }
+      }
+
+      // Si todo falla, usar imagen por defecto
+      setFallbackImageUrl('/noimage.jpg')
+      setLoading(false)
     }
-    fetchImage()
-  }, [cellData])
+
+    loadImage()
+  }, [cellData, rowData?.id])
 
   // Función para manejar el click en la imagen
   const handleImageClick = () => {
@@ -60,12 +122,9 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
     }
   }
 
-  // Si no hay cellData, mostrar mensaje
-  if (!cellData) {
+  // Si no hay cellData pero hay fallbackImageUrl, mostrarla
+  if (!cellData && fallbackImageUrl && !loading) {
     return (
-      // <div className="cell-portada" onClick={handleImageClick}>
-      //   <span className="cell-portada__text">Sin imagen</span>
-      // </div>
       <div className="cell-portada">
         <div
           onClick={handleImageClick}
@@ -73,14 +132,13 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            src="/noimage.jpg"
-            // src={imageData?.thumbnailURL}
-            // alt={imageData.alt || imageData.filename || 'Imagen de portada'}
+            src={fallbackImageUrl}
+            alt="Imagen de la propiedad"
             width={180}
             height={150}
             className="cell-portada__img"
             unoptimized
-            onError={() => setError('Error al cargar la imagen')}
+            onError={() => setFallbackImageUrl('/noimage.jpg')}
           />
         </div>
       </div>
@@ -131,6 +189,8 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
 
   // Si hay datos de imagen, mostrarla
   if (imageData) {
+    const optimizedUrl = getOptimizedImageUrl(imageData)
+
     return (
       <div className="cell-portada">
         <div
@@ -139,8 +199,7 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
           title={rowData?.id ? 'Click para ver detalles' : undefined}
         >
           <Image
-            src={imageData?.sizes?.thumbnail?.url || imageData?.url}
-            // src={imageData?.thumbnailURL}
+            src={optimizedUrl}
             alt={imageData.alt || imageData.filename || 'Imagen de portada'}
             width={180}
             height={150}
