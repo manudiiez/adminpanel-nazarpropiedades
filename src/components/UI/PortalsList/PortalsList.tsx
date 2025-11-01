@@ -157,11 +157,13 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
         />
 
         {/* Portal Mercado Libre */}
-        <MercadoLibrePortal
-          mercadoLibreData={localMercadoLibreData}
-          propertyId={propertyId}
-          onDataUpdate={handleMercadoLibreDataUpdate}
-        />
+        {propertyData?.images?.coverImage && propertyData?.images?.gallery && (
+          <MercadoLibrePortal
+            mercadoLibreData={localMercadoLibreData}
+            propertyId={propertyId}
+            onDataUpdate={handleMercadoLibreDataUpdate}
+          />
+        )}
       </div>
     </div>
   )

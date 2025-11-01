@@ -1469,6 +1469,9 @@ export const Propiedades: CollectionConfig = {
           name: 'imagenesExtra',
           label: 'Imágenes extra (URLs)',
           type: 'array',
+          admin: {
+            hidden: true,
+          },
           labels: { singular: 'Imagen', plural: 'Imágenes' },
           fields: [
             {
@@ -1563,7 +1566,7 @@ export const Propiedades: CollectionConfig = {
     {
       name: 'inmoup',
       label: 'Configuración de Inmoup',
-      // admin: { hidden: true },
+      admin: { hidden: true },
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'Inmoup' },
@@ -1589,7 +1592,7 @@ export const Propiedades: CollectionConfig = {
     {
       name: 'mercadolibre',
       label: 'Configuración de MercadoLibre',
-      // admin: { hidden: true },
+      admin: { hidden: true },
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'MercadoLibre' },
