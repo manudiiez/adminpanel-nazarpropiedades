@@ -55,6 +55,9 @@ export const Propiedades: CollectionConfig = {
             },
           },
         },
+        list: {
+          Component: '@/views/PropertiesListView#default', // tu vista
+        },
       },
     },
   },

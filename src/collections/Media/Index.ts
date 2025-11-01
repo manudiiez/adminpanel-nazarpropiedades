@@ -12,6 +12,15 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     update: authenticated,
   },
+  admin: {
+    components: {
+      views: {
+        list: {
+          Component: '@/views/MediaListView#default', // tu vista
+        },
+      },
+    },
+  },
   hooks: {
     afterChange: [afterChangeHook],
   },

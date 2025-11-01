@@ -63,8 +63,26 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
   // Si no hay cellData, mostrar mensaje
   if (!cellData) {
     return (
-      <div className="cell-portada" onClick={handleImageClick}>
-        <span className="cell-portada__text">Sin imagen</span>
+      // <div className="cell-portada" onClick={handleImageClick}>
+      //   <span className="cell-portada__text">Sin imagen</span>
+      // </div>
+      <div className="cell-portada">
+        <div
+          onClick={handleImageClick}
+          className={`cell-portada__image-wrapper ${rowData?.id ? 'clickable' : ''}`}
+          title={rowData?.id ? 'Click para ver detalles' : undefined}
+        >
+          <Image
+            src="/noimage.jpg"
+            // src={imageData?.thumbnailURL}
+            // alt={imageData.alt || imageData.filename || 'Imagen de portada'}
+            width={180}
+            height={150}
+            className="cell-portada__img"
+            unoptimized
+            onError={() => setError('Error al cargar la imagen')}
+          />
+        </div>
       </div>
     )
   }
@@ -140,5 +158,23 @@ export default function ImageCell({ cellData, rowData }: { cellData?: any; rowDa
     <div className="cell-portada" onClick={handleImageClick}>
       <span style={{ color: 'var(--theme-elevation-600)', fontStyle: 'italic' }}>Sin imagen</span>
     </div>
+    // <div className="cell-portada">
+    //   <div
+    //     onClick={handleImageClick}
+    //     className={`cell-portada__image-wrapper ${rowData?.id ? 'clickable' : ''}`}
+    //     title={rowData?.id ? 'Click para ver detalles' : undefined}
+    //   >
+    //     <Image
+    //       src="/noimage.jpg"
+    //       // src={imageData?.thumbnailURL}
+    //       // alt={imageData.alt || imageData.filename || 'Imagen de portada'}
+    //       width={180}
+    //       height={150}
+    //       className="cell-portada__img"
+    //       unoptimized
+    //       onError={() => setError('Error al cargar la imagen')}
+    //     />
+    //   </div>
+    // </div>
   )
 }
