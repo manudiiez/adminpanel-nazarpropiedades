@@ -169,6 +169,62 @@ export const Propiedades: CollectionConfig = {
         return data
       },
     ],
+    beforeDelete: [
+      async ({ req, id }) => {
+        try {
+          // Obtener el documento antes de eliminarlo
+          const property = await req.payload.findByID({
+            collection: 'propiedades',
+            id,
+          })
+
+          if (!property) {
+            console.log(`Propiedad ${id} no encontrada`)
+            return
+          }
+
+          const imagesToDelete: string[] = []
+
+          // Recopilar IDs de imágenes a eliminar
+          if (property.images?.coverImage) {
+            imagesToDelete.push(
+              typeof property.images.coverImage === 'string'
+                ? property.images.coverImage
+                : property.images.coverImage.id,
+            )
+          }
+
+          if (property.images?.gallery && Array.isArray(property.images.gallery)) {
+            property.images.gallery.forEach((img: any) => {
+              const imageId = typeof img === 'string' ? img : img.id
+              if (imageId) {
+                imagesToDelete.push(imageId)
+              }
+            })
+          }
+
+          // Eliminar todas las imágenes
+          if (imagesToDelete.length > 0) {
+            console.log(`Eliminando ${imagesToDelete.length} imágenes relacionadas con la propiedad ${id}`)
+
+            for (const imageId of imagesToDelete) {
+              try {
+                await req.payload.delete({
+                  collection: 'media',
+                  id: imageId,
+                })
+                console.log(`✓ Imagen ${imageId} eliminada`)
+              } catch (error) {
+                console.error(`✗ Error al eliminar imagen ${imageId}:`, error)
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error en beforeDelete hook:', error)
+          // No lanzamos el error para permitir que la eliminación de la propiedad continúe
+        }
+      },
+    ],
   },
   fields: [
     // Campo título oculto para useAsTitle (se sincroniza con aiContent.title)
