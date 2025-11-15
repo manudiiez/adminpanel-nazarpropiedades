@@ -65,7 +65,7 @@ export const Propiedades: CollectionConfig = {
     admin: authenticated,
     create: authenticated,
     delete: authenticated,
-    read: authenticated,
+    read: () => true,
     update: authenticated,
   },
   hooks: {
@@ -852,7 +852,11 @@ export const Propiedades: CollectionConfig = {
               type: 'select',
               name: 'barrioPrivado',
               label: 'Barrio Privado',
-              options: ['Si', 'No', 'Semi Privado'],
+              options: [
+                { label: 'Si', value: 'si' },
+                { label: 'No', value: 'no' },
+                { label: 'Semi Privado', value: 'semi_privado' },
+              ],
               admin: {
                 width: '50%',
                 placeholder: 'Indistinto',

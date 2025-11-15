@@ -74,6 +74,7 @@ export interface Config {
     media: Media;
     'mercadolibre-tokens': MercadolibreToken;
     contractmedia: Contractmedia;
+    mediaInmoup: MediaInmoup;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -87,6 +88,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'mercadolibre-tokens': MercadolibreTokensSelect<false> | MercadolibreTokensSelect<true>;
     contractmedia: ContractmediaSelect<false> | ContractmediaSelect<true>;
+    mediaInmoup: MediaInmoupSelect<false> | MediaInmoupSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -94,8 +96,12 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    featured: Featured;
+  };
+  globalsSelect: {
+    featured: FeaturedSelect<false> | FeaturedSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -586,7 +592,7 @@ export interface Propiedade {
   };
   amenities?: {
     mascotas?: ('Si' | 'No') | null;
-    barrioPrivado?: ('Si' | 'No' | 'Semi Privado') | null;
+    barrioPrivado?: ('si' | 'no' | 'semi_privado') | null;
     agua?: ('Si' | 'No') | null;
     cloacas?: ('Si' | 'No') | null;
     gas?: ('Si' | 'No') | null;
@@ -1067,6 +1073,44 @@ export interface MercadolibreToken {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mediaInmoup".
+ */
+export interface MediaInmoup {
+  id: string;
+  alt?: string | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    watermark?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -1099,6 +1143,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contractmedia';
         value: string | Contractmedia;
+      } | null)
+    | ({
+        relationTo: 'mediaInmoup';
+        value: string | MediaInmoup;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1450,6 +1498,49 @@ export interface ContractmediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mediaInmoup_select".
+ */
+export interface MediaInmoupSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        watermark?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -1479,6 +1570,29 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featured".
+ */
+export interface Featured {
+  id: string;
+  /**
+   * Seleccioná y ordená las 6 propiedades que aparecen en la página de inicio. Arrastrá para cambiar el orden.
+   */
+  featuredProperties?: (string | Propiedade)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "featured_select".
+ */
+export interface FeaturedSelect<T extends boolean = true> {
+  featuredProperties?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

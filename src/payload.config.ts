@@ -15,6 +15,8 @@ import { Propiedades } from './collections/Propiedades'
 import { Contratos } from './collections/Contratos'
 import { MercadoLibreTokens } from './collections/MercadoLibreTokens'
 import { ContractMedia } from './collections/ContractMedia'
+import { Featured } from './globals/Featured'
+import { MediaInmoup } from './collections/MediaInmoup/Index'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -40,7 +42,17 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Clientes, Propiedades, Contratos, Media, MercadoLibreTokens, ContractMedia],
+  collections: [
+    Users,
+    Clientes,
+    Propiedades,
+    Contratos,
+    Media,
+    MercadoLibreTokens,
+    ContractMedia,
+    MediaInmoup,
+  ],
+  globals: [Featured],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -64,9 +76,18 @@ export default buildConfig({
             return `${baseURL}/${prefix}/${filename}`
           },
         },
-        contractmedia: {
-          prefix: process.env.R2_PREFIX_contract || '',
+        mediaInmoup: {
+          prefix: process.env.R2_PREFIX || '',
+          generateFileURL: ({ filename, prefix }) => {
+            const baseURL =
+              process.env.R2_PUBLIC_BASE_URL ||
+              `https://${process.env.R2_BUCKET}.r2.cloudflarestorage.com`
+            return `${baseURL}/${prefix}/${filename}`
+          },
         },
+        // contractmedia: {
+        //   prefix: process.env.R2_PREFIX_contract || '',
+        // },
       },
       bucket: process.env.R2_BUCKET!,
       // baseURL: process.env.R2_PUBLIC_BASE_URL, // sirve URLs bonitas desde tu CDN
