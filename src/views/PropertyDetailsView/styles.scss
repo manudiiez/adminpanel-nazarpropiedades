@@ -283,6 +283,17 @@
     }
   }
 
+  &__link {
+    color: var(--theme-elevation-900);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--theme-success-600);
+      text-decoration: underline;
+    }
+  }
+
   /* ============================================ */
   /* DESCRIPTION */
   /* ============================================ */

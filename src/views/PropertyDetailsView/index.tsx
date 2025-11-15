@@ -414,6 +414,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                                 </span>
                               </div>
                             )}
+                          </div>
+
+                          <div className="property-details__info-row property-details__info-row--three">
                             {formData.environments?.garages && (
                               <div className="property-details__info-item">
                                 <span className="property-details__info-label">Garajes</span>
@@ -422,7 +425,34 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                                 </span>
                               </div>
                             )}
+                            {formData.environments?.plantas && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Plantas</span>
+                                <span className="property-details__info-value">
+                                  {formData.environments.plantas}
+                                </span>
+                              </div>
+                            )}
+                            {formData.environments?.garageType && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Tipo de Garage</span>
+                                <span className="property-details__info-value">
+                                  {propertyLabels.garageType(formData.environments.garageType)}
+                                </span>
+                              </div>
+                            )}
                           </div>
+
+                          {formData.environments?.furnished && (
+                            <div className="property-details__info-row">
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Amueblado</span>
+                                <span className="property-details__info-value">
+                                  {propertyLabels.furnished(formData.environments.furnished)}
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -430,20 +460,30 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                       <div className="property-details__info-card">
                         <h3 className="property-details__card-title">Características Físicas</h3>
                         <div className="property-details__card-content">
-                          <div className="property-details__info-row">
-                            <div className="property-details__info-item">
-                              <span className="property-details__info-label">Superficie Total</span>
-                              <span className="property-details__info-value">
-                                {formData.caracteristics?.totalArea || 'No especificado'} m²
-                              </span>
-                            </div>
+                          <div className="property-details__info-row property-details__info-row--three">
+                            {formData.caracteristics?.totalArea && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Superficie Total</span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics.totalArea} m²
+                                </span>
+                              </div>
+                            )}
                             {formData.caracteristics?.coveredArea && (
                               <div className="property-details__info-item">
                                 <span className="property-details__info-label">
                                   Superficie Cubierta
                                 </span>
                                 <span className="property-details__info-value">
-                                  {formData.caracteristics?.coveredArea || 'No especificado'} m²
+                                  {formData.caracteristics.coveredArea} m²
+                                </span>
+                              </div>
+                            )}
+                            {formData.caracteristics?.landArea && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Área de Terreno</span>
+                                <span className="property-details__info-value">
+                                  {formData.caracteristics.landArea} m²
                                 </span>
                               </div>
                             )}
@@ -495,31 +535,12 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                             )}
                           </div>
 
-                          <div className="property-details__info-row">
-                            {formData.caracteristics?.orientation && (
+                          {formData.caracteristics?.orientation && (
+                            <div className="property-details__info-row">
                               <div className="property-details__info-item">
                                 <span className="property-details__info-label">Orientación</span>
                                 <span className="property-details__info-value">
-                                  {propertyLabels.orientation(formData.caracteristics?.orientation)}
-                                </span>
-                              </div>
-                            )}
-                            {formData.caracteristics?.garageType && (
-                              <div className="property-details__info-item">
-                                <span className="property-details__info-label">Tipo de Garage</span>
-                                <span className="property-details__info-value">
-                                  {propertyLabels.garageType(formData.caracteristics?.garageType)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          {formData.environments?.furnished && (
-                            <div className="property-details__info-row">
-                              <div className="property-details__info-item">
-                                <span className="property-details__info-label">Amueblado</span>
-                                <span className="property-details__info-value">
-                                  {propertyLabels.furnished(formData.environments?.furnished)}
+                                  {propertyLabels.orientation(formData.caracteristics.orientation)}
                                 </span>
                               </div>
                             </div>
@@ -961,33 +982,37 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                               {formData.ubication?.address || 'No hay dirección'}
                             </span>
                           </div>
-                          <div className="property-details__info-item">
-                            <span className="property-details__info-label">Provincia</span>
-                            <span className="property-details__info-value">
-                              {formData.ubication?.province || 'No hay provincia'}
-                            </span>
+                          <div className="property-details__info-row">
+                            <div className="property-details__info-item">
+                              <span className="property-details__info-label">Provincia</span>
+                              <span className="property-details__info-value">
+                                {formData.ubication?.province || 'No hay provincia'}
+                              </span>
+                            </div>
+                            <div className="property-details__info-item">
+                              <span className="property-details__info-label">Departamento</span>
+                              <span className="property-details__info-value">
+                                {formData.ubication?.department
+                                  ? propertyLabels.department(formData.ubication.department)
+                                  : 'No hay departamento'}
+                              </span>
+                            </div>
                           </div>
-                          <div className="property-details__info-item">
-                            <span className="property-details__info-label">Departamento</span>
-                            <span className="property-details__info-value">
-                              {formData.ubication?.department
-                                ? propertyLabels.department(formData.ubication.department)
-                                : 'No hay departamento'}
-                            </span>
-                          </div>
-                          <div className="property-details__info-item">
-                            <span className="property-details__info-label">Localidad</span>
-                            <span className="property-details__info-value">
-                              {formData.ubication?.locality
-                                ? propertyLabels.locality(formData.ubication.locality)
-                                : 'No hay localidad'}
-                            </span>
-                          </div>
-                          <div className="property-details__info-item">
-                            <span className="property-details__info-label">Barrio</span>
-                            <span className="property-details__info-value">
-                              {formData.ubication?.neighborhood || 'No hay barrio'}
-                            </span>
+                          <div className="property-details__info-row">
+                            <div className="property-details__info-item">
+                              <span className="property-details__info-label">Localidad</span>
+                              <span className="property-details__info-value">
+                                {formData.ubication?.locality
+                                  ? propertyLabels.locality(formData.ubication.locality)
+                                  : 'No hay localidad'}
+                              </span>
+                            </div>
+                            <div className="property-details__info-item">
+                              <span className="property-details__info-label">Barrio</span>
+                              <span className="property-details__info-value">
+                                {formData.ubication?.neighborhood || 'No hay barrio'}
+                              </span>
+                            </div>
                           </div>
                           {formData.ubication?.locationPrivacy && (
                             <div className="property-details__info-item">
@@ -999,8 +1024,63 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                               </span>
                             </div>
                           )}
+                          {formData.ubication?.approximateRadius && (
+                            <div className="property-details__info-item">
+                              <span className="property-details__info-label">
+                                Radio de Aproximación
+                              </span>
+                              <span className="property-details__info-value">
+                                {formData.ubication.approximateRadius} metros
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
+
+                      {/* Videos y Tour Virtual */}
+                      {(formData.images?.videoUrl || formData.images?.virtualTourUrl) && (
+                        <div className="property-details__info-card">
+                          <h3 className="property-details__card-title">Multimedia</h3>
+                          <div className="property-details__card-content">
+                            {formData.images?.videoUrl && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Video</span>
+                                <a
+                                  href={formData.images.videoUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="property-details__info-value property-details__link"
+                                >
+                                  Ver video de la propiedad →
+                                </a>
+                              </div>
+                            )}
+                            {formData.images?.virtualTourUrl && (
+                              <div className="property-details__info-item">
+                                <span className="property-details__info-label">Tour Virtual 3D</span>
+                                <a
+                                  href={formData.images.virtualTourUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="property-details__info-value property-details__link"
+                                >
+                                  Ver tour virtual →
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Notas Internas */}
+                      {formData.notes && (
+                        <div className="property-details__info-card property-details__info-card--full">
+                          <h3 className="property-details__card-title">Notas Internas</h3>
+                          <div className="property-details__card-content">
+                            <p className="property-details__description">{formData.notes}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
