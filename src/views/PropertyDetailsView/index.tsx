@@ -108,13 +108,11 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   const ownerData = formData?.owner ? await getOwnerData(formData.owner) : null
   // Construir todas las imágenes para el carrusel
   let allImages: any[] = []
-  if (formData?.images && formData?.images?.coverImage && formData?.images?.galleryImages) {
+  if (formData?.images && formData?.images?.coverImage && formData?.images?.gallery) {
     allImages = [...(coverImage ? [coverImage] : []), ...galleryImages]
-  }
-  if (formData?.images && formData?.images?.imagenesExtra) {
+  } else if (formData?.images && formData?.images?.imagenesExtra) {
     allImages = [...formData?.images?.imagenesExtra]
   }
-  console.log(formData)
   // Construir array de imágenes para portales con coverImage primero
   const portalImages = []
   // Agregar coverImage como primera imagen (orden 1)
@@ -137,8 +135,6 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   // Obtener datos de inmoup desde formData
   const inmoupData = formData.inmoup || {}
   const mercadolibreData = formData.mercadolibre || {}
-  console.log('inmoupData:', inmoupData)
-  console.log('mercadolibreData:', mercadolibreData)
 
   // Función para determinar el estado de publicación
   const getPortalStatus = (portalData: any) => {
