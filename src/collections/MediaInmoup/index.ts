@@ -3,8 +3,8 @@
 import { authenticated } from '@/access/authenticated'
 import type { CollectionConfig } from 'payload'
 
-export const Media: CollectionConfig = {
-  slug: 'media',
+export const MediaInmoup: CollectionConfig = {
+  slug: 'mediaInmoup',
   access: {
     read: () => true,
     create: authenticated,
