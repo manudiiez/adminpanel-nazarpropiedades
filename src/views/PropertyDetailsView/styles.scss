@@ -7,7 +7,7 @@
   &__status {
     font-size: 1.1rem;
     color: var(--theme-success-600);
-    padding: .7rem 1.2rem;
+    padding: 0.7rem 1.2rem;
     border: 1px solid var(--theme-success-500);
     border-radius: var(--style-radius-m);
     background-color: var(--theme-success-150);
@@ -232,24 +232,16 @@
   /* INFO ITEMS */
   /* ============================================ */
   &__info-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
 
     &--three {
-      grid-template-columns: repeat(3, 1fr);
-
-      @media (max-width: 600px) {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      @media (max-width: 480px) {
-        grid-template-columns: 1fr;
-      }
+      // Flexbox automáticamente distribuye los items
     }
 
     @media (max-width: 480px) {
-      grid-template-columns: 1fr;
+      // En móvil sigue siendo flexible
     }
   }
 
@@ -257,9 +249,27 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    flex: 0 0 calc(50% - 0.5rem); // Por defecto 2 columnas fijas (no crece ni encoge)
 
     &--full {
-      grid-column: 1 / -1;
+      flex: 0 0 100%; // Ocupa todo el ancho
+    }
+
+    // Dentro de un row--three, los items ocupan 3 columnas
+    .property-details__info-row--three & {
+      flex: 0 0 calc(33.333% - 0.67rem); // 3 columnas fijas
+
+      @media (max-width: 768px) {
+        flex: 0 0 calc(50% - 0.5rem); // 2 columnas en tablets
+      }
+
+      @media (max-width: 480px) {
+        flex: 0 0 100%; // 1 columna en móvil
+      }
+    }
+
+    @media (max-width: 480px) {
+      flex: 0 0 100%; // 1 columna en móvil
     }
   }
 

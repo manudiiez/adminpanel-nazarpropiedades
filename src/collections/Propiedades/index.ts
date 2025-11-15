@@ -234,7 +234,9 @@ export const Propiedades: CollectionConfig = {
             {
               name: 'inmoup',
               type: 'checkbox',
-              hidden: true,
+              admin: {
+                hidden: true,
+              },
             },
           ],
         },
@@ -1500,6 +1502,9 @@ export const Propiedades: CollectionConfig = {
           type: 'upload',
           relationTo: 'media',
           admin: {
+            condition: (data, siblingData) => {
+              return !data?.classification.inmoup
+            },
             components: {
               Cell: '@/components/cells/ImageCell/ImageCell',
             },
@@ -1527,6 +1532,9 @@ export const Propiedades: CollectionConfig = {
           hasMany: true, // 👈 habilita multi-selección / drag&drop múltiple
           admin: {
             description: 'Arrastrá varias imágenes a la vez; podés reordenarlas con drag & drop.',
+            condition: (data, siblingData) => {
+              return !data?.classification.inmoup
+            },
           },
           validate: (val: unknown, { data }: { data: any }) => {
             // Validación de máximo 30 imágenes
