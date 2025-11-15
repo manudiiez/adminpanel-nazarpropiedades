@@ -74,7 +74,6 @@ export interface Config {
     media: Media;
     'mercadolibre-tokens': MercadolibreToken;
     contractmedia: Contractmedia;
-    mediaInmoup: MediaInmoup;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -88,7 +87,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'mercadolibre-tokens': MercadolibreTokensSelect<false> | MercadolibreTokensSelect<true>;
     contractmedia: ContractmediaSelect<false> | ContractmediaSelect<true>;
-    mediaInmoup: MediaInmoupSelect<false> | MediaInmoupSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -220,6 +218,7 @@ export interface Propiedade {
       | 'triplex'
       | 'vinedo';
     condition: 'venta' | 'alquiler' | 'alquiler_temporario' | 'permuta';
+    inmoup?: boolean | null;
   };
   ubication: {
     /**
@@ -856,7 +855,7 @@ export interface Propiedade {
      */
     description?: string | null;
   };
-  images: {
+  images?: {
     imagenesExtra?:
       | {
           url?: string | null;
@@ -867,7 +866,7 @@ export interface Propiedade {
     /**
      * Imagen principal que aparecerá como portada. No repetir esta imagen en la galería.
      */
-    coverImage: string | Media;
+    coverImage?: (string | null) | Media;
     /**
      * Arrastrá varias imágenes a la vez; podés reordenarlas con drag & drop.
      */
@@ -1073,44 +1072,6 @@ export interface MercadolibreToken {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mediaInmoup".
- */
-export interface MediaInmoup {
-  id: string;
-  alt?: string | null;
-  prefix?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    watermark?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -1143,10 +1104,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contractmedia';
         value: string | Contractmedia;
-      } | null)
-    | ({
-        relationTo: 'mediaInmoup';
-        value: string | MediaInmoup;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1242,6 +1199,7 @@ export interface PropiedadesSelect<T extends boolean = true> {
     | {
         type?: T;
         condition?: T;
+        inmoup?: T;
       };
   ubication?:
     | T
@@ -1495,49 +1453,6 @@ export interface ContractmediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mediaInmoup_select".
- */
-export interface MediaInmoupSelect<T extends boolean = true> {
-  alt?: T;
-  prefix?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        watermark?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

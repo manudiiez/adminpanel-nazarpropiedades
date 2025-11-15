@@ -231,6 +231,11 @@ export const Propiedades: CollectionConfig = {
               required: true,
               index: true, // Hace que aparezca automáticamente en los filtros
             },
+            {
+              name: 'inmoup',
+              type: 'checkbox',
+              hidden: true,
+            },
           ],
         },
       ],
@@ -1494,13 +1499,23 @@ export const Propiedades: CollectionConfig = {
           label: 'Imagen de Portada',
           type: 'upload',
           relationTo: 'media',
-          required: true,
           admin: {
             components: {
               Cell: '@/components/cells/ImageCell/ImageCell',
             },
             description:
               'Imagen principal que aparecerá como portada. No repetir esta imagen en la galería.',
+          },
+          validate: (value: unknown, { data }: { data: any }) => {
+            // Si classification.inmoup está marcado, el campo NO es requerido
+            if (data?.classification?.inmoup) {
+              return true
+            }
+            // Si NO está marcado, el campo es requerido
+            if (!value) {
+              return 'La imagen de portada es requerida'
+            }
+            return true
           },
         },
         // Imágenes con orden y principal (array de objetos)
@@ -1513,7 +1528,24 @@ export const Propiedades: CollectionConfig = {
           admin: {
             description: 'Arrastrá varias imágenes a la vez; podés reordenarlas con drag & drop.',
           },
-          validate: (val) => (Array.isArray(val) && val.length <= 29 ? true : 'Máximo 30 imágenes'),
+          validate: (val: unknown, { data }: { data: any }) => {
+            // Validación de máximo 30 imágenes
+            if (Array.isArray(val) && val.length > 29) {
+              return 'Máximo 30 imágenes'
+            }
+
+            // Si classification.inmoup está marcado, el campo NO es requerido
+            if (data?.classification?.inmoup) {
+              return true
+            }
+
+            // Si NO está marcado, el campo es requerido
+            if (!val || (Array.isArray(val) && val.length === 0)) {
+              return 'La galería de imágenes es requerida'
+            }
+
+            return true
+          },
         },
         {
           type: 'row',

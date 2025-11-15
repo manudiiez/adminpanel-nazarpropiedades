@@ -16,7 +16,6 @@ import { Contratos } from './collections/Contratos'
 import { MercadoLibreTokens } from './collections/MercadoLibreTokens'
 import { ContractMedia } from './collections/ContractMedia'
 import { Featured } from './globals/Featured'
-import { MediaInmoup } from './collections/MediaInmoup/Index'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -42,16 +41,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [
-    Users,
-    Clientes,
-    Propiedades,
-    Contratos,
-    Media,
-    MercadoLibreTokens,
-    ContractMedia,
-    MediaInmoup,
-  ],
+  collections: [Users, Clientes, Propiedades, Contratos, Media, MercadoLibreTokens, ContractMedia],
   globals: [Featured],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -68,15 +58,6 @@ export default buildConfig({
     s3Storage({
       collections: {
         media: {
-          prefix: process.env.R2_PREFIX || '',
-          generateFileURL: ({ filename, prefix }) => {
-            const baseURL =
-              process.env.R2_PUBLIC_BASE_URL ||
-              `https://${process.env.R2_BUCKET}.r2.cloudflarestorage.com`
-            return `${baseURL}/${prefix}/${filename}`
-          },
-        },
-        mediaInmoup: {
           prefix: process.env.R2_PREFIX || '',
           generateFileURL: ({ filename, prefix }) => {
             const baseURL =
