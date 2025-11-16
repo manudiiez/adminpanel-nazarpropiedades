@@ -39,35 +39,29 @@ export const Media: CollectionConfig = {
     imageSizes: [
       {
         name: 'thumbnail',
-        width: 250,
+        width: 400,
         height: undefined, // Mantiene proporción
         withoutEnlargement: false, // Permitir agrandar
       },
       {
         name: 'watermark',
-        width: 768,
-        height: undefined, // Mantiene proporción
-        withoutEnlargement: false, // Permitir agrandar
-      },
-      {
-        name: 'og',
-        width: 1200,
+        width: 900,
         height: undefined, // Mantiene proporción
         withoutEnlargement: false, // Permitir agrandar
       },
     ],
     // ✅ Comprimir y redimensionar el original antes de guardarlo
     resizeOptions: {
-      width: 1200, // Tamaño máximo del "original"
+      width: 850, // Tamaño máximo del "original"
       height: undefined, // Mantiene proporción
       fit: 'inside', // Mantener proporción
     },
 
-    formatOptions: {
-      format: 'jpeg', // Convertir todo a JPEG
-      options: {
-        quality: 85, // Comprimir al 85%
-      },
-    },
+    // formatOptions: {
+    //   format: 'jpeg', // Convertir todo a JPEG
+    //   options: {
+    //     quality: 95, // Comprimir al 85%
+    //   },
+    // },
   },
 }

@@ -77,13 +77,19 @@ export const Propiedades: CollectionConfig = {
         }
         return data
       },
-      ({ data, operation, originalDoc }) => {
-        // Detectar duplicación: es una creación pero tiene datos de portales
-        // (los documentos nuevos no deberían tener estos campos poblados)
+      ({ data, operation, originalDoc, req }) => {
+        // Detectar duplicación de varias formas:
+        // 1. Es una creación pero tiene datos de portales
+        // 2. Viene del contexto de duplicación de Payload
         const isDuplicate =
-          operation === 'create' && (data.inmoup?.externalId || data.mercadolibre?.externalId)
+          operation === 'create' &&
+          (data.inmoup?.externalId ||
+            data.mercadolibre?.externalId ||
+            req?.context?.duplicateFrom ||
+            data.createdAt) // Si tiene createdAt en una creación, es duplicado
+
         if (isDuplicate) {
-          console.log('Documento duplicado detectado, limpiando campos de portales...')
+          console.log('Documento duplicado detectado, limpiando campos de portales e imágenes...')
 
           // Limpiar información de Inmoup
           if (data.inmoup) {
@@ -106,6 +112,29 @@ export const Propiedades: CollectionConfig = {
               externalUrl: null,
               lastSyncAt: null,
               lastError: null,
+            }
+          }
+
+          // Limpiar imágenes completamente
+          if (data.images) {
+            data.images = {
+              coverImage: null,
+              gallery: [],
+              imagenesExtra: [],
+              videoUrl: data.images.videoUrl || null,
+              virtualTourUrl: data.images.virtualTourUrl || null,
+            }
+            console.log('Imágenes limpiadas en la propiedad duplicada')
+          }
+
+          // Si no existe el objeto images, crear uno vacío
+          if (!data.images) {
+            data.images = {
+              coverImage: null,
+              gallery: [],
+              imagenesExtra: [],
+              videoUrl: null,
+              virtualTourUrl: null,
             }
           }
         }
