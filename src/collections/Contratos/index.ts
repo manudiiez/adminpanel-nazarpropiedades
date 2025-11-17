@@ -84,6 +84,9 @@ export const Contratos: CollectionConfig = {
                   equals: 'activa',
                 },
               },
+              // admin: {
+              //   appearance: 'drawer',
+              // },
             },
             {
               type: 'row',
