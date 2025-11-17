@@ -1,5 +1,6 @@
 // src/globals/Featured.ts
-import { GlobalConfig } from 'payload/types'
+
+import { GlobalConfig } from 'payload'
 
 export const Featured: GlobalConfig = {
   slug: 'featured',
@@ -14,7 +15,11 @@ export const Featured: GlobalConfig = {
       type: 'relationship',
       relationTo: 'propiedades', // El slug de tu colección de propiedades
       hasMany: true, // Es una selección múltiple
-
+      filterOptions: {
+        status: {
+          equals: 'activa',
+        },
+      },
       // --- Acá está el control que pediste ---
       maxRows: 6,
 

@@ -361,34 +361,5 @@ export const Contratos: CollectionConfig = {
         }
       },
     ],
-    // Nuevo hook para actualizar estado de propiedad cuando se crea un contrato
-    afterChange: [
-      async ({ doc, operation, req }) => {
-        // Solo cuando se crea un nuevo contrato
-        if (operation === 'create' && doc.property) {
-          try {
-            console.log('🏠 Nuevo contrato creado - Actualizando estado de propiedad a "terminada"')
-
-            // Actualizar el estado de la propiedad a "terminada"
-            await req.payload.update({
-              collection: 'propiedades',
-              id: doc.property,
-              data: {
-                status: 'terminada',
-              },
-            })
-            console.log(
-              '✅ Estado de propiedad actualizado a "terminada" por contrato:',
-              doc.displayTitle,
-            )
-          } catch (error) {
-            console.log('❌ Error actualizando estado de propiedad tras crear contrato')
-            // alert(
-            //   `Error: ${error instanceof Error ? error.message : 'Error al cambiar el estado de la propiedad'}`,
-            // )
-          }
-        }
-      },
-    ],
   },
 }
