@@ -27,8 +27,8 @@ async function processGalleryImages(
         })
         if (imageData) {
           galleryImages.push({
-            url: imageData?.sizes?.og?.url || imageData.url || '',
-            filename: imageData?.sizes?.og?.filename || imageData.filename || '',
+            url: imageData.url || '',
+            filename: imageData.filename || '',
           })
         }
       } catch (error) {
@@ -54,8 +54,8 @@ async function processCoverImage(
       })
       if (imageData) {
         return {
-          url: imageData?.sizes?.og?.url || imageData.url || '',
-          filename: imageData?.sizes?.og?.filename || imageData.filename || '',
+          url: imageData.url || '',
+          filename: imageData.filename || '',
         }
       }
     } catch (error) {
@@ -523,7 +523,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.amenities?.mascotas && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">¿Aceptan Mascotas?</span>
+                              <span className="property-details__info-label">
+                                ¿Aceptan Mascotas?
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.amenities.mascotas}
                               </span>
@@ -587,7 +589,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.pisosEdificio && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Pisos del Edificio</span>
+                              <span className="property-details__info-label">
+                                Pisos del Edificio
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.pisosEdificio}
                               </span>
@@ -595,7 +599,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.departamentosPorPiso && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Unidades por Piso</span>
+                              <span className="property-details__info-label">
+                                Unidades por Piso
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.departamentosPorPiso}
                               </span>
@@ -603,7 +609,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.superficieBalcon && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Superficie Balcón</span>
+                              <span className="property-details__info-label">
+                                Superficie Balcón
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.superficieBalcon} m²
                               </span>
@@ -619,7 +627,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.disposicionTerreno && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Disposición del Lote</span>
+                              <span className="property-details__info-label">
+                                Disposición del Lote
+                              </span>
                               <span className="property-details__info-value">
                                 {propertyLabels.dispositionLote(formData.extra.disposicionTerreno)}
                               </span>
@@ -627,7 +637,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.formaTerreno && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Forma del Terreno</span>
+                              <span className="property-details__info-label">
+                                Forma del Terreno
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.formaTerreno === 'regular'
                                   ? 'Regular'
@@ -671,7 +683,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.tipoCoverturaCochera && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Cobertura Cochera</span>
+                              <span className="property-details__info-label">
+                                Cobertura Cochera
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.tipoCoverturaCochera === 'semi_cubierta'
                                   ? 'Semi Cubierta'
@@ -701,7 +715,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.cantidadOficinas && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Cantidad de Oficinas</span>
+                              <span className="property-details__info-label">
+                                Cantidad de Oficinas
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.cantidadOficinas}
                               </span>
@@ -709,7 +725,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.guests && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Máximo de Huéspedes</span>
+                              <span className="property-details__info-label">
+                                Máximo de Huéspedes
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.guests}
                               </span>
@@ -725,7 +743,9 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
                           )}
                           {formData.extra?.camas && (
                             <div className="property-details__info-item">
-                              <span className="property-details__info-label">Cantidad de Camas</span>
+                              <span className="property-details__info-label">
+                                Cantidad de Camas
+                              </span>
                               <span className="property-details__info-value">
                                 {formData.extra.camas}
                               </span>

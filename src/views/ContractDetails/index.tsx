@@ -311,16 +311,45 @@ export default async function ContractDetails(props: AdminViewServerProps & Page
 
                   <div className="contract-details__property">
                     <div className="contract-details__property-image">
-                      {propertyData.images?.coverImage && (
-                        <img
-                          src={
-                            typeof propertyData.images.coverImage === 'string'
-                              ? propertyData.images.coverImage
-                              : propertyData.images.coverImage.url || ''
+                      {(() => {
+                        // Prioridad 1: coverImage
+                        if (propertyData.images?.coverImage) {
+                          const coverImage = propertyData.images.coverImage
+                          const imageUrl =
+                            typeof coverImage === 'string'
+                              ? coverImage
+                              : coverImage?.sizes?.thumbnail?.url || coverImage?.url || ''
+
+                          if (imageUrl) {
+                            return (
+                              <img
+                                src={imageUrl}
+                                alt={propertyData.title || 'Imagen de propiedad'}
+                              />
+                            )
                           }
-                          alt={propertyData.title || 'Imagen de propiedad'}
-                        />
-                      )}
+                        }
+
+                        // Prioridad 2: Primera imagen de imagenesExtra
+                        if (
+                          propertyData.images?.imagenesExtra &&
+                          Array.isArray(propertyData.images.imagenesExtra) &&
+                          propertyData.images.imagenesExtra.length > 0
+                        ) {
+                          const firstExtraImage = propertyData.images.imagenesExtra[0]
+                          if (firstExtraImage?.url) {
+                            return (
+                              <img
+                                src={firstExtraImage.url}
+                                alt={propertyData.title || 'Imagen de propiedad'}
+                              />
+                            )
+                          }
+                        }
+
+                        // Sin imagen disponible
+                        return null
+                      })()}
                     </div>
 
                     <div className="contract-details__property-info">
