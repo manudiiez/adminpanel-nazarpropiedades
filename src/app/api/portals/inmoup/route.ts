@@ -603,7 +603,7 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify(inmoupData), // Array completo: { propiedades: [...] }
       })
       // console.log('respuestas inmoup fetch:', inmoupResponse)
-      console.log(JSON.stringify(inmoupData, null, 2)) // pretty JSON
+      console.log('📤 Datos enviados a Inmoup:', JSON.stringify(inmoupData, null, 2)) // pretty JSON
 
       if (!inmoupResponse.ok) {
         const errorData = await inmoupResponse.json().catch(() => ({}))

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { InmoupPortal, MercadoLibrePortal } from '../../portals'
 import './styles.scss'
+import MetaPortal from '@/components/portals/meta'
 
 interface PortalData {
   name?: string
@@ -10,6 +11,16 @@ interface PortalData {
   externalId?: string
   externalUrl?: string
   status?: 'queued' | 'ok' | 'published' | 'error' | 'desactualizado' | 'not_published' | 'not_sent'
+  lastSyncAt?: string
+  lastError?: string
+}
+
+interface MetaPortalData {
+  name?: string
+  uploaded?: boolean
+  externalId?: string
+  externalUrl?: string
+  status?: 'queued' | 'ok' | 'published' | 'error' | 'not_published' | 'not_sent'
   lastSyncAt?: string
   lastError?: string
 }
@@ -26,6 +37,7 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
   const [images, setImages] = useState<any[]>([])
   const [localInmoupData, setLocalInmoupData] = useState<PortalData>({})
   const [localMercadoLibreData, setLocalMercadoLibreData] = useState<PortalData>({})
+  const [localMetaData, setLocalMetaData] = useState<MetaPortalData>({})
 
   // Fetch de datos de la propiedad al montar el componente
   useEffect(() => {
@@ -50,6 +62,7 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
         setImages(result.images)
         setLocalInmoupData(result.inmoup || {})
         setLocalMercadoLibreData(result.mercadolibre || {})
+        setLocalMetaData(result.meta || {})
       } catch (err) {
         console.error('Error fetching property data:', err)
         setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -63,23 +76,6 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
     }
   }, [propertyId])
 
-  // Función para refrescar los datos del portal
-  const refreshPortalData = async () => {
-    try {
-      const response = await fetch(`/api/properties/${propertyId}`)
-
-      if (response.ok) {
-        const result = await response.json()
-        setPropertyData(result.property)
-        setLocalInmoupData(result.property?.inmoup || {})
-        setLocalMercadoLibreData(result.property?.mercadolibre || {})
-        console.log('Datos de portales actualizados')
-      }
-    } catch (err) {
-      console.error('Error refrescando datos de portales:', err)
-    }
-  }
-
   // Función para actualizar datos de Inmoup desde el componente hijo
   const handleInmoupDataUpdate = (newData: PortalData) => {
     setLocalInmoupData(newData)
@@ -88,6 +84,11 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
   // Función para actualizar datos de MercadoLibre desde el componente hijo
   const handleMercadoLibreDataUpdate = (newData: PortalData) => {
     setLocalMercadoLibreData(newData)
+  }
+
+  // Función para actualizar datos de Meta desde el componente hijo
+  const handleMetaDataUpdate = (newData: MetaPortalData) => {
+    setLocalMetaData(newData)
   }
 
   if (loading) {
@@ -162,6 +163,13 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
             mercadoLibreData={localMercadoLibreData}
             propertyId={propertyId}
             onDataUpdate={handleMercadoLibreDataUpdate}
+          />
+        )}
+        {propertyData?.images?.coverImage && propertyData?.images?.gallery && (
+          <MetaPortal
+            metaData={localMetaData}
+            propertyId={propertyId}
+            onDataUpdate={handleMetaDataUpdate}
           />
         )}
       </div>

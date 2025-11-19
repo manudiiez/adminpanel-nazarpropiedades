@@ -234,7 +234,9 @@ export const Propiedades: CollectionConfig = {
 
           // Eliminar todas las imágenes
           if (imagesToDelete.length > 0) {
-            console.log(`Eliminando ${imagesToDelete.length} imágenes relacionadas con la propiedad ${id}`)
+            console.log(
+              `Eliminando ${imagesToDelete.length} imágenes relacionadas con la propiedad ${id}`,
+            )
 
             for (const imageId of imagesToDelete) {
               try {
@@ -1725,6 +1727,32 @@ export const Propiedades: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'MercadoLibre' },
+        { name: 'uploaded', type: 'checkbox', defaultValue: false },
+        { name: 'externalId', type: 'text' },
+        { name: 'externalUrl', type: 'text' },
+        {
+          name: 'status',
+          type: 'select',
+          defaultValue: 'not_sent',
+          options: [
+            { label: 'No enviado', value: 'not_sent' },
+            { label: 'En cola', value: 'queued' },
+            { label: 'OK', value: 'ok' },
+            { label: 'Error', value: 'error' },
+            { label: 'Desactualizado', value: 'desactualizado' },
+          ],
+        },
+        { name: 'lastSyncAt', type: 'date' },
+        { name: 'lastError', type: 'textarea' },
+      ],
+    },
+    {
+      name: 'meta',
+      label: 'Configuración de Instagram / Facebook',
+      admin: { hidden: true },
+      type: 'group',
+      fields: [
+        { name: 'name', type: 'text', defaultValue: 'Meta' },
         { name: 'uploaded', type: 'checkbox', defaultValue: false },
         { name: 'externalId', type: 'text' },
         { name: 'externalUrl', type: 'text' },

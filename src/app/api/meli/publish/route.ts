@@ -70,9 +70,7 @@ export async function POST(request: NextRequest) {
     const images: Array<{ url: string; orden: number }> = []
 
     if (property.images?.coverImage) {
-      const coverUrl =
-        (property.images.coverImage as any)?.sizes?.og?.url ||
-        (property.images.coverImage as any)?.url
+      const coverUrl = (property.images.coverImage as any)?.url
       if (coverUrl) {
         images.push({ url: coverUrl, orden: 0 })
       }
@@ -80,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     if (property.images?.gallery && Array.isArray(property.images.gallery)) {
       property.images.gallery.forEach((img, index) => {
-        const imgUrl = (img as any).sizes?.og?.url || (img as any).url
+        const imgUrl = (img as any).url
         if (imgUrl) {
           images.push({ url: imgUrl, orden: index + 1 })
         }

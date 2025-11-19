@@ -903,6 +903,15 @@ export interface Propiedade {
     lastSyncAt?: string | null;
     lastError?: string | null;
   };
+  meta?: {
+    name?: string | null;
+    uploaded?: boolean | null;
+    externalId?: string | null;
+    externalUrl?: string | null;
+    status?: ('not_sent' | 'queued' | 'ok' | 'error' | 'desactualizado') | null;
+    lastSyncAt?: string | null;
+    lastError?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1312,6 +1321,17 @@ export interface PropiedadesSelect<T extends boolean = true> {
         lastError?: T;
       };
   mercadolibre?:
+    | T
+    | {
+        name?: T;
+        uploaded?: T;
+        externalId?: T;
+        externalUrl?: T;
+        status?: T;
+        lastSyncAt?: T;
+        lastError?: T;
+      };
+  meta?:
     | T
     | {
         name?: T;
