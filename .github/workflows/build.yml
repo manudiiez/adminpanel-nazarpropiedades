@@ -29,7 +29,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Genera tags según si es push a main o push de tag semántico
+      # Genera tags según si es push a main o push de tag semántico.
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
