@@ -135,6 +135,7 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
   // Obtener datos de inmoup desde formData
   const inmoupData = formData.inmoup || {}
   const mercadolibreData = formData.mercadolibre || {}
+  const meta = formData.meta || {}
 
   // Función para determinar el estado de publicación
   const getPortalStatus = (portalData: any) => {
@@ -226,6 +227,19 @@ export default async function PropertyDetails(props: AdminViewServerProps) {
       button: getPortalButton(mercadolibreData),
       externalId: mercadolibreData.externalId || null,
       externalUrl: mercadolibreData.externalUrl || null,
+    },
+    meta: {
+      name: meta.name || 'Instagram',
+      logo: '🏠',
+      status: getPortalStatus(meta),
+      publishedDate: meta.lastSyncAt || null,
+      notes:
+        meta.lastError ||
+        (meta.status === 'ok' ? 'Portal activo y funcionando' : 'Portal listo para publicar'),
+      requiredFields: ['title', 'price', 'location', 'images'],
+      button: getPortalButton(meta),
+      externalId: meta.externalId || null,
+      externalUrl: meta.externalUrl || null,
     },
   }
 
