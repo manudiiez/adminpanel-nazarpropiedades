@@ -1492,7 +1492,7 @@ export const Propiedades: CollectionConfig = {
               type: 'number',
               admin: {
                 placeholder: 'Ingresa la cantidad de oficinas',
-                description: 'Este campo solo sera visible para mercado libre',
+                description: 'Este campo solo sera visible para mercado libre e instagram',
                 width: '25%',
                 condition: (data, siblingData) => {
                   return data?.classification.type === 'oficina'

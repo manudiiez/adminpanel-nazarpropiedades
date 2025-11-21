@@ -838,7 +838,7 @@ export interface Propiedade {
      */
     banosPiso?: number | null;
     /**
-     * Este campo solo sera visible para mercado libre
+     * Este campo solo sera visible para mercado libre e instagram
      */
     cantidadOficinas?: number | null;
   };
