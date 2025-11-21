@@ -13,6 +13,9 @@ export const Media: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    hidden: ({ user }) => {
+      return user?.role !== 'admin'
+    },
     components: {
       views: {
         list: {
