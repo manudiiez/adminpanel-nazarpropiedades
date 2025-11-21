@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { getDepartmentLabel, getGarageTypeLabel } from '@/utils/propertyLabels'
 
 async function updateMetaStatus(
   propertyId: string,
@@ -20,7 +21,7 @@ async function updateMetaStatus(
           uploaded: status === 'ok' || status === 'published',
           externalId: externalId || null,
           externalUrl: externalUrl || null,
-          status: status,
+          status: status === 'published' ? 'ok' : status,
           lastSyncAt: new Date().toISOString(),
           lastError: lastError || null,
         },
@@ -36,10 +37,8 @@ async function updateMetaStatus(
 
 // POST - Publicar propiedad en Instagram
 export async function POST(request: NextRequest) {
-  const { propertyId } = await request.json()
+  const { propertyId, selectedImageIds } = await request.json()
   try {
-    console.log('📤 Iniciando publicación en Instagram para propiedad:', propertyId)
-
     // Validar que existe propertyId
     if (!propertyId) {
       return NextResponse.json({ error: 'propertyId es requerido' }, { status: 400 })
@@ -90,8 +89,43 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Construir array de todas las imágenes disponibles
+    const allImages = []
+    if (property.images?.coverImage) {
+      allImages.push(property.images.coverImage)
+    }
+    if (Array.isArray(property.images?.gallery)) {
+      allImages.push(...property.images.gallery)
+    }
+
+    // Filtrar solo las imágenes seleccionadas
+    const selectedImages = allImages.filter((img) => {
+      if (typeof img === 'string') {
+        return selectedImageIds.includes(img)
+      }
+      // Si es un objeto Media, verificar id o _id
+      const imageId = (img as any).id || (img as any)._id
+      return selectedImageIds.includes(imageId)
+    })
+
+    // Transformar valores a labels antes de enviar
+    const transformedProperty = {
+      ...property,
+      ubication: {
+        ...property.ubication,
+        department: property.ubication?.department
+          ? getDepartmentLabel(property.ubication.department)
+          : property.ubication?.department,
+      },
+      environments: {
+        ...property.environments,
+        garageType: property.environments?.garageType
+          ? getGarageTypeLabel(property.environments.garageType)
+          : property.environments?.garageType,
+      },
+    }
+
     // Enviar la propiedad completa a n8n
-    console.log('📤 Enviando propiedad a n8n...')
     const n8nResponse = await fetch(n8nWebhookUrl, {
       method: 'POST',
       headers: {
@@ -100,15 +134,82 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         action: 'publishToInstagram',
         propertyId: propertyId,
-        property: property,
+        property: transformedProperty,
+        selectedImages: selectedImages,
       }),
     })
 
-    if (!n8nResponse.ok) {
-      const errorData = await n8nResponse.json().catch(() => ({}))
-      console.error('❌ Error de n8n:', errorData)
+    // Intentar parsear la respuesta de n8n
+    const n8nResult = await n8nResponse.json().catch(() => ({}))
+    console.log('📨 Respuesta de n8n:', n8nResult)
 
-      const errorMessage = errorData.message || errorData.error || 'Error al publicar en Instagram'
+    // Verificar si n8n devolvió un error en el body (independientemente del status HTTP)
+    if (n8nResult.status === 'error') {
+      const errorMessage = n8nResult.message || 'Error al publicar en Instagram'
+      const errorDetails = n8nResult.details || ''
+
+      console.error('❌ Error de n8n:', errorMessage, errorDetails)
+
+      await updateMetaStatus(
+        propertyId,
+        'error',
+        undefined,
+        undefined,
+        `${errorMessage}${errorDetails ? ': ' + errorDetails : ''}`,
+      )
+
+      return NextResponse.json(
+        {
+          error: 'Error publicando en Instagram',
+          message: errorMessage,
+          details: errorDetails,
+          updatedMetaData: {
+            name: 'Instagram',
+            uploaded: false,
+            externalId: null,
+            externalUrl: null,
+            status: 'error' as const,
+            lastSyncAt: new Date().toISOString(),
+            lastError: `${errorMessage}${errorDetails ? ': ' + errorDetails : ''}`,
+          },
+        },
+        { status: 400 },
+      )
+    }
+
+    // Verificar si n8n devolvió éxito
+    if (n8nResult.status === 'success' && n8nResult.postId) {
+      const externalId = n8nResult.postId
+      const externalUrl = n8nResult.postUrl || null
+
+      console.log('✅ Publicación exitosa. Post ID:', externalId)
+
+      await updateMetaStatus(propertyId, 'published', externalId, externalUrl)
+
+      const updatedMetaData = {
+        name: 'Instagram',
+        uploaded: true,
+        externalId: externalId,
+        externalUrl: externalUrl,
+        status: 'ok' as const,
+        lastSyncAt: new Date().toISOString(),
+        lastError: null,
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Propiedad publicada en Instagram exitosamente',
+        postId: externalId,
+        postUrl: externalUrl,
+        updatedMetaData,
+      })
+    }
+
+    // Si la respuesta HTTP no es ok y no tenemos estructura de error conocida
+    if (!n8nResponse.ok) {
+      const errorMessage = n8nResult.message || n8nResult.error || 'Error desconocido de n8n'
+
+      console.error('❌ Error HTTP de n8n:', n8nResponse.status, errorMessage)
 
       await updateMetaStatus(propertyId, 'error', undefined, undefined, errorMessage)
 
@@ -130,31 +231,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const n8nResult = await n8nResponse.json()
-    console.log('✅ Respuesta de n8n:', n8nResult)
+    // Si llegamos aquí, la respuesta no tiene el formato esperado
+    console.error('❌ Respuesta de n8n en formato inesperado:', n8nResult)
 
-    // Actualizar estado exitoso en BD
-    const externalId = n8nResult.postId || n8nResult.id || null
-    const externalUrl = n8nResult.postUrl || n8nResult.permalink || null
+    const errorMessage = 'Respuesta de n8n en formato inesperado'
+    await updateMetaStatus(propertyId, 'error', undefined, undefined, errorMessage)
 
-    await updateMetaStatus(propertyId, 'published', externalId, externalUrl)
-
-    const updatedMetaData = {
-      name: 'Instagram',
-      uploaded: true,
-      externalId: externalId,
-      externalUrl: externalUrl,
-      status: 'published' as const,
-      lastSyncAt: new Date().toISOString(),
-      lastError: null,
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Propiedad enviada a Instagram exitosamente',
-      n8nResponse: n8nResult,
-      updatedMetaData,
-    })
+    return NextResponse.json(
+      {
+        error: errorMessage,
+        details:
+          'Se esperaba {status: "success", postId: "..."} o {status: "error", message: "...", details: "..."}',
+        receivedData: n8nResult,
+        updatedMetaData: {
+          name: 'Instagram',
+          uploaded: false,
+          externalId: null,
+          externalUrl: null,
+          status: 'error' as const,
+          lastSyncAt: new Date().toISOString(),
+          lastError: errorMessage,
+        },
+      },
+      { status: 500 },
+    )
   } catch (error) {
     console.error('❌ Error en API de Meta:', error)
 

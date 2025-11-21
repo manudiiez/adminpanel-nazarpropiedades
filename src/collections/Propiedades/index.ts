@@ -12,6 +12,7 @@ import {
   validateGarageType,
   validateMascotas,
   validateAmbientes,
+  validateFrontAndDeep,
 } from '@/utils/validateFields'
 
 type ExtendedOption = {
@@ -692,6 +693,7 @@ export const Propiedades: CollectionConfig = {
                   return data?.classification.type !== 'negocio'
                 },
               },
+              validate: validateFrontAndDeep,
             },
             {
               name: 'deepMeters',
@@ -704,6 +706,7 @@ export const Propiedades: CollectionConfig = {
                   return data?.classification.type !== 'negocio'
                 },
               },
+              validate: validateFrontAndDeep,
             },
             {
               name: 'antiquity',
@@ -1749,7 +1752,7 @@ export const Propiedades: CollectionConfig = {
     {
       name: 'meta',
       label: 'Configuración de Instagram / Facebook',
-      admin: { hidden: true },
+      // admin: { hidden: true },
       type: 'group',
       fields: [
         { name: 'name', type: 'text', defaultValue: 'Meta' },

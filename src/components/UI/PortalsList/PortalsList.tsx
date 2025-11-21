@@ -34,7 +34,6 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
   const [error, setError] = useState<string | null>(null)
   const [propertyData, setPropertyData] = useState<any>(null)
   const [ownerData, setOwnerData] = useState<any>(null)
-  const [images, setImages] = useState<any[]>([])
   const [localInmoupData, setLocalInmoupData] = useState<PortalData>({})
   const [localMercadoLibreData, setLocalMercadoLibreData] = useState<PortalData>({})
   const [localMetaData, setLocalMetaData] = useState<MetaPortalData>({})
@@ -59,7 +58,6 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
         // Actualizar estados con los datos obtenidos
         setPropertyData(result)
         setOwnerData(result.ownerData)
-        setImages(result.images)
         setLocalInmoupData(result.inmoup || {})
         setLocalMercadoLibreData(result.mercadolibre || {})
         setLocalMetaData(result.meta || {})
@@ -170,6 +168,22 @@ export default function PortalsList({ propertyId }: PortalsListProps) {
             metaData={localMetaData}
             propertyId={propertyId}
             onDataUpdate={handleMetaDataUpdate}
+            images={(() => {
+              // Construir array de imágenes desde el objeto images
+              const imageArray = []
+
+              // Agregar coverImage si existe
+              if (propertyData?.images?.coverImage) {
+                imageArray.push(propertyData.images.coverImage)
+              }
+
+              // Agregar imágenes de gallery si existe
+              if (Array.isArray(propertyData?.images?.gallery)) {
+                imageArray.push(...propertyData.images.gallery)
+              }
+
+              return imageArray
+            })()}
           />
         )}
       </div>

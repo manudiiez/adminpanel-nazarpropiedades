@@ -199,6 +199,18 @@ export const validateAntiquity = (value: any, { data }: ValidationArgs) => {
 
   return true
 }
+// Validación para antiquity
+export const validateFrontAndDeep = (value: any, { data }: ValidationArgs) => {
+  const requiredTypes = ['lote']
+
+  if (requiredTypes.includes(data?.classification?.type || '')) {
+    if (!value || value === 0) {
+      return 'Este campo es obligatorio.'
+    }
+  }
+
+  return true
+}
 
 // Validación para conservationStatus
 export const validateConservationStatus = (value: any, { data }: ValidationArgs) => {
